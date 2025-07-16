@@ -1,46 +1,28 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import AuthButton from "@/components/AuthButtonComponent"
-import GetUserButton from "@/components/GetUserButton"
-import { auth } from '@/utils/firebase'
-import { onAuthStateChanged } from 'firebase/auth'
+import {useEffect, useState} from 'react'
+//import {useRouter} from 'next/navigation'
+import {auth} from '@/utils/firebase'
+//import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
+import AuthenticatedLayout from "@/components/AuthenticatedLayout";
 
-export default function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false) // State to track login status
+export default function HomePage() {
+    const [name, setName] = useState('')
 
-  // Listen to authentication state changes
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user) // Set to true if a user is logged in, otherwise false
-    })
+    useEffect(() => {
+        const user = auth.currentUser
+        if (user?.displayName) setName(user.displayName)
+    }, [])
 
-    // Cleanup subscription on component unmount
-    return () => unsubscribe()
-  }, [])
+    return (
+        <AuthenticatedLayout>
 
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <h1 className="text-2xl font-bold text-center">Firebase Authentication & API Request</h1>
-        
-        {/* Login Button */}
-        <AuthButton />
-
-        {/* Divider */}
-        <div className="w-full h-px bg-gray-200 my-4"></div>
-
-        {/* Conditionally Render GetUserButton */}
-        {isLoggedIn ? (
-          <GetUserButton />
-        ) : (
-          <p className="text-gray-100">Please log in to fetch user data.</p>
-        )}
-      </main>
-
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <p>Powered by Firebase and Next.js</p>
-      </footer>
-    </div>
-  )
+            <div className="flex flex-col h-screen items-center justify-center bg-white px-4">
+                <h1 className="text-3xl font-semibold text-gray-800">
+                    <h2 className="text-2xl font-semibold">Welcome {name || '👋'}</h2>
+                    <p className="mt-2 text-gray-600">You&#39;re logged in.</p>
+                </h1>
+            </div>
+        </AuthenticatedLayout>
+    )
 }
