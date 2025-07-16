@@ -12,7 +12,7 @@
 
 body {
     background: var(--background);
-    color: var(--foreground);
+    color: var(--light-text);
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -35,11 +35,37 @@ body {
     background-color: var(--background);
 }
 
-/* ✅ Custom login background with mosaic effect */
 .bg-login {
     background-color: var(--background);
     background-image: url('/assets/background_1.png'); /* put image in /public/images */
     background-repeat: repeat;
     background-size: contain;
     background-position: center;
+}
+
+.shadow-dance-text {
+    transition: all 0.5s;
+    font-variation-settings: "wght" 300, "ital" 1;
+    font-size: 3rem;
+    text-align: center;
+    color: var(--light-text);
+    font-family: "Meta", sans-serif;
+    animation: shadow-dance 3s forwards;
+}
+
+@keyframes shadow-dance {
+    0% {
+        text-shadow: 0 0 0 #07bccc,
+        0 0 0 #e601c0,
+        0 0 0 #e9019a,
+        0 0 0 #f40468,
+        0 0 0 #482896;
+    }
+    100% {
+        text-shadow: 5px 5px 0 #07bccc,
+        10px 10px 0 #e601c0,
+        15px 15px 0 #e9019a,
+        20px 20px 0 #f40468,
+        25px 25px 10px #482896;
+    }
 }
