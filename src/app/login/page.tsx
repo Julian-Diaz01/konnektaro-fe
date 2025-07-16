@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { onAuthStateChanged, getIdToken, User } from 'firebase/auth'
-import { auth } from '@/utils/firebase'
-import { loginAnonymously, loginWithGoogle } from '@/utils/authentication_service'
+import {useEffect, useState} from 'react'
+import {useRouter} from 'next/navigation'
+import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
+import {auth} from '@/utils/firebase'
+import {loginAnonymously, loginWithGoogle} from '@/utils/authentication_service'
 import Head from 'next/head'
 
 export default function LoginPage() {
@@ -29,27 +29,30 @@ export default function LoginPage() {
         return () => unsubscribe()
     }, [router])
 
-    if (loading) return <div className="text-center pt-20 text-gray-500">Checking login...</div>
+    if (loading) return <div
+        className="h-screen w-full flex flex-col justify-center items-center bg-login text-center px-4">
+        <div className="pt-20 text-center text-white">Checking login...</div>
+    </div>
 
     return (
         <>
             <Head>
                 <title>Konnektaro Login</title>
             </Head>
-            <div className="flex flex-col h-screen justify-center items-center text-center bg-white px-4">
-                <h1 className="text-4xl font-bold mb-12 text-gray-800">Konnektaro</h1>
+            <div className="h-screen w-full flex flex-col justify-center items-center bg-login text-center px-4">
+                <h1 className="mb-12 font-bold text-4xl text-title italic">Konnektaro</h1>
 
-                <div className="flex flex-col w-full max-w-sm gap-4">
+                <div className="w-full max-w-sm flex flex-col gap-4">
                     <button
                         onClick={loginAnonymously}
-                        className="bg-blue-500 text-white py-4 rounded-md shadow-md hover:bg-blue-600 transition w-full text-lg"
+                        className="w-full py-4 button-primary rounded-md shadow-md  text-lg transition hover:bg-blue-600"
                     >
                         Sign in as Guest
                     </button>
 
                     <button
                         onClick={loginWithGoogle}
-                        className="bg-green-500 text-white py-4 rounded-md shadow-md hover:bg-green-600 transition w-full text-lg"
+                        className="w-full py-4 button-secondary rounded-md shadow-md  text-lg transition hover:bg-green-600"
                     >
                         Sign in as Moderator
                     </button>

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import './../../styles/globals.css'
 
 export default function LoginLayout({ children }: { children: ReactNode }) {
     return (
