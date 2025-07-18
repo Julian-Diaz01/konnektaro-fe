@@ -39,7 +39,7 @@ export default function LoginPage() {
     }, [router])
 
     if (loading) return <div
-        className="h-screen w-full flex flex-col justify-center items-center bg-login text-center px-4">
+        className="h-screen w-full flex flex-col justify-center items-center bg-primary text-center px-4">
         <div className="pt-20 text-center text-white">Checking login...</div>
     </div>
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
             <Head>
                 <title>Konnektaro Login</title>
             </Head>
-            <div className="h-screen w-full flex flex-col justify-center items-center bg-login text-center px-4">
+            <div className="h-screen w-full flex flex-col justify-center items-center bg-primary text-center px-4">
                 <div className="flex-grow flex items-center justify-center w-full">
                     <h1  ref={textRef} onClick={restartAnimation} className="text-4xl font-bold shadow-dance-text">Konnektaro</h1>
                 </div>

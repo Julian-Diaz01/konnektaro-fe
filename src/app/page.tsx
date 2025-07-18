@@ -16,8 +16,7 @@ export default function HomePage() {
 
     return (
         <AuthenticatedLayout>
-
-            <div className="flex flex-col h-screen items-center justify-center bg-white px-4">
+            <div className="flex flex-col h-screen items-center justify-center bg-secondary px-4">
                 <h1 className="text-3xl font-semibold text-gray-800">
                     <h2 className="text-2xl font-semibold">Welcome {name || '👋'}</h2>
                     <p className="mt-2 text-gray-600">You&#39;re logged in.</p>
