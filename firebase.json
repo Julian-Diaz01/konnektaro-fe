@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "konnektaro",
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

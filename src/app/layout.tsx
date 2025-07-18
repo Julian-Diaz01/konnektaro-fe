@@ -12,7 +12,6 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
         <Head>
-            <link rel="icon" type="image/png" href="/favicon.png"/>
             <title>Konnektaro</title>
         </Head>
         <body>{children}</body>
