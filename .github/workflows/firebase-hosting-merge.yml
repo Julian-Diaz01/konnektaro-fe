@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Install Dependencies
         run: npm install
       - name: Create .env file from GitHub Secrets
@@ -23,7 +26,9 @@ jobs:
           echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" >> .env
           echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" >> .env
           echo "FIREBASE_SERVICE_ACCOUNT_KONNEKTAR_5E73F=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KONNEKTAR_5E73F }}" >> .env
-      - run: npm run build
+
+      - name: Build
+        run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
