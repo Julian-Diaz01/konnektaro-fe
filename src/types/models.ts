@@ -19,8 +19,8 @@ export interface User {
     email: string
     icon: string
     description: string
-    role: 'user' | 'admin'
-    userActivityIds: UserActivityLink[]
+    role: 'user'
+    userActivityIds?: UserActivityLink[]
 }
 
 export interface UserActivityLink {
