@@ -1,3 +1,4 @@
+/*
 import axios from '../utils/axiosInstance'
 
 //TODO ADD TYPES FOR REQUEST DATA
@@ -32,3 +33,4 @@ export const pairUsersInActivity = (sessionId: string, activityId: string, share
 // 📄 REVIEW
 export const getUserReview = (userId: string, sessionId: string) =>
     axios.get(`/user/${userId}/review/${sessionId}`)
+*/
