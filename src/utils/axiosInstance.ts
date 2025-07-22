@@ -1,6 +1,8 @@
 import axios from 'axios'
-import { auth } from './firebase'
-import { signOut } from 'firebase/auth'
+import {auth} from './firebase'
+import {onAuthStateChanged, signOut} from 'firebase/auth'
+import {User} from 'firebase/auth'
+
 
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -10,15 +12,24 @@ const instance = axios.create({
 })
 
 let cachedToken: string | null = null
-let tokenExpiry: number | null = null
+let tokenExpiry = 0
 
-const isTokenExpired = () => {
-    if (!tokenExpiry) return true
-    return Date.now() >= tokenExpiry
-}
+const waitForUser = (): Promise<User | null> =>
+    new Promise((resolve) => {
+        if (auth.currentUser) {
+            resolve(auth.currentUser)
+        } else {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe()
+                resolve(user)
+            })
+        }
+    })
 
-const getValidToken = async () => {
-    const user = auth.currentUser
+const isTokenExpired = () => Date.now() > tokenExpiry - 60_000 // 1 min early refresh
+
+export const getValidToken = async (): Promise<string | null> => {
+    const user = await waitForUser()
     if (!user) return null
 
     try {
@@ -29,7 +40,7 @@ const getValidToken = async () => {
         }
         return cachedToken
     } catch (error) {
-        console.error('🔥 Token refresh failed, logging out:', error)
+        console.error('🔥 Token refresh failed:', error)
         await signOut(auth)
         return null
     }
