@@ -2,12 +2,12 @@
 
 import React, {useState} from 'react'
 import {useRouter} from 'next/navigation'
-import {createSession} from '@/services/sessionService'
+import {createEvent} from '@/services/eventService'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 
-export default function CreateSessionPage() {
+export default function CreateEventPage() {
     const router = useRouter()
-    const [sessionData, setSessionData] = useState({
+    const [eventData, setEventData] = useState({
         name: '',
         description: '',
         picture: ''
@@ -17,7 +17,7 @@ export default function CreateSessionPage() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
-        setSessionData(prev => ({...prev, [name]: value}))
+        setEventData(prev => ({...prev, [name]: value}))
     }
 
     const handleSubmit = async () => {
@@ -25,15 +25,15 @@ export default function CreateSessionPage() {
         setError('')
 
         try {
-            const session = await createSession({
-                ...sessionData,
+            const event = await createEvent({
+                ...eventData,
             })
 
-            if (session) router.push('/')
+            if (event) router.push('/')
         } catch (err: unknown) {
             if (typeof err === 'object' && err !== null && 'response' in err) {
                 const errorResponse = err as { response?: { data?: { error?: string } } }
-                setError(errorResponse.response?.data?.error || 'Failed to create session.')
+                setError(errorResponse.response?.data?.error || 'Failed to create event.')
             } else {
                 setError('Unexpected error occurred.')
             }
@@ -42,19 +42,19 @@ export default function CreateSessionPage() {
         }
     }
 
-    const isFormValid = sessionData.name.trim() !== '' && sessionData.description.trim() !== ''
+    const isFormValid = eventData.name.trim() !== '' && eventData.description.trim() !== ''
 
     return (
         <AuthenticatedLayout>
             <div className="p-4 max-w-md mx-auto h-[90vh] bg-white text-black">
-                <h1 className="text-2xl font-semibold mb-4">Create New Session</h1>
+                <h1 className="text-2xl font-semibold mb-4">Create New Event</h1>
 
                 <input
                     name="name"
                     type="text"
-                    placeholder="Session Name"
+                    placeholder="Event Name"
                     className="w-full mb-2 p-2 border rounded"
-                    value={sessionData.name}
+                    value={eventData.name}
                     onChange={handleChange}
                 />
 
@@ -63,7 +63,7 @@ export default function CreateSessionPage() {
                     type="text"
                     placeholder="Description"
                     className="w-full mb-2 p-2 border rounded"
-                    value={sessionData.description}
+                    value={eventData.description}
                     onChange={handleChange}
                 />
 
@@ -72,7 +72,7 @@ export default function CreateSessionPage() {
                     type="text"
                     placeholder="Picture URL (optional)"
                     className="w-full mb-4 p-2 border rounded"
-                    value={sessionData.picture}
+                    value={eventData.picture}
                     onChange={handleChange}
                 />
 

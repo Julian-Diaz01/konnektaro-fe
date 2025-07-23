@@ -5,7 +5,7 @@ import Head from "next/head";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',
-    description: 'Collaborative session app',
+    description: 'Collaborative event app',
 }
 
 export default function RootLayout({children}: { children: React.ReactNode }) {

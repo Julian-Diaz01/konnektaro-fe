@@ -1,19 +1,19 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {Suspense, useEffect, useState} from 'react'
 import {useRouter, useSearchParams} from 'next/navigation'
 import AvatarSelector from '@/components/AvatarSelector'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import {createUser} from '@/services/userService'
-import {getSessionStatus} from '@/services/sessionService'
+import {getEventStatus} from '@/services/eventService'
 
 export default function CreateUserPage() {
     const router = useRouter()
-    const sessionId = useSearchParams().get('sessionId') || ''
+    const eventId = useSearchParams().get('eventId') || ''
 
-    const [sessionLoading, setSessionLoading] = useState(true)
-    const [sessionOpen, setSessionOpen] = useState(false)
-    const [sessionName, setSessionName] = useState('')
+    const [eventLoading, setEventLoading] = useState(true)
+    const [eventOpen, setEventOpen] = useState(false)
+    const [eventName, setEventName] = useState('')
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -24,27 +24,27 @@ export default function CreateUserPage() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
-    // Validate session on mount
+    // Validate event on mount
     useEffect(() => {
-        const validateSession = async () => {
+        const validateEvent = async () => {
             try {
-                const {data} = await getSessionStatus(sessionId)
-                setSessionName(data.name)
-                setSessionOpen(data.open)
+                const {data} = await getEventStatus(eventId)
+                setEventName(data.name)
+                setEventOpen(data.open)
             } catch {
-                setError('Session not found or invalid.')
+                setError('Event not found or invalid.')
             } finally {
-                setSessionLoading(false)
+                setEventLoading(false)
             }
         }
 
-        if (sessionId) {
-            validateSession()
+        if (eventId) {
+            validateEvent()
         } else {
-            setError('Missing session ID.')
-            setSessionLoading(false)
+            setError('Missing event ID.')
+            setEventLoading(false)
         }
-    }, [sessionId])
+    }, [eventId])
 
     const handleChange = (key: keyof typeof form, value: string | boolean) => {
         setForm(prev => ({...prev, [key]: value}))
@@ -52,7 +52,7 @@ export default function CreateUserPage() {
 
     const handleSubmit = async () => {
         setError('')
-        if (!form.name || !form.avatar || !sessionId) {
+        if (!form.name || !form.avatar || !eventId) {
             setError('Please fill all required fields.')
             return
         }
@@ -64,7 +64,7 @@ export default function CreateUserPage() {
                 email: form.email,
                 icon: form.avatar,
                 description: form.description,
-                sessionId,
+                eventId,
                 role: 'user'
             })
             router.push('/')
@@ -82,12 +82,13 @@ export default function CreateUserPage() {
 
     return (
         <AuthenticatedLayout>
+            <Suspense fallback={<div>Loading........</div>}>
             <div className="min-h-screen px-6 py-4 flex flex-col justify-start items-center bg-background">
-                {sessionLoading ? (
+                {eventLoading ? (
                     <div className="mt-20 text-gray-700 text-lg font-medium flex items-center gap-3">
                         <div
                             className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-                        Loading session...
+                        Loading event...
                     </div>
                 ) : error ? (
                     <div className="mt-12 text-center">
@@ -99,10 +100,10 @@ export default function CreateUserPage() {
                             ← Go back
                         </button>
                     </div>
-                ) : !sessionOpen ? (
+                ) : !eventOpen ? (
                     <div className="mt-12 text-center">
                         <p className="text-yellow-600 font-medium text-lg mb-2">
-                            The session &#34;<span className="font-bold">{sessionName}</span>&#34; is closed.
+                            The event &#34;<span className="font-bold">{eventName}</span>&#34; is closed.
                         </p>
                         <button
                             onClick={() => router.push('/')}
@@ -169,6 +170,7 @@ export default function CreateUserPage() {
                     </>
                 )}
             </div>
+            </Suspense>
         </AuthenticatedLayout>
     )
 }

@@ -1,6 +1,6 @@
 # Konnektaro Frontend
 
-Welcome to the **Konnektaro** frontend – a mobile-first React application built with **Next.js**, **Firebase Authentication**, and **Tailwind CSS**. It supports both **anonymous users** (guests) and **moderators** (Google sign-in) for a session-based activity platform.
+Welcome to the **Konnektaro** frontend – a mobile-first React application built with **Next.js**, **Firebase Authentication**, and **Tailwind CSS**. It supports both **anonymous users** (guests) and **moderators** (Google sign-in) for a event-based activity platform.
 
 ---
 

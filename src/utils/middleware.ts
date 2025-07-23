@@ -14,5 +14,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/session/:path*'] // Protect these routes
+    matcher: ['/dashboard/:path*', '/event/:path*'] // Protect these routes
 }
