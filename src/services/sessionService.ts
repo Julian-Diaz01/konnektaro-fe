@@ -12,10 +12,11 @@ export const createSession = (data: Omit<Session, 'sessionId' | 'userIds' | 'act
 
 export const getSession = (sessionId: string) =>
     axios.get<Session>(`/session/${sessionId}`)
+export const getSessionStatus = (sessionId: string) =>
+    axios.get<Session>(`/session/status/${sessionId}`)
 
 export const getAllSessions = () =>
     axios.get<Session[]>('/session')
-
 export const deleteSession = (sessionId: string) =>
     axios.delete(`/session/${sessionId}`)
 

@@ -1,5 +1,4 @@
 'use client'
-
 import Image from 'next/image'
 import clsx from 'clsx'
 
@@ -14,10 +13,10 @@ const avatarOptions = [
 
 type Props = {
     selected: string | null
-    onSelect: (avatar: string) => void
+    onSelectAvatar: (avatar: string) => void
 }
 
-export default function AvatarSelector({ selected, onSelect }: Props) {
+export default function AvatarSelector({ selected, onSelectAvatar }: Props) {
     return (
         <div className="grid grid-cols-3 gap-3 justify-items-center">
             {avatarOptions.map((avatar) => (
@@ -28,7 +27,7 @@ export default function AvatarSelector({ selected, onSelect }: Props) {
                         'hover:shadow-lg',
                         selected === avatar ? 'border-[var(--terciary)] shadow-[0_0_10px_var(--terciary)]' : 'border-[var(--primary)]'
                     )}
-                    onClick={() => onSelect(avatar)}
+                    onClick={() => onSelectAvatar(avatar)}
                 >
                     <Image
                         src={`/avatars/${avatar}`}
@@ -42,3 +41,4 @@ export default function AvatarSelector({ selected, onSelect }: Props) {
         </div>
     )
 }
+
