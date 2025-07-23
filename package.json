@@ -10,12 +10,17 @@
     "deploy": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.5",
+    "@radix-ui/react-slot": "^1.2.3",
     "axios": "^1.10.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "firebase": "^11.10.0",
+    "lucide-react": "^0.525.0",
     "next": "15.3.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -29,6 +34,8 @@
     "firebase-tools": "^14.11.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.3.5",
     "typescript": "^5"
   }
 }
