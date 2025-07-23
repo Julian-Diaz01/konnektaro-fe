@@ -7,11 +7,11 @@ export const createUser = (userData: never) => axios.post('/user', userData)
 export const getUser = (userId: string) => axios.get(`/user/${userId}`)
 export const deleteUser = (userId: string) => axios.delete(`/user/${userId}`)
 
-// 📚 SESSION
-export const createSession = (data: never) => axios.post('/session', data)
-export const getSession = (sessionId: string) => axios.get(`/session/${sessionId}`)
-export const getAllSessions = () => axios.get('/session')
-export const deleteSession = (sessionId: string) => axios.delete(`/session/${sessionId}`)
+// 📚 EVENT
+export const createEvent = (data: never) => axios.post('/event', data)
+export const getEvent = (eventId: string) => axios.get(`/event/${eventId}`)
+export const getAllEvents = () => axios.get('/event')
+export const deleteEvent = (eventId: string) => axios.delete(`/event/${eventId}`)
 
 // 📝 ACTIVITY
 export const createActivity = (data: never) => axios.post('/activity', data)
@@ -27,10 +27,10 @@ export const updateUserActivity = (id: string, data: never) =>
 export const deleteUserActivity = (id: string) => axios.delete(`/user-activity/${id}`)
 
 // 👥 GROUP
-export const pairUsersInActivity = (sessionId: string, activityId: string, share: boolean) =>
-    axios.post(`/session/${sessionId}/activity-group/${activityId}`, { share })
+export const pairUsersInActivity = (eventId: string, activityId: string, share: boolean) =>
+    axios.post(`/event/${eventId}/activity-group/${activityId}`, { share })
 
 // 📄 REVIEW
-export const getUserReview = (userId: string, sessionId: string) =>
-    axios.get(`/user/${userId}/review/${sessionId}`)
+export const getUserReview = (userId: string, eventId: string) =>
+    axios.get(`/user/${userId}/review/${eventId}`)
 */

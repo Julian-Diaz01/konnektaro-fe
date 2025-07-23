@@ -2,18 +2,18 @@ import React from 'react'
 import {useRouter} from 'next/navigation'
 import Image from 'next/image'
 
-interface SessionCardProps {
-    sessionId: string
+interface EventCardProps {
+    eventId: string
     name: string
     description: string
     picture?: string
 }
 
-const SessionCard: React.FC<SessionCardProps> = ({ sessionId, name, description, picture }) => {
+const EventCard: React.FC<EventCardProps> = ({ eventId, name, description, picture }) => {
     const router = useRouter()
 
     const handleClick = () => {
-        router.push(`/create-user?sessionId=${sessionId}`)
+        router.push(`/create-user?eventId=${eventId}`)
     }
 
     return (
@@ -24,7 +24,7 @@ const SessionCard: React.FC<SessionCardProps> = ({ sessionId, name, description,
             {picture && (
                 <Image
                     src={picture}
-                    alt="Session picture"
+                    alt="Event picture"
                     width={400}
                     height={200}
                     className="rounded-md w-full h-32 object-cover"
@@ -32,7 +32,7 @@ const SessionCard: React.FC<SessionCardProps> = ({ sessionId, name, description,
                 />            ) ||
                 <Image
                     src={"/avatars/bunny.svg"}
-                    alt="Session picture"
+                    alt="Event picture"
                     width={400}
                     height={200}
                     className="rounded-md w-full h-32 object-cover"
@@ -45,4 +45,4 @@ const SessionCard: React.FC<SessionCardProps> = ({ sessionId, name, description,
     )
 }
 
-export default SessionCard
+export default EventCard

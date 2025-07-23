@@ -5,13 +5,13 @@ import {onAuthStateChanged, User} from 'firebase/auth'
 import {useRouter} from 'next/navigation'
 import {auth} from '@/utils/firebase'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
-import {Session} from "@/types/models";
-import SessionCard from "@/components/SessionCard";
-import {getAllSessions} from "@/services/sessionService";
+import {Event} from "@/types/models";
+import EventCard from "@/components/EventCard";
+import {getAllEvents} from "@/services/eventService";
 
 export default function HomePage() {
     const router = useRouter()
-    const [sessions, setSessions] = useState<Session[]>([])
+    const [events, setEvents] = useState<Event[]>([])
     const [name, setName] = useState('')
     const [isAnonymous, setIsAnonymous] = useState(true)
     const [user, setUser] = useState<User | null>(null)
@@ -34,22 +34,22 @@ export default function HomePage() {
         }
     }, [user])
     useEffect(() => {
-        const fetchSessions = async () => {
+        const fetchEvents = async () => {
             try {
-                const response = await getAllSessions()
-                const openSessions = response.data.filter((s: Session) => s.open)
-                setSessions(openSessions)
+                const response = await getAllEvents()
+                const openEvents = response.data.filter((s: Event) => s.open)
+                setEvents(openEvents)
             } catch (err) {
-                console.error('Failed to fetch sessions:', err)
+                console.error('Failed to fetch events:', err)
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchSessions()
+        fetchEvents()
     }, [])
-    const handleCreateSession = () => {
-        router.push('/create-session')
+    const handleCreateEvent = () => {
+        router.push('/create-event')
     }
 
     return (
@@ -69,27 +69,27 @@ export default function HomePage() {
 
                         {!isAnonymous && (
                             <button
-                                onClick={handleCreateSession}
+                                onClick={handleCreateEvent}
                                 className="bg-primary text-white py-4 px-6 rounded-lg shadow-md hover:bg-opacity-90 cursor-pointer text-lg"
                             >
-                                Create a New Session
+                                Create a New Event
                             </button>
                         )}
 
 
                         {loading ? (
-                            <p>Loading sessions...</p>
-                        ) : sessions.length === 0 ? (
-                            <p className="text-gray-500">No open sessions available</p>
+                            <p>Loading events...</p>
+                        ) : events.length === 0 ? (
+                            <p className="text-gray-500">No open events available</p>
                         ) : (
                             <div className="grid gap-4 md:grid-cols-2">
-                                {sessions.map(session => (
-                                    <SessionCard
-                                        key={session.sessionId}
-                                        sessionId={session.sessionId}
-                                        name={session.name}
-                                        description={session.description}
-                                        picture={session.picture}
+                                {events.map(event => (
+                                    <EventCard
+                                        key={event.eventId}
+                                        eventId={event.eventId}
+                                        name={event.name}
+                                        description={event.description}
+                                        picture={event.picture}
                                     />
                                 ))}
                             </div>

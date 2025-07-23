@@ -1,9 +1,7 @@
-// /types/models.ts
-
 export type ActivityType = 'self' | 'partner'
 
-export interface Session {
-    sessionId: string
+export interface Event {
+    eventId: string
     name: string
     description: string
     picture?: string
@@ -14,7 +12,7 @@ export interface Session {
 
 export interface User {
     userId: string
-    sessionId: string
+    eventId: string
     name: string
     email: string
     icon: string
@@ -32,7 +30,7 @@ export interface UserActivityLink {
 
 export interface Activity {
     activityId: string
-    sessionId: string
+    eventId: string
     date: string
     type: ActivityType
     question: string
@@ -65,7 +63,7 @@ export interface ActivityGroupItem {
 export interface GroupActivity {
     groupActivityId: string
     activityId: string
-    sessionId: string
+    eventId: string
     groups: ActivityGroupItem[]
     share: boolean
 }
