@@ -1,6 +1,7 @@
 export const themeColors = {
-    primary: '#4B3D8F',
-    secondary: '#faece1',
+    primary: 'hls(var(--primary))',
+    secondary: 'hls(var(--secondary))',
+    terciary: 'hls(var(--terciary))',
     accent: '#F59E0B',
     background: '#faece1',
     dark: '#111827'

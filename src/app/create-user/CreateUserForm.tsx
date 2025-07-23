@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import AvatarSelector from '@/components/AvatarSelector'
 import { createUser } from '@/services/userService'
 import { getEventStatus } from '@/services/eventService'
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export default function CreateUserForm() {
     const router = useRouter()
@@ -106,7 +108,7 @@ export default function CreateUserForm() {
                     <p className="w-full mb-4 text-l font-medium text-gray-700 text-left">Select Avatar:*</p>
                     <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)} />
 
-                    <input
+                    <Input
                         type="text"
                         placeholder="Name*"
                         required
@@ -114,14 +116,14 @@ export default function CreateUserForm() {
                         value={form.name}
                         onChange={(e) => handleChange('name', e.target.value)}
                     />
-                    <input
+                    <Input
                         type="email"
                         placeholder="Email"
                         className="w-full mb-2 p-2 border rounded text-gray-700"
                         value={form.email}
                         onChange={(e) => handleChange('email', e.target.value)}
                     />
-                    <input
+                    <Input
                         type="text"
                         placeholder="Job title"
                         className="w-full mb-2 p-2 border rounded text-gray-700"
@@ -130,7 +132,7 @@ export default function CreateUserForm() {
                     />
 
                     <label className="flex items-start gap-3 mt-4 mb-6 text-base text-gray-700">
-                        <input
+                        <Input
                             type="checkbox"
                             required
                             checked={form.consent}
@@ -144,13 +146,13 @@ export default function CreateUserForm() {
 
                     {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
-                    <button
+                    <Button
                         disabled={loading || !form.name || !form.avatar}
                         onClick={handleSubmit}
-                        className="bg-primary text-white w-full py-3 rounded-full font-semibold disabled:opacity-50"
+                        className="bg-primary w-full py-3 rounded-full font-semibold disabled:opacity-50"
                     >
-                        {loading ? 'Saving...' : 'Save Profile'}
-                    </button>
+                        {loading ? 'Saving...' : 'Create Profile'}
+                    </Button>
                 </>
             )}
         </div>

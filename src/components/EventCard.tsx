@@ -23,7 +23,7 @@ const EventCard: React.FC<EventCardProps> = ({ eventId, name, description, pictu
         >
             {picture && (
                 <Image
-                    src={picture}
+                    src={`/avatars/${picture}`}
                     alt="Event picture"
                     width={400}
                     height={200}
@@ -31,7 +31,7 @@ const EventCard: React.FC<EventCardProps> = ({ eventId, name, description, pictu
                     priority={false}
                 />            ) ||
                 <Image
-                    src={"/avatars/bunny.svg"}
+                    src={`/avatars/${picture}`}
                     alt="Event picture"
                     width={400}
                     height={200}

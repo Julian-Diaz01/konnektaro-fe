@@ -25,7 +25,7 @@ export default function AvatarSelector({ selected, onSelectAvatar }: Props) {
                     className={clsx(
                         'rounded-full border-8 p-1 cursor-pointer transition shadow-gray-400 bg-primary',
                         'hover:shadow-lg',
-                        selected === avatar ? 'border-[var(--terciary)] shadow-[0_0_10px_var(--terciary)]' : 'border-[var(--primary)]'
+                        selected === avatar ? 'border-[var(--terciary)] shadow-[0_0_10px_var(--terciary)]' : 'border-[var(--background)]'
                     )}
                     onClick={() => onSelectAvatar(avatar)}
                 >
