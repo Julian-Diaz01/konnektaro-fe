@@ -8,6 +8,7 @@ import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import {Event} from "@/types/models";
 import EventCard from "@/components/EventCard";
 import {getAllEvents} from "@/services/eventService";
+import {Button} from "@/components/ui/button";
 
 export default function HomePage() {
     const router = useRouter()
@@ -54,7 +55,7 @@ export default function HomePage() {
 
     return (
         <AuthenticatedLayout>
-            <div className="flex flex-col h-screen items-center p-4 pt-16 bg-white">
+            <div className="flex flex-col h-screen p-8 pt-16 bg-white">
                 {loading ? (
                     <div className="text-gray-600 text-lg flex flex-col items-center">
                         <div
@@ -67,13 +68,16 @@ export default function HomePage() {
                             Welcome {name || '👋'}
                         </h1>
 
+                        <h1 className="text-2xl font-semibold text-primary mb-6">
+                            Join an Event
+                        </h1>
                         {!isAnonymous && (
-                            <button
+                            <Button
                                 onClick={handleCreateEvent}
                                 className="bg-primary text-white py-4 px-6 rounded-lg shadow-md hover:bg-opacity-90 cursor-pointer text-lg"
                             >
                                 Create a New Event
-                            </button>
+                            </Button>
                         )}
 
 

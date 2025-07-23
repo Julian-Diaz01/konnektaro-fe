@@ -6,6 +6,7 @@ import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
 import {auth} from '@/utils/firebase'
 import {loginAnonymously, loginWithGoogle} from '@/utils/authentication_service'
 import Head from 'next/head'
+import {Button} from "@/components/ui/button";
 
 export default function LoginPage() {
     const router = useRouter()
@@ -53,19 +54,20 @@ export default function LoginPage() {
                     <h1  ref={textRef} onClick={restartAnimation} className="text-4xl font-bold shadow-dance-text">Konnektaro</h1>
                 </div>
                 <div className="w-full max-w-sm flex flex-col gap-4 mb-5">
-                    <button
+                    <Button variant="secondary"
                         onClick={loginAnonymously}
-                        className="w-full py-4 button-primary rounded-md shadow-md  text-lg transition"
+                        className=" w-full h-[10vh] rounded-full font-semibold text-lg sm:text-xl"
                     >
                         Sign in as Guest
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
+                        variant="outline"
                         onClick={loginWithGoogle}
-                        className="w-full py-4 button-secondary rounded-md shadow-md  text-lg transition"
+                        className=" w-full h-[10vh] rounded-full font-semibold text-lg sm:text-xl"
                     >
                         Sign in as Moderator
-                    </button>
+                    </Button>
                 </div>
             </div>
         </>
