@@ -22,6 +22,10 @@ export default function HomePage() {
 
     const loading = userLoading || eventsLoading
 
+    const handleClick = (eventId: string) => {
+        router.push(`/create-user?eventId=${eventId}`)
+    }
+
     return (
         <AuthenticatedLayout onlyAdmin={false} allowAnonymous={true}>
             <div className="flex flex-col h-screen p-8 pt-16 bg-white">
@@ -47,8 +51,8 @@ export default function HomePage() {
                             <div className="grid gap-4 md:grid-cols-2">
                                 {events.map(event => (
                                     <EventCard
+                                        handleClick={() => handleClick(event.eventId)}
                                         key={event.eventId}
-                                        eventId={event.eventId}
                                         name={event.name}
                                         description={event.description}
                                         picture={event.picture}
