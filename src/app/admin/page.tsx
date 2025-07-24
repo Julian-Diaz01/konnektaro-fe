@@ -3,7 +3,7 @@
 import {useRouter} from 'next/navigation'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import {Button} from '@/components/ui/button'
-import EventList from '@/components/EventList'
+import EventListAdmin from '@/components/EventListAdmin'
 import useAuthUser from "@/hooks/useAuthUser";
 import useOpenEvents from "@/hooks/useOpenEvents";
 import Spinner from "@/components/ui/spinner";
@@ -38,7 +38,7 @@ export default function AdminPage() {
                 {loading ? (
                   <Spinner />
                 ) : (
-                    <EventList events={events} />
+                    <EventListAdmin events={events} />
                 )}
             </div>
         </AuthenticatedLayout>

@@ -5,9 +5,9 @@ type Props = {
     events: Event[]
 }
 
-export default function EventList({ events }: Props) {
+export default function EventListAdmin({events}: Props) {
     if (!events.length) {
-        return <p className="text-gray-500">No open events available</p>
+        return <p className="text-gray-500">No events available</p>
     }
 
     return (
@@ -15,10 +15,10 @@ export default function EventList({ events }: Props) {
             {events.map(event => (
                 <EventCard
                     key={event.eventId}
-                    eventId={event.eventId}
                     name={event.name}
                     description={event.description}
                     picture={event.picture}
+                    handleClick={() => console.log('clicked')}
                 />
             ))}
         </div>
