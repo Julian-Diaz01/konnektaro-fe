@@ -20,7 +20,7 @@ export default function AdminPage() {
     }
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
             <div className="flex flex-col h-screen p-8 pt-16 bg-white">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6">
                     Welcome {user?.displayName || ''}

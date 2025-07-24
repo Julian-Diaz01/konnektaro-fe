@@ -1,6 +1,7 @@
 // utils/auth.ts
-import { signInWithPopup, signInAnonymously, GoogleAuthProvider } from 'firebase/auth'
+import {signInWithPopup, signInAnonymously, GoogleAuthProvider, signOut} from 'firebase/auth'
 import { auth } from './firebase'
+import {deleteCookie} from "cookies-next";
 
 export const loginWithGoogle = async (): Promise<firebaseUser | null> => {
   const provider = new GoogleAuthProvider()
@@ -23,6 +24,11 @@ export const loginAnonymously = async (): Promise<firebaseUser | null> => {
     console.error('Anonymous Login Error:', error)
     return null
   }
+}
+
+export const logout = async () => {
+  await signOut(auth)
+  deleteCookie('__session')
 }
 
 type firebaseUser = {

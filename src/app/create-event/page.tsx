@@ -45,7 +45,7 @@ export default function CreateEventPage() {
     const isFormValid = eventData.name.trim() !== '' && eventData.description.trim() !== ''
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
             <div className="p-4 max-w-md mx-auto h-[90vh] bg-white text-black">
                 <h1 className="text-2xl font-semibold mb-4">Create New Event</h1>
 

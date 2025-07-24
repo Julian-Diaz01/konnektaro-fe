@@ -23,7 +23,7 @@ export default function HomePage() {
     const loading = userLoading || eventsLoading
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout onlyAdmin={false} allowAnonymous={true}>
             <div className="flex flex-col h-screen p-8 pt-16 bg-white">
                 {loading ? (
                     <Spinner/>
