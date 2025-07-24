@@ -7,7 +7,7 @@ import Spinner from "@/components/ui/spinner";
 
 export default function CreateUserPage() {
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout onlyAdmin={false} allowAnonymous={true}>
             <Suspense fallback={<Spinner />}>
                 <CreateUserForm />
             </Suspense>

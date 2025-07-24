@@ -1,35 +1,54 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import { auth } from '@/utils/firebase'
-import { signOut, onAuthStateChanged } from 'firebase/auth'
-import { deleteCookie } from 'cookies-next'
+import {useEffect, useState} from 'react'
+import {useRouter, usePathname} from 'next/navigation'
+import useAuthUser from '@/hooks/useAuthUser'
+import {logout} from '@/utils/authentication_service'
+import Spinner from '@/components/ui/spinner'
 
 interface Props {
     children: React.ReactNode
+    allowAnonymous?: boolean
+    onlyAdmin?: boolean
 }
 
-const AuthenticatedLayout = ({ children }: Props) => {
+const AuthenticatedLayout = ({children, allowAnonymous = true, onlyAdmin = false}: Props) => {
     const router = useRouter()
     const pathname = usePathname()
+    const {user, loading} = useAuthUser()
+    const [isAllowed, setIsAllowed] = useState(false)
 
     const handleLogout = async () => {
-        await signOut(auth)
-        deleteCookie('__session')
+        await logout()
         router.replace('/login')
     }
-
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async user => {
-            if (!user) {
-                router.replace('/login')
-            }
-        })
-        return () => unsubscribe()
-    }, [router])
+        if (!loading && user) {
+            const isAnonymous = user.isAnonymous
+            const isAdmin = !isAnonymous && !!user.email
 
-    // Don't show layout for login page
+            if (onlyAdmin && !isAdmin) {
+                router.replace('/')
+            } else if (!allowAnonymous && isAnonymous) {
+                router.replace('/admin')
+            } else if (!onlyAdmin && allowAnonymous && isAdmin) {
+                router.replace('/admin')
+            } else if (onlyAdmin && isAnonymous) {
+                router.replace('/')
+            } else {
+                setIsAllowed(true)
+            }
+        }
+    }, [user, loading, allowAnonymous, onlyAdmin, router])
+
+    // 👤 Block layout rendering until auth is resolved
+    if (loading || !isAllowed) {
+        return <div className=" p-16 h-full items-center justify-center">
+            <Spinner color="white"
+            /></div>
+    }
+
+    // 🚪 Exclude layout on login page
     if (pathname === '/login') return <>{children}</>
 
     return (
