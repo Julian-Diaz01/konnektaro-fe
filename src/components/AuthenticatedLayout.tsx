@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { auth } from '@/utils/firebase'
 import { signOut, onAuthStateChanged } from 'firebase/auth'
+import { deleteCookie } from 'cookies-next'
 
 interface Props {
     children: React.ReactNode
@@ -15,6 +16,7 @@ const AuthenticatedLayout = ({ children }: Props) => {
 
     const handleLogout = async () => {
         await signOut(auth)
+        deleteCookie('__session')
         router.replace('/login')
     }
 
