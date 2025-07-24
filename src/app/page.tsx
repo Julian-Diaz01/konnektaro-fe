@@ -1,76 +1,37 @@
 'use client'
 
-import {useEffect, useState} from 'react'
-import {onAuthStateChanged, User} from 'firebase/auth'
 import {useRouter} from 'next/navigation'
-import {auth} from '@/utils/firebase'
+import useAuthUser from '@/hooks/useAuthUser'
+import useOpenEvents from '@/hooks/useOpenEvents'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
-import {Event} from "@/types/models";
-import EventCard from "@/components/EventCard";
-import {getAllEvents} from "@/services/eventService";
-import {Button} from "@/components/ui/button";
+import EventCard from '@/components/EventCard'
+import {Button} from '@/components/ui/button'
+import Spinner from "@/components/ui/spinner";
 
 export default function HomePage() {
     const router = useRouter()
-    const [events, setEvents] = useState<Event[]>([])
-    const [name, setName] = useState('')
-    const [isAnonymous, setIsAnonymous] = useState(true)
-    const [user, setUser] = useState<User | null>(null)
-    const [loading, setLoading] = useState(true)
+    const {user, loading: userLoading} = useAuthUser()
+    const {events, loading: eventsLoading} = useOpenEvents()
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-            console.log('Auth state changed:', firebaseUser)
-            setUser(firebaseUser)
-            setLoading(false)
-        })
-
-        return () => unsubscribe()
-    }, [])
-
-    useEffect(() => {
-        if (user) {
-            setName(user.displayName || '')
-            setIsAnonymous(user.isAnonymous)
-        }
-    }, [user])
-    useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                const response = await getAllEvents()
-                const openEvents = response.data.filter((s: Event) => s.open)
-                setEvents(openEvents)
-            } catch (err) {
-                console.error('Failed to fetch events:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchEvents()
-    }, [])
     const handleCreateEvent = () => {
         router.push('/create-event')
     }
+
+    const isAnonymous = user?.isAnonymous
+    const name = user?.displayName || '👋'
+
+    const loading = userLoading || eventsLoading
 
     return (
         <AuthenticatedLayout>
             <div className="flex flex-col h-screen p-8 pt-16 bg-white">
                 {loading ? (
-                    <div className="text-gray-600 text-lg flex flex-col items-center">
-                        <div
-                            className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-2"/>
-                        Loading...
-                    </div>
+                    <Spinner/>
                 ) : (
                     <>
-                        <h1 className="text-3xl font-semibold text-gray-800 mb-6">
-                            Welcome {name || '👋'}
-                        </h1>
+                        <h1 className="text-3xl font-semibold text-gray-800 mb-6">Welcome {name}</h1>
+                        <h2 className="text-2xl font-semibold text-primary mb-6">Join an Event</h2>
 
-                        <h1 className="text-2xl font-semibold text-primary mb-6">
-                            Join an Event
-                        </h1>
                         {!isAnonymous && (
                             <Button
                                 onClick={handleCreateEvent}
@@ -80,10 +41,7 @@ export default function HomePage() {
                             </Button>
                         )}
 
-
-                        {loading ? (
-                            <p>Loading events...</p>
-                        ) : events.length === 0 ? (
+                        {events.length === 0 ? (
                             <p className="text-gray-500">No open events available</p>
                         ) : (
                             <div className="grid gap-4 md:grid-cols-2">
@@ -98,7 +56,6 @@ export default function HomePage() {
                                 ))}
                             </div>
                         )}
-
                     </>
                 )}
             </div>

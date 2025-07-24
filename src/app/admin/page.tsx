@@ -1,0 +1,46 @@
+'use client'
+
+import {useRouter} from 'next/navigation'
+import AuthenticatedLayout from '@/components/AuthenticatedLayout'
+import {Button} from '@/components/ui/button'
+import EventList from '@/components/EventList'
+import useAuthUser from "@/hooks/useAuthUser";
+import useOpenEvents from "@/hooks/useOpenEvents";
+import Spinner from "@/components/ui/spinner";
+
+export default function AdminPage() {
+    const router = useRouter()
+    const { user, loading: userLoading } = useAuthUser()
+    const { events, loading: eventsLoading } = useOpenEvents()
+
+    const loading = userLoading || eventsLoading
+
+    const handleCreateEvent = () => {
+        router.push('/edit-event')
+    }
+
+    return (
+        <AuthenticatedLayout>
+            <div className="flex flex-col h-screen p-8 pt-16 bg-white">
+                <h1 className="text-3xl font-semibold text-gray-800 mb-6">
+                    Welcome {user?.displayName || ''}
+                </h1>
+
+                <Button
+                    onClick={handleCreateEvent}
+                    className="bg-primary text-white py-4 px-6 rounded-lg shadow-md hover:bg-opacity-90 cursor-pointer text-lg mb-6"
+                >
+                    Create a New Event
+                </Button>
+
+                <h2 className="text-2xl font-semibold text-primary mb-6">Active Events</h2>
+
+                {loading ? (
+                  <Spinner />
+                ) : (
+                    <EventList events={events} />
+                )}
+            </div>
+        </AuthenticatedLayout>
+    )
+}
