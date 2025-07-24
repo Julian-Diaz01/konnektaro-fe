@@ -5,6 +5,7 @@ import {useRouter, usePathname} from 'next/navigation'
 import useAuthUser from '@/hooks/useAuthUser'
 import {logout} from '@/utils/authentication_service'
 import Spinner from '@/components/ui/spinner'
+import {Button} from "@/components/ui/button";
 
 interface Props {
     children: React.ReactNode
@@ -51,17 +52,21 @@ const AuthenticatedLayout = ({children, allowAnonymous = true, onlyAdmin = false
     // 🚪 Exclude layout on login page
     if (pathname === '/login') return <>{children}</>
 
+    const handleClick = () => {
+        router.push('/')
+    }
+
     return (
         <div className="min-h-screen flex flex-col">
             <header className="bg-gray-100 text-center py-4 border-b border-gray-200">
                 <div className="flex justify-between items-center px-4 max-w-screen-md mx-auto">
-                    <h1 className="text-xl font-bold text-gray-800">Konnektaro</h1>
-                    <button
+                    <h1 onClick={handleClick} className="text-xl font-bold text-gray-800 cursor-pointer">Konnektaro</h1>
+                    <Button variant={"outlinePrimary"}
                         onClick={handleLogout}
-                        className="text-sm text-red-500 hover:underline"
+                        className="text-sm text-red-700 hover:underline"
                     >
                         Logout
-                    </button>
+                    </Button>
                 </div>
             </header>
 
