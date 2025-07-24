@@ -16,7 +16,7 @@ export default function AdminPage() {
     const loading = userLoading || eventsLoading
 
     const handleCreateEvent = () => {
-        router.push('/edit-event')
+        router.push('/create-event')
     }
 
     return (
