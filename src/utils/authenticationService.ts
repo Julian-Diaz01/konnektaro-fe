@@ -8,6 +8,7 @@ export const loginWithGoogle = async (): Promise<firebaseUser | null> => {
   try {
     const result = await signInWithPopup(auth, provider)
     console.log('User logged in (Google):', result.user)
+    setLoginTimestamp()
     return result.user
   } catch (error: unknown) {
     console.error('Google Login Error:', error)
@@ -19,6 +20,7 @@ export const loginAnonymously = async (): Promise<firebaseUser | null> => {
   try {
     const result = await signInAnonymously(auth)
     console.log('User logged in (Anonymous):', result.user)
+    setLoginTimestamp()
     return result.user
   } catch (error: unknown) {
     console.error('Anonymous Login Error:', error)
@@ -26,8 +28,13 @@ export const loginAnonymously = async (): Promise<firebaseUser | null> => {
   }
 }
 
+const setLoginTimestamp = () => {
+  localStorage.setItem('loginTimestamp', Date.now().toString())
+}
+
 export const logout = async () => {
   await signOut(auth)
+  localStorage.removeItem('loginTimestamp')
   deleteCookie('__session')
 }
 

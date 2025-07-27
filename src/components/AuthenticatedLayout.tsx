@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
 import useAuthUser from '@/hooks/useAuthUser'
-import {logout} from '@/utils/authentication_service'
+import {logout} from '@/utils/authenticationService'
 import Spinner from '@/components/ui/spinner'
 import {Button} from "@/components/ui/button";
 
