@@ -1,0 +1,9 @@
+import {Activity} from "@/types/models";
+import axios from "@/utils/axiosInstance";
+
+export const createActivity = async (activity: Partial<Activity>): Promise<Activity> => {
+    const res = await axios.post<Activity>('/activity', activity)
+    return res.data
+}
+export const deleteActivity = (activityId: string) =>
+    axios.delete(`/activity/${activityId}`)

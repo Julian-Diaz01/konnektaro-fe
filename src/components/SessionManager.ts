@@ -1,15 +1,24 @@
 'use client'
 
-import {useEffect} from "react";
-import {logout} from "@/utils/authenticationService";
+import { useEffect } from 'react'
+import { logout } from '@/utils/authenticationService'
 
-const MAX_SESSION_AGE =   60 * 1000 // 12 hours
+const MAX_SESSION_AGE = 12 * 60 * 60 * 1000 // 12 hours
 
 export const useAutoLogout = () => {
-
     useEffect(() => {
+        const currentPath = window.location.pathname
         const loginTimestamp = localStorage.getItem('loginTimestamp')
-        if (!loginTimestamp) return
+
+        if (!loginTimestamp) {
+            if (currentPath !== '/login') {
+                console.log('❌ No timestamp found — logging out')
+                logout().then(() => window.location.href = '/login')
+            } else {
+                console.log('⚠️ No timestamp, but already on /login — skipping logout')
+            }
+            return
+        }
 
         const timePassed = Date.now() - Number(loginTimestamp)
         const timeLeft = MAX_SESSION_AGE - timePassed
@@ -20,7 +29,7 @@ export const useAutoLogout = () => {
             return
         }
 
-        console.log(`🕒 Auto-logout scheduled in ${Math.round(timeLeft / 1000 / 60)} minutes`)
+        console.log(`🕒 Auto-logout scheduled in ${Math.round(timeLeft / 60000)} minutes`)
         const timeout = setTimeout(() => {
             console.log('🔒 12h reached — logging out')
             logout().then(() => window.location.href = '/login')
