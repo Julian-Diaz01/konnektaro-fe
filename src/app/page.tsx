@@ -28,7 +28,7 @@ export default function HomePage() {
 
     return (
         <AuthenticatedLayout onlyAdmin={false} allowAnonymous={true}>
-            <div className="flex flex-col h-screen p-8 pt-16 bg-white">
+            <div className="flex flex-col h-screen p-8 pt-16 white-background">
                 {loading ? (
                     <Spinner/>
                 ) : (

@@ -10,7 +10,7 @@ import {
 export const createEvent = (data: Omit<Event, 'eventId' | 'userIds' | 'activityIds' | 'open'>) =>
     axios.post<Event>('/event', data)
 
-export const getEvent = (eventId: string) =>
+export const getEventById = (eventId: string) =>
     axios.get<Event>(`/event/${eventId}`)
 export const getEventStatus = (eventId: string) =>
     axios.get<Event>(`/event/status/${eventId}`)
