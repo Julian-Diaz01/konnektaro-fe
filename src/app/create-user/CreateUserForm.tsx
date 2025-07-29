@@ -8,11 +8,13 @@ import {getEventStatus} from '@/services/eventService'
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
+import useAuthUser from '@/hooks/useAuthUser'
+import {BackLink} from "@/components/BackLink";
 
 export default function CreateUserForm() {
     const router = useRouter()
     const eventId = useSearchParams().get('eventId') || ''
-
+    const {user: firebaseUser, loading: authLoading} = useAuthUser()
     const [eventLoading, setEventLoading] = useState(true)
     const [eventOpen, setEventOpen] = useState(false)
     const [eventName, setEventName] = useState('')
@@ -58,9 +60,15 @@ export default function CreateUserForm() {
             return
         }
 
+        if (!firebaseUser?.uid) {
+            setError('Unexpected error with the user, please log out and log back in.')
+            return
+        }
+
         try {
             setLoading(true)
             await createUser({
+                userId: firebaseUser.uid,
                 name: form.name,
                 email: form.email,
                 icon: form.avatar,
@@ -83,36 +91,15 @@ export default function CreateUserForm() {
 
     return (
         <div className="min-h-screen px-6 py-4 flex flex-col justify-start items-center white-background">
-            <div className="mb-4 flex mr-[auto]">
-                <a
-                    onClick={() => router.push("/admin")}
-                    className="border-b border-primary text-primary cursor-pointer"
-                >
-                    {"< Back"}
-                </a>
-            </div>
+            <BackLink/>
             {eventLoading ? (
                 <Spinner/>
             ) : error ? (
-                <div className="mt-12 text-center">
-                    <p className="text-red-500 text-base mb-4">{error}</p>
-                    <Button onClick={() => router.push('/')}
-                            className="mt-2 bg-primary text-white underline cursor-pointer">
-                        ← Go back
-                    </Button>
-                </div>
+                <ErrorScreen message={error}/>
             ) : !eventOpen ? (
-                <div className="mt-12 text-center">
-                    <p className="text-yellow-600 font-medium text-lg mb-2">
-                        The event &#34;<span className="font-bold">{eventName}</span>&#34; is closed.
-                    </p>
-                    <Button onClick={() => router.push('/')}
-                            className="mt-2 bg-primary text-white underline cursor-pointer">
-                        ← Go back
-                    </Button>
-                </div>
+                <EventClosedMessage eventName={eventName}/>
             ) : (
-                <>
+                <div className="w-full gap-3 flex flex-col items-center">
                     <p className="w-full mb-4 text-l font-medium text-gray-700 text-left">Select Avatar:*</p>
                     <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)}/>
 
@@ -120,21 +107,18 @@ export default function CreateUserForm() {
                         type="text"
                         placeholder="Name*"
                         required
-                        className="w-full mt-4 mb-2 p-2 border rounded text-gray-700"
                         value={form.name}
                         onChange={(e) => handleChange('name', e.target.value)}
                     />
                     <Input
                         type="email"
                         placeholder="Email"
-                        className="w-full mb-2 p-2 border rounded text-gray-700"
                         value={form.email}
                         onChange={(e) => handleChange('email', e.target.value)}
                     />
                     <Input
                         type="text"
                         placeholder="Job title"
-                        className="w-full mb-2 p-2 border rounded text-gray-700"
                         value={form.description}
                         onChange={(e) => handleChange('description', e.target.value)}
                     />
@@ -147,22 +131,45 @@ export default function CreateUserForm() {
                             onChange={(e) => handleChange('consent', e.target.checked)}
                             className="accent-primary w-6 h-6 mt-0.5"
                         />
-                        <span className="leading-snug">
-              I consent to my anonymised data being used for quality purposes*
-            </span>
+                        <span>I consent to my anonymised data being used for quality purposes*</span>
                     </label>
 
                     {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                     <Button
-                        disabled={loading || !form.name || !form.avatar || !form.consent}
+                        disabled={loading || !form.name || !form.avatar || !form.consent || authLoading ||
+                            !firebaseUser}
                         onClick={handleSubmit}
                         className=" w-full py-3 font-semibold disabled:opacity-50"
                     >
                         {loading ? 'Saving...' : 'Create Profile'}
                     </Button>
-                </>
+                </div>
             )}
         </div>
     )
+}
+
+const EventClosedMessage = ({eventName}: { eventName: string }) => {
+    const router = useRouter()
+
+    return <div className="mt-12 text-center">
+        <p className="text-yellow-600 font-medium text-lg mb-2">
+            The event &#34;<span className="font-bold">{eventName}</span>&#34; is closed.
+        </p>
+        <Button onClick={() => router.push('/')} className="mt-2 bg-primary text-white underline cursor-pointer">
+            ← Go back
+        </Button>
+    </div>
+}
+
+const ErrorScreen = ({message}: { message: string }) => {
+    const router = useRouter()
+
+    return <div className="mt-12 text-center">
+        <p className="text-red-500 text-base mb-4">{message}</p>
+        <Button onClick={() => router.push('/')} className="mt-2 bg-primary text-white underline cursor-pointer">
+            ← Go back
+        </Button>
+    </div>
 }
