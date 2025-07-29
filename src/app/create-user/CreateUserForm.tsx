@@ -8,7 +8,6 @@ import {getEventStatus} from '@/services/eventService'
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
 
 export default function CreateUserForm() {
     const router = useRouter()
