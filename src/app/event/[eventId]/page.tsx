@@ -58,7 +58,7 @@ export default function EventDetailsPage() {
             ...prev!,
             activityIds: [...(prev?.activityIds || []), created.activityId],
         }))
-        setActivities([...activities, created]) // Add newly created activity to the list
+        setActivities([...activities, created])
         setShowForm(false)
     }
 

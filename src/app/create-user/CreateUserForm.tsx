@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import {useEffect, useState} from 'react'
+import {useRouter, useSearchParams} from 'next/navigation'
 import AvatarSelector from '@/components/AvatarSelector'
-import { createUser } from '@/services/userService'
-import { getEventStatus } from '@/services/eventService'
+import {createUser} from '@/services/userService'
+import {getEventStatus} from '@/services/eventService'
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import Spinner from "@/components/ui/spinner";
+import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
 
 export default function CreateUserForm() {
     const router = useRouter()
@@ -28,7 +30,7 @@ export default function CreateUserForm() {
     useEffect(() => {
         const validateEvent = async () => {
             try {
-                const { data } = await getEventStatus(eventId)
+                const {data} = await getEventStatus(eventId)
                 setEventName(data.name)
                 setEventOpen(data.open)
             } catch {
@@ -47,7 +49,7 @@ export default function CreateUserForm() {
     }, [eventId])
 
     const handleChange = (key: keyof typeof form, value: string | boolean) => {
-        setForm(prev => ({ ...prev, [key]: value }))
+        setForm(prev => ({...prev, [key]: value}))
     }
 
     const handleSubmit = async () => {
@@ -81,32 +83,39 @@ export default function CreateUserForm() {
     }
 
     return (
-        <div className="min-h-screen px-6 py-4 flex flex-col justify-start items-center bg-background">
+        <div className="min-h-screen px-6 py-4 flex flex-col justify-start items-center white-background">
+            <div className="mb-4 flex mr-[auto]">
+                <a
+                    onClick={() => router.push("/admin")}
+                    className="border-b border-primary text-primary cursor-pointer"
+                >
+                    {"< Back"}
+                </a>
+            </div>
             {eventLoading ? (
-                <div className="mt-20 text-gray-700 text-lg font-medium flex items-center gap-3">
-                    <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-                    Loading event...
-                </div>
+                <Spinner/>
             ) : error ? (
                 <div className="mt-12 text-center">
                     <p className="text-red-500 text-base mb-4">{error}</p>
-                    <button onClick={() => router.push('/')} className="mt-2 bg-primary text-white underline cursor-pointer">
+                    <Button onClick={() => router.push('/')}
+                            className="mt-2 bg-primary text-white underline cursor-pointer">
                         ← Go back
-                    </button>
+                    </Button>
                 </div>
             ) : !eventOpen ? (
                 <div className="mt-12 text-center">
                     <p className="text-yellow-600 font-medium text-lg mb-2">
                         The event &#34;<span className="font-bold">{eventName}</span>&#34; is closed.
                     </p>
-                    <button onClick={() => router.push('/')} className="mt-2 bg-primary text-white underline cursor-pointer">
+                    <Button onClick={() => router.push('/')}
+                            className="mt-2 bg-primary text-white underline cursor-pointer">
                         ← Go back
-                    </button>
+                    </Button>
                 </div>
             ) : (
                 <>
                     <p className="w-full mb-4 text-l font-medium text-gray-700 text-left">Select Avatar:*</p>
-                    <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)} />
+                    <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)}/>
 
                     <Input
                         type="text"
@@ -131,7 +140,7 @@ export default function CreateUserForm() {
                         onChange={(e) => handleChange('description', e.target.value)}
                     />
 
-                    <label className="flex items-start gap-3 mt-4 mb-6 text-base text-gray-700">
+                    <label className="flex items-start gap-3 mt-4 mb-6 text-base text-gray-700 mr-[auto]">
                         <Input
                             type="checkbox"
                             required
@@ -147,9 +156,9 @@ export default function CreateUserForm() {
                     {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                     <Button
-                        disabled={loading || !form.name || !form.avatar}
+                        disabled={loading || !form.name || !form.avatar || !form.consent}
                         onClick={handleSubmit}
-                        className="bg-primary w-full py-3 rounded-full font-semibold disabled:opacity-50"
+                        className=" w-full py-3 font-semibold disabled:opacity-50"
                     >
                         {loading ? 'Saving...' : 'Create Profile'}
                     </Button>
