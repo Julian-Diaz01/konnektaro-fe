@@ -31,14 +31,14 @@ console.log(eventId)
     }
 
     return (
-        <div className="border p-4 rounded space-y-2 mt-4">
+        <div className="mt-4 gap-3 flex flex-col">
             <Input name="title" placeholder="Title" value={formData.title} onChange={handleChange}/>
             <Input name="question" placeholder="Question" value={formData.question} onChange={handleChange}/>
             <select
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="w-full px-2 py-1 border rounded text-gray-500"
+                className="w-full px-2 py-1 border rounded text-gray-500 bg-white"
             >
                 <option value="self">Self</option>
                 <option value="partner">Partner</option>
