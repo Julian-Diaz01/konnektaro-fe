@@ -63,7 +63,7 @@ const AuthenticatedLayout = ({children, allowAnonymous = true, onlyAdmin = false
                     <h1 onClick={handleClick} className="text-xl font-bold text-gray-800 cursor-pointer">Konnektaro</h1>
                     <Button variant={"outlinePrimary"}
                         onClick={handleLogout}
-                        className="text-sm text-red-700 hover:underline"
+                        className="text-sm hover:underline"
                     >
                         Logout
                     </Button>

@@ -18,7 +18,7 @@ type Props = {
 
 export default function AvatarSelector({ selected, onSelectAvatar }: Props) {
     return (
-        <div className="grid grid-cols-3 gap-3 justify-items-center">
+        <div className="grid grid-cols-3 gap-3 justify-items-center mb-3">
             {avatarOptions.map((avatar) => (
                 <div
                     key={avatar}
