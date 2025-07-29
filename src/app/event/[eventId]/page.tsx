@@ -23,7 +23,6 @@ export default function EventDetailsPage() {
         const fetchEventData = async () => {
             const response = await getEventById(eventId as string)
             setEvent(response.data)
-
             // Fetch full activity details if activity IDs exist
             if (response.data.activityIds?.length) {
                 const activityResponses = await Promise.all(
@@ -72,58 +71,59 @@ export default function EventDetailsPage() {
 
     return (
         <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
-            <div className="p-6 pt-8 space-y-6 max-w-3xl mx-auto white-background">
-                <Button
-                    variant="outlinePrimary"
-                    onClick={() => router.push("/admin")}
-                >
-                    {"< Back to Admin"}
-                </Button>
-                <h2 className="text-3xl font-bold ">{event.name}</h2>
-                <p className="">{event.description}</p>
-                <div className="flex flex-wrap flex-flow-row gap-3">
+            <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
+                <div className="mb-4 flex justify-between items-center">
+                    <a
+                        onClick={() => router.push("/admin")}
+                        className="border-b border-primary text-primary cursor-pointer"
+                    >
+                        {"< Back"}
+                    </a>
+                    <ConfirmDeleteButton
+                        name="event"
+                        onConfirm={handleDeleteEvent}
+                        buttonText="Delete Event"
+                        buttonVariant="destructiveOutline"
+                    />
+
+                </div>
+                <div className="w-full mb-8 flex flex-row gap-6 items-start bg-white border">
                     {event.picture && (
                         <Image
                             src={`/avatars/${event.picture}`}
                             alt="Event"
                             width={400}
                             height={300}
-                            className="rounded shadow-md event-img mb-4 p-4 bg-white"
+                            className="w-[30%] h-auto p-3 rounded shadow-none event-img"
                         />
                     )}
-                    <div>
-                        <div className="flex gap-3">
-                            <Button variant="disabled" onClick={() => {
-                            }}>
-                                Edit Event
-                            </Button>
-                            <ConfirmDeleteButton
-                                name="event"
-                                onConfirm={handleDeleteEvent}
-                                buttonText="Delete Event"
-                            />
+
+                    <div className="m-3 ml-0 flex flex-col flex-grow gap-3">
+                        <h2 className="pb-3 border-b font-bold text-3xl">{event.name}</h2>
+                        <p className="text-gray-700">{event.description}</p>
+                        <div className="ml-auto">
+                            <Button variant="disabled">Edit Event</Button>
                         </div>
                     </div>
                 </div>
-
-                <div className="bg-white border p-4 rounded">
-                    <h2 className="text-xl font-semibold border-b">Activities</h2>
+                <div className="p-4 bg-white border rounded">
+                    <h2 className="pb-3 border-b font-semibold text-xl">Activities</h2>
 
                     {activities.length > 0 ? (
-                        <ul className="space-y-2 mt-2">
+                        <ul className="mt-2 space-y-2">
                             {activities.map((activity) => (
                                 <li
                                     key={activity.activityId}
-                                    className="flex justify-between items-start space-y-1 flex-col sm:flex-row sm:items-center border-b"
+                                    className="pb-3 space-y-1 flex flex-col justify-between items-start border-b sm:flex-row sm:items-center"
                                 >
                                     <div>
                                         <p className="font-bold text-lg">{activity.title}</p>
                                         <p className="text-gray-600">{activity.question}</p>
-                                        <p className="italic text-sm text-gray-500">
+                                        <p className="text-sm text-gray-500 italic">
                                             Type: {activity.type}
                                         </p>
                                     </div>
-                                    <div className="flex gap-2 float-right">
+                                    <div className="ml-[auto] flex gap-2">
                                         <ConfirmDeleteButton
                                             name="Activity"
                                             onConfirm={() => handleDeleteActivity(activity.activityId)}
@@ -135,7 +135,7 @@ export default function EventDetailsPage() {
                             ))}
                         </ul>
                     ) : (
-                        <p className="text-sm text-gray-500 mt-2">No activities yet</p>
+                        <p className="mt-2 text-sm text-gray-500">No activities yet</p>
                     )}
                 </div>
 
