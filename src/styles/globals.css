@@ -126,10 +126,8 @@ p, h1, h2, h3, h4, h5, h6 {
     animation: shadow-dance 3s forwards;
 }
 .event-img {
-    width: 50% !important;
     height: auto;
     border-radius: var(--radius);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 @keyframes shadow-dance {
     0% {
