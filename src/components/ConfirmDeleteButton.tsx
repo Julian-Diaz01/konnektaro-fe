@@ -14,7 +14,7 @@ type ConfirmDeleteButtonProps = {
   name: string;
   onConfirm: () => void;
   buttonText?: string;
-  buttonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost"; // Variant of the button
+  buttonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "destructiveOutline";
 };
 
 export function ConfirmDeleteButton({
