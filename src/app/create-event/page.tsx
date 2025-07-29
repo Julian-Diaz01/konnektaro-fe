@@ -4,6 +4,9 @@ import React, {useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {createEvent} from '@/services/eventService'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
+import {BackLink} from "@/components/BackLink";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export default function CreateEventPage() {
     const router = useRouter()
@@ -46,46 +49,43 @@ export default function CreateEventPage() {
 
     return (
         <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
-            <div className="p-4 max-w-md mx-auto h-[90vh] bg-white text-black">
+            <div className="p-4  w-full h-[88vh] white-background ">
+                <BackLink href="/admin"/>
                 <h1 className="text-2xl font-semibold mb-4">Create New Event</h1>
+                <div className="space-y-3">
+                    <Input
+                        name="name"
+                        type="text"
+                        placeholder="Event Name"
+                        value={eventData.name}
+                        onChange={handleChange}
+                    />
+                    <Input
+                        name="description"
+                        type="text"
+                        placeholder="Description"
+                        value={eventData.description}
+                        onChange={handleChange}
+                    />
 
-                <input
-                    name="name"
-                    type="text"
-                    placeholder="Event Name"
-                    className="w-full mb-2 p-2 border rounded"
-                    value={eventData.name}
-                    onChange={handleChange}
-                />
+                    <Input
+                        name="picture"
+                        type="text"
+                        placeholder="Picture URL (optional)"
+                        value={eventData.picture}
+                        onChange={handleChange}
+                    />
 
-                <input
-                    name="description"
-                    type="text"
-                    placeholder="Description"
-                    className="w-full mb-2 p-2 border rounded"
-                    value={eventData.description}
-                    onChange={handleChange}
-                />
-
-                <input
-                    name="picture"
-                    type="text"
-                    placeholder="Picture URL (optional)"
-                    className="w-full mb-4 p-2 border rounded"
-                    value={eventData.picture}
-                    onChange={handleChange}
-                />
-
-                <button
-                    onClick={handleSubmit}
-                    disabled={!isFormValid || loading}
-                    className={`bg-primary text-white py-2 px-4 rounded w-full ${
-                        !isFormValid || loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-90'
-                    }`}
-                >
-                    {loading ? 'Creating...' : 'Create'}
-                </button>
-
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={!isFormValid || loading}
+                        className={`bg-primary text-white w-full ${
+                            !isFormValid || loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-90'
+                        }`}
+                    >
+                        {loading ? 'Creating...' : 'Create'}
+                    </Button>
+                </div>
                 {error && <p className="text-sm text-red-800 mt-2">{error}</p>}
             </div>
         </AuthenticatedLayout>

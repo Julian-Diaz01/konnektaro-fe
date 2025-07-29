@@ -11,6 +11,8 @@ import AuthenticatedLayout from "@/components/AuthenticatedLayout"
 import AddActivityForm from "@/components/AddActivity"
 import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton"
 import axios from "@/utils/axiosInstance"
+import {BackLink} from "@/components/BackLink";
+import Spinner from "@/components/ui/spinner";
 
 export default function EventDetailsPage() {
     const {eventId} = useParams()
@@ -67,18 +69,13 @@ export default function EventDetailsPage() {
         setActivities((prev) => prev.filter((activity) => activity.activityId !== activityId))
     }
 
-    if (!event) return <p className="p-8">Loading...</p>
+    if (!event) return <Spinner color="white" />
 
     return (
         <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
             <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
                 <div className="mb-4 flex justify-between items-center">
-                    <a
-                        onClick={() => router.push("/admin")}
-                        className="border-b border-primary text-primary cursor-pointer"
-                    >
-                        {"< Back"}
-                    </a>
+                    <BackLink href="/admin" />
                     <ConfirmDeleteButton
                         name="event"
                         onConfirm={handleDeleteEvent}
