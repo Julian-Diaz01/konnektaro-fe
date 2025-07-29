@@ -36,7 +36,7 @@ export default function AdminPage() {
                 <h2 className="text-2xl font-semibold text-primary mb-6">Active Events</h2>
 
                 {loading ? (
-                  <Spinner />
+                  <Spinner color="white" />
                 ) : (
                     <EventListAdmin events={events} />
                 )}
