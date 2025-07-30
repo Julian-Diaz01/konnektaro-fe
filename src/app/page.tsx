@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {useRouter} from 'next/navigation'
 import useAuthUser from '@/hooks/useAuthUser'
@@ -7,20 +7,47 @@ import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import EventCard from '@/components/EventCard'
 import {Button} from '@/components/ui/button'
 import Spinner from "@/components/ui/spinner";
+import { useEffect, useState } from 'react';
+import { getUser } from '@/services/userService';
 
 export default function HomePage() {
     const router = useRouter()
     const {user, loading: userLoading} = useAuthUser()
     const {events, loading: eventsLoading} = useOpenEvents()
+    const isAnonymous = user?.isAnonymous
+    const name = user?.displayName || '👋'
+    const [checkingUser, setCheckingUser] = useState(false);
+
+    // This will be true if we are waiting for getUser to finish for an anonymous user
+    const [userChecked, setUserChecked] = useState(false);
+
+    useEffect(() => {
+        if (userLoading) return;
+        if (!isAnonymous || !user?.uid) {
+            setUserChecked(true);
+            return;
+        }
+        setCheckingUser(true);
+        getUser(user.uid)
+            .then(res => {
+                if (res.data?.eventId) {
+                    router.replace('/event');
+                } else {
+                    setUserChecked(true);
+                }
+            })
+            .catch(() => {
+                // If 404, do nothing (user not assigned to event)
+                setUserChecked(true);
+            })
+            .finally(() => setCheckingUser(false));
+    }, [isAnonymous, user, userLoading, router]);
+
+    const loading = userLoading || eventsLoading || checkingUser || !userChecked;
 
     const handleCreateEvent = () => {
         router.push('/create-event')
     }
-
-    const isAnonymous = user?.isAnonymous
-    const name = user?.displayName || '👋'
-
-    const loading = userLoading || eventsLoading
 
     const handleClick = (eventId: string) => {
         router.push(`/create-user?eventId=${eventId}`)
