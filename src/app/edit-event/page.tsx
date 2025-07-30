@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from "react";
-import EventPageClient from "@/app/event/EventPageClient";
+import EventPageClient from "@/app/edit-event/EventPageClient";
 
 export default function EventPage() {
   return (
