@@ -1,11 +1,21 @@
 {
   "hosting": {
     "site": "konnektaro",
-    "public": "out",
+    "public": ".next",
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextApp"
+      }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ]
+  },
+  "functions": {
+    "source": "."
   }
 }
+
