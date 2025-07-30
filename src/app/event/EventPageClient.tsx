@@ -1,46 +1,60 @@
 'use client'
-export const dynamic = 'force-dynamic'
 
-import {useEffect, useState} from "react"
-import {useParams, useRouter} from "next/navigation"
-import {Event, Activity, ActivityType} from "@/types/models"
-import {Button} from "@/components/ui/button"
-import {deleteEvent, getEventById} from "@/services/eventService"
-import {createActivity, deleteActivity} from "@/services/activityService"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Event, Activity, ActivityType } from "@/types/models"
+import { Button } from "@/components/ui/button"
+import { deleteEvent, getEventById } from "@/services/eventService"
+import { createActivity, deleteActivity } from "@/services/activityService"
 import Image from "next/image"
 import AuthenticatedLayout from "@/components/AuthenticatedLayout"
 import AddActivityForm from "@/components/AddActivity"
-import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton"
+import { ConfirmDeleteButton } from "@/components/ConfirmDeleteButton"
 import axios from "@/utils/axiosInstance"
-import {BackLink} from "@/components/BackLink";
-import Spinner from "@/components/ui/spinner";
+import { BackLink } from "@/components/BackLink"
+import Spinner from "@/components/ui/spinner"
 
-export default function EventDetailsPage() {
-    const {eventId} = useParams()
+export default function EventPageClient() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const eventId = searchParams.get('id')
+
     const [event, setEvent] = useState<Event | null>(null)
-    const [activities, setActivities] = useState<Activity[]>([]) // Store full activity details
+    const [activities, setActivities] = useState<Activity[]>([])
     const [showForm, setShowForm] = useState(false)
 
     useEffect(() => {
+        if (!eventId) {
+            router.push('/admin')
+            return
+        }
+
         const fetchEventData = async () => {
-            const response = await getEventById(eventId as string)
-            setEvent(response.data)
-            // Fetch full activity details if activity IDs exist
-            if (response.data.activityIds?.length) {
-                const activityResponses = await Promise.all(
-                    response.data.activityIds.map((activityId) =>
-                        axios.get<Activity>(`/activity/${activityId}`)
+            try {
+                const response = await getEventById(eventId)
+                setEvent(response.data)
+
+                // Fetch full activity details if activity IDs exist
+                if (response.data.activityIds?.length) {
+                    const activityResponses = await Promise.all(
+                        response.data.activityIds.map((activityId) =>
+                            axios.get<Activity>(`/activity/${activityId}`)
+                        )
                     )
-                )
-                setActivities(activityResponses.map((res) => res.data))
+                    setActivities(activityResponses.map((res) => res.data))
+                }
+            } catch (error) {
+                console.error('Error fetching event:', error)
+                router.push('/admin')
             }
         }
+
         fetchEventData()
-    }, [eventId])
+    }, [eventId, router])
 
     const handleDeleteEvent = async () => {
-        await deleteEvent(eventId as string)
+        if (!eventId) return
+        await deleteEvent(eventId)
         router.push("/admin")
     }
 
@@ -70,7 +84,13 @@ export default function EventDetailsPage() {
         setActivities((prev) => prev.filter((activity) => activity.activityId !== activityId))
     }
 
-    if (!event) return <Spinner color="white" />
+    if (!eventId) {
+        return <Spinner color="white" />
+    }
+
+    if (!event) {
+        return <Spinner color="white" />
+    }
 
     return (
         <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
@@ -83,8 +103,8 @@ export default function EventDetailsPage() {
                         buttonText="Delete Event"
                         buttonVariant="destructiveOutline"
                     />
-
                 </div>
+
                 <div className="w-full mb-8 flex flex-row gap-6 items-start bg-white border">
                     {event.picture && (
                         <Image
@@ -104,6 +124,7 @@ export default function EventDetailsPage() {
                         </div>
                     </div>
                 </div>
+
                 <div className="p-4 bg-white border rounded">
                     <h2 className="pb-3 border-b font-semibold text-xl">Activities</h2>
 
@@ -144,7 +165,9 @@ export default function EventDetailsPage() {
                             eventId={event.eventId}
                         />
                     ) : (
-                        <Button className="w-full" onClick={() => setShowForm(true)}>Add Activity</Button>
+                        <Button className="w-full" onClick={() => setShowForm(true)}>
+                            Add Activity
+                        </Button>
                     )}
                 </section>
             </div>

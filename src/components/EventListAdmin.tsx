@@ -20,7 +20,7 @@ export default function EventListAdmin({events}: Props) {
                     name={event.name}
                     description={event.description}
                     picture={event.picture}
-                    handleClick={() => router.push(`/event/${event.eventId}`)}
+                    handleClick={() => router.push(`/event?id=${event.eventId}`)}
                 />
             ))}
         </div>
