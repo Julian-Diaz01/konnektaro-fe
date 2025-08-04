@@ -1,6 +1,7 @@
 // app/layout.tsx
 import './../styles/globals.css'
 import type {Metadata} from 'next'
+import Head from "next/head";
 import {SessionManager} from "@/components/SessionManager";
 
 export const metadata: Metadata = {
@@ -11,10 +12,11 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <body>
-            <SessionManager/>
-            {children}
-        </body>
+        <Head>
+            <title>Konnektaro</title>
+        </Head>
+        <SessionManager/>
+        <body>{children}</body>
         </html>
     )
 }
