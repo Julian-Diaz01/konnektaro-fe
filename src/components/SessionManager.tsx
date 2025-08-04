@@ -3,6 +3,8 @@
 import {useEffect, useState} from 'react'
 import {logout} from '@/utils/authenticationService'
 import {useRouter} from 'next/navigation'
+import {auth} from '@/utils/firebase'
+import {onAuthStateChanged} from 'firebase/auth'
 
 const MAX_SESSION_AGE = 12 * 60 * 60 * 1000 // 12 hours
 
@@ -29,11 +31,11 @@ export const useAutoLogout = () => {
                     return
                 }
 
-                // For protected routes, redirect to login
+                // For protected routes, redirect to login immediately
                 if (PROTECTED_ROUTES.some(route => currentPath.startsWith(route))) {
                     console.log('❌ No timestamp on protected route — redirecting to login')
                     await logout()
-                    router.push('/login')
+                    router.replace('/login')
                     return
                 }
 
@@ -50,7 +52,7 @@ export const useAutoLogout = () => {
             if (timePassed >= MAX_SESSION_AGE) {
                 console.log('🔒 Session expired — logging out now')
                 await logout()
-                router.push('/login')
+                router.replace('/login')
                 return
             }
 
@@ -59,14 +61,31 @@ export const useAutoLogout = () => {
             const timeout = setTimeout(async () => {
                 console.log('🔒 12h reached — logging out')
                 await logout()
-                router.push('/login')
+                router.replace('/login')
             }, timeLeft)
 
             setIsChecking(false)
             return () => clearTimeout(timeout)
         }
 
-        checkSession()
+        // Wait for Firebase auth to initialize before checking session
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is authenticated, check session
+                checkSession()
+            } else {
+                // No user, check if we need to redirect
+                const currentPath = window.location.pathname
+                if (PROTECTED_ROUTES.some(route => currentPath.startsWith(route))) {
+                    console.log('❌ No authenticated user on protected route — redirecting to login')
+                    router.replace('/login')
+                } else {
+                    setIsChecking(false)
+                }
+            }
+        })
+
+        return () => unsubscribe()
     }, [router])
 
     return {isChecking}
