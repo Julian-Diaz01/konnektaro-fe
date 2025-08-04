@@ -2,6 +2,7 @@ import axios from 'axios'
 import {auth} from './firebase'
 import {onAuthStateChanged, signOut} from 'firebase/auth'
 import {User} from 'firebase/auth'
+import {logout} from '@/utils/authenticationService'
 
 
 const instance = axios.create({
@@ -52,6 +53,14 @@ instance.interceptors.request.use(
         const token = await getValidToken()
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
+        } else {
+            // If no valid token, logout and redirect to login
+            console.warn('🚫 No valid token available, logging out and redirecting to login')
+            await logout()
+            if (typeof window !== 'undefined') {
+                window.location.href = '/login'
+            }
+            return Promise.reject(new Error('No valid authentication token'))
         }
         return config
     },
