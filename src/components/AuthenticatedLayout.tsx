@@ -1,19 +1,32 @@
 'use client'
 
 import {useEffect, useState} from 'react'
-import {useRouter, usePathname} from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 import useAuthUser from '@/hooks/useAuthUser'
 import {logout} from '@/utils/authenticationService'
 import Spinner from '@/components/ui/spinner'
 import {Button} from "@/components/ui/button";
+import LoginPage from "@/app/login/page";
 
 interface Props {
     children: React.ReactNode
     allowAnonymous?: boolean
     onlyAdmin?: boolean
 }
+export const ADMIN_URLS = {
+    dashboard: '/admin',
+    createEvent: '/create-event',
+    editEvent: '/edit-event',
+};
 
-const AuthenticatedLayout = ({children, allowAnonymous = true, onlyAdmin = false}: Props) => {
+export const USER_URLS = {
+    home: '/',
+    createUser: '/create-user',
+    event: '/event',
+    login: '/login',
+};
+
+const AuthenticatedLayout = ({children}: Props) => {
     const router = useRouter()
     const pathname = usePathname()
     const {user, loading} = useAuthUser()
@@ -23,34 +36,56 @@ const AuthenticatedLayout = ({children, allowAnonymous = true, onlyAdmin = false
         await logout()
         router.replace('/login')
     }
+
     useEffect(() => {
-        if (!loading && user) {
-            const isAnonymous = user.isAnonymous
-            const isAdmin = !isAnonymous && !!user.email
+        if (loading) return // Wait for user to load
 
-            if (onlyAdmin && !isAdmin) {
-                router.replace('/')
-            } else if (!allowAnonymous && isAnonymous) {
-                router.replace('/admin')
-            } else if (!onlyAdmin && allowAnonymous && isAdmin) {
-                router.replace('/admin')
-            } else if (onlyAdmin && isAnonymous) {
-                router.replace('/')
-            } else {
-                setIsAllowed(true)
+        if (!user) {
+            if(pathname === '/login'){
+                console.log('User not found, staying on login page')
+                setIsAllowed(true) // Allow staying on login page
+                return
             }
+            console.log('No user found, redirecting to login')
+            router.replace('/login')
+            return
         }
-    }, [user, loading, allowAnonymous, onlyAdmin, router])
 
-    // 👤 Block layout rendering until auth is resolved
-    if (loading || !isAllowed) {
-        return <div className=" p-16 h-full items-center justify-center">
-            <Spinner color="white"
-            /></div>
+        // Determine isAdmin/inAdminPage and handle logic
+        const isAdmin = !user?.isAnonymous
+        const inAdminPage = Object.values(ADMIN_URLS).includes(pathname)
+console.log(inAdminPage, user)
+
+        console.log(!inAdminPage && !user.email)
+
+        // Logic to allow/redirect user based on path and role
+        if (inAdminPage && !isAdmin) {
+            console.log('Access to an admin page denied. Redirecting to /home')
+            router.replace(USER_URLS.home)
+        } else if (!inAdminPage && !user) {
+            console.log('Anonymous users cannot access personal pages. Redirecting.')
+            if(pathname === '/login') return;
+            router.replace('/login')
+        } else {
+            setIsAllowed(true)
+        }
+    }, [user, loading, pathname, router])
+
+    if(pathname === '/login' && !user) {
+        return <LoginPage/>
     }
-
-    // 🚪 Exclude layout on login page
-    if (pathname === '/login') return <>{children}</>
+    // Show loading spinner while checking auth
+    if (loading || !isAllowed) {
+        console.log('🔍 Auth Debug - loading:', loading, 'isAllowed:', isAllowed, 'user:', !!user)
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <Spinner color="white" />
+                    <div className="mt-4 text-white">Checking authentication...</div>
+                </div>
+            </div>
+        )
+    }
 
     const handleClick = () => {
         router.push('/')

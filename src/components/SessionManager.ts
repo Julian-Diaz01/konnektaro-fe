@@ -10,14 +10,14 @@ export const useAutoLogout = () => {
         const currentPath = window.location.pathname
         const loginTimestamp = localStorage.getItem('loginTimestamp')
 
+        // Skip session check on login page entirely
+        if (currentPath === '/login') {
+            return
+        }
+
         if (!loginTimestamp) {
-            if (currentPath !== '/login') {
-                console.log('❌ No timestamp found — logging out')
-                logout().then(() => window.location.href = '/login')
-            } else {
-                console.log('⚠️ No timestamp, but already on /login — skipping logout')
-                logout().then(() => window.location.href = '/login')
-            }
+            console.log('❌ No timestamp found — logging out')
+            logout().then(() => window.location.href = '/login')
             return
         }
 
@@ -42,5 +42,5 @@ export const useAutoLogout = () => {
 
 export const SessionManager = () => {
     useAutoLogout()
-    return null // no UI needed
+    return null
 }

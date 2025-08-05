@@ -1,7 +1,6 @@
 'use client'
 
 import {useRouter} from 'next/navigation'
-import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import {Button} from '@/components/ui/button'
 import EventListAdmin from '@/components/EventListAdmin'
 import useAuthUser from "@/hooks/useAuthUser";
@@ -10,17 +9,16 @@ import Spinner from "@/components/ui/spinner";
 
 export default function AdminPage() {
     const router = useRouter()
-    const { user, loading: userLoading } = useAuthUser()
+    const { user } = useAuthUser() // Remove userLoading since AuthenticatedLayout handles it
     const { events, loading: eventsLoading } = useOpenEvents()
 
-    const loading = userLoading || eventsLoading
+    const loading = eventsLoading // Only keep eventsLoading since AuthenticatedLayout handles user loading
 
     const handleCreateEvent = () => {
         router.push('/create-event')
     }
 
     return (
-        <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
             <div className="flex flex-col h-screen p-8 pt-16 white-background">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6">
                     Welcome {user?.displayName || ''}
@@ -41,6 +39,5 @@ export default function AdminPage() {
                     <EventListAdmin events={events} />
                 )}
             </div>
-        </AuthenticatedLayout>
     )
 }

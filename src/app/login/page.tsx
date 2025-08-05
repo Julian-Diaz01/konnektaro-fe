@@ -6,7 +6,7 @@ import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
 import {auth} from '@/utils/firebase'
 import {loginAnonymously, loginWithGoogle} from '@/utils/authenticationService'
 import Head from 'next/head'
-import {Button} from "@/components/ui/button";
+import {Button} from "@/components/ui/button"
 
 export default function LoginPage() {
     const router = useRouter()

@@ -3,7 +3,6 @@
 import React, {useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {createEvent} from '@/services/eventService'
-import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import {BackLink} from "@/components/BackLink";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -48,7 +47,6 @@ export default function CreateEventPage() {
     const isFormValid = eventData.name.trim() !== '' && eventData.description.trim() !== ''
 
     return (
-        <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
             <div className="p-4  w-full h-[88vh] white-background ">
                 <BackLink href="/admin"/>
                 <h1 className="text-2xl font-semibold mb-4">Create New Event</h1>
@@ -88,6 +86,5 @@ export default function CreateEventPage() {
                 </div>
                 {error && <p className="text-sm text-red-800 mt-2">{error}</p>}
             </div>
-        </AuthenticatedLayout>
     )
 }
