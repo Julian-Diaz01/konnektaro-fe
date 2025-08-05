@@ -3,16 +3,15 @@
 import {useRouter} from 'next/navigation'
 import useAuthUser from '@/hooks/useAuthUser'
 import useOpenEvents from '@/hooks/useOpenEvents'
-import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import EventCard from '@/components/EventCard'
 import {Button} from '@/components/ui/button'
 import Spinner from "@/components/ui/spinner";
-import { useEffect, useState } from 'react';
-import { getUser } from '@/services/userService';
+import {useEffect, useState} from 'react';
+import {getUser} from '@/services/userService';
 
 export default function HomePage() {
     const router = useRouter()
-    const {user, loading: userLoading} = useAuthUser()
+    const {user} = useAuthUser() // Remove userLoading since AuthenticatedLayout handles it
     const {events, loading: eventsLoading} = useOpenEvents()
     const isAnonymous = user?.isAnonymous
     const name = user?.displayName || '👋'
@@ -20,9 +19,12 @@ export default function HomePage() {
 
     // This will be true if we are waiting for getUser to finish for an anonymous user
     const [userChecked, setUserChecked] = useState(false);
-
     useEffect(() => {
-        if (userLoading) return;
+        if (!user || isAnonymous) {
+            setUserChecked(true)
+            return
+        }
+
         if (!isAnonymous || !user?.uid) {
             setUserChecked(true);
             return;
@@ -41,9 +43,9 @@ export default function HomePage() {
                 setUserChecked(true);
             })
             .finally(() => setCheckingUser(false));
-    }, [isAnonymous, user, userLoading, router]);
+    }, [isAnonymous, user, router]);
 
-    const loading = userLoading || eventsLoading || checkingUser || !userChecked;
+    const loading = eventsLoading || checkingUser || !userChecked;
 
     const handleCreateEvent = () => {
         router.push('/create-event')
@@ -54,7 +56,6 @@ export default function HomePage() {
     }
 
     return (
-        <AuthenticatedLayout onlyAdmin={false} allowAnonymous={true}>
             <div className="flex flex-col h-screen p-8 pt-16 white-background">
                 {loading ? (
                     <Spinner/>
@@ -90,6 +91,5 @@ export default function HomePage() {
                     </>
                 )}
             </div>
-        </AuthenticatedLayout>
     )
 }

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { deleteEvent, getEventById } from "@/services/eventService"
 import { createActivity, deleteActivity } from "@/services/activityService"
 import Image from "next/image"
-import AuthenticatedLayout from "@/components/AuthenticatedLayout"
 import AddActivityForm from "@/components/AddActivity"
 import { ConfirmDeleteButton } from "@/components/ConfirmDeleteButton"
 import axios from "@/utils/axiosInstance"
@@ -93,7 +92,6 @@ export default function EventPageClient() {
     }
 
     return (
-        <AuthenticatedLayout onlyAdmin allowAnonymous={false}>
             <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
                 <div className="mb-4 flex justify-between items-center">
                     <BackLink href="/admin" />
@@ -171,6 +169,5 @@ export default function EventPageClient() {
                     )}
                 </section>
             </div>
-        </AuthenticatedLayout>
     )
 }

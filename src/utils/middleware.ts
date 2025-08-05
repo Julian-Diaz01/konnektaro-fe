@@ -1,18 +1,31 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { auth } from '@/utils/firebase';
+console.log('Firebase Auth:', auth);
+// Define public paths that don't require authentication
+const PUBLIC_PATHS = [
+    '/login', 
+    '/_next', 
+    '/favicon.ico',
+]
+
+// Define admin-only paths
+/*const ADMIN_PATHS = [
+    '/admin',
+    '/create-event',
+    '/edit-event',
+]*/
 
 export async function middleware(request: NextRequest) {
-    const token = request.cookies.get('__session')?.value
-
-    if (!token) {
-        return NextResponse.redirect(new URL('/login', request.url))
+    const path = request.nextUrl.pathname
+    
+    // Allow public paths
+    if (PUBLIC_PATHS.some((p) => path.startsWith(p))) {
+        return NextResponse.next()
     }
-
-    // Optional: validate token via backend or Firebase Admin SDK proxy API if needed
-
     return NextResponse.next()
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/event/:path*'] // Protect these routes
+    matcher: ['/((?!api|_next|favicon.ico).*)'],
 }
