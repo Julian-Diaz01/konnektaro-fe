@@ -6,18 +6,16 @@ import {Input} from '@/components/ui/input'
 import {Button} from '@/components/ui/button'
 
 type Props = {
-    eventData: (activity: { title: string; question: string; type: ActivityType }) => void
-    eventId: string
+    activityData: (activityData: { title: string; question: string; type: ActivityType }) => void
 }
 
-export default function AddActivityForm({eventData, eventId}: Props) {
+export default function AddActivityForm({activityData}: Props) {
     const [formData, setFormData] = useState({
         title: '',
         question: '',
         type: 'self' as ActivityType,
-        eventId: eventId
     })
-console.log(eventId)
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const {name, value} = e.target
         setFormData(prev => ({...prev, [name]: value}))
@@ -25,8 +23,8 @@ console.log(eventId)
 
     const handleSubmit = () => {
         if (formData.question && formData.title) {
-            eventData(formData)
-            setFormData({title: '', question: '', type: 'self', eventId: eventId})
+            activityData(formData)
+            setFormData({title: '', question: '', type: 'self'})
         }
     }
 
