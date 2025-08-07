@@ -1,5 +1,6 @@
 import {useCallback, useState} from 'react'
 import {getAllUserByEvent} from '@/services/eventService'
+import {getUser, deleteUser as deleteUserApi} from '@/services/userService'
 import {PartialUser} from '@/types/models'
 
 
@@ -9,6 +10,7 @@ export function useUser() {
     const [error, setError] = useState<string | null>(null)
 
     const fetchUsersByEvent = useCallback(async (eventId?: string) => {
+        setError(null)
         if (!eventId) {
             setError('No eventId provided')
             return
@@ -25,22 +27,42 @@ export function useUser() {
         }
     }, [])
 
-    // Placeholder for fetching a single user by userId if needed in the future
-    const fetchUser = async (userId: string) => {
+    const fetchUser = useCallback(async (userId?: string) => {
+        setError(null)
         if (!userId) {
             setError('No userId provided')
             return
         }
-        // TODO: Implement fetch single user by userId if needed
-    }
+        try {
+            setLoading(true)
+            const response = await getUser(userId)
+            // Optionally update users state or return the user
+            return response.data
+        } catch (err) {
+            console.error("Failed to fetch user:", err)
+            setError("Failed to fetch user.")
+        } finally {
+            setLoading(false)
+        }
+    }, [])
 
-    const deleteUser = (userId: string) => {
+    const deleteUser = useCallback(async (userId?: string) => {
+        setError(null)
         if (!userId) {
             setError('No userId provided')
             return
         }
-        setUsers((prev) => prev.filter((user) => user.userId !== userId))
-    }
+        try {
+            setLoading(true)
+            await deleteUserApi(userId)
+            setUsers((prev) => prev.filter((user) => user.userId !== userId))
+        } catch (err) {
+            console.error("Failed to delete user:", err)
+            setError("Failed to delete user.")
+        } finally {
+            setLoading(false)
+        }
+    }, [])
 
     return {
         users,

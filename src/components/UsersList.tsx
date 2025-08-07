@@ -7,7 +7,8 @@ import {
   DialogTrigger,
   DialogContent,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/dialog'
+import { FaTrash } from 'react-icons/fa'
 
 interface UsersListProps {
     eventId?: string
@@ -23,10 +24,10 @@ export default function UsersList({eventId}: UsersListProps) {
         }
     }, [open, eventId, fetchUsersByEvent])
 
-    if (!eventId) return null;
-///TODO FIX MAKE A REAL TABLE AND FIX DELETE USER FUNCTION AND ADD THE USERLIST LOGIC TO THE HOOK
+    if (!eventId) return null
+    
     return (
-        <div className="my-8">
+        <div className="my-8 border rounded bg-white p-3">
             <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold">Users</h3>
                 <Dialog open={open} onOpenChange={setOpen}>
@@ -34,27 +35,41 @@ export default function UsersList({eventId}: UsersListProps) {
                     <Button>Show Users</Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogTitle>Users ({users.length})</DialogTitle>
-                    {/* DialogClose button is handled by DialogContent by default */}
+                    <DialogTitle>{users.length} - User(s)</DialogTitle>
                     {loading ? (
                         <Spinner/>
                     ) : error ? (
                         <div className="text-red-600">{error}</div>
                     ) : (
-                        <ul className="divide-y max-h-80 overflow-y-auto">
+                        <table className="min-w-full table-auto border divide-y divide-gray-200 text-sm max-h-80 overflow-y-auto">
+                            <thead className="bg-gray-100 sticky top-0">
+                            <tr>
+                                <th className="px-4 py-2 text-left font-medium text-gray-700">Name</th>
+                                <th className="px-4 py-2 text-left font-medium text-gray-700">Email</th>
+                                <th className="px-4 py-2 text-left font-medium text-gray-700">Description</th>
+                                <th className="px-4 py-2 text-left font-medium text-gray-700"></th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
                             {users.map((user) => (
-                                <li key={user.userId} className="py-3 flex items-center justify-between">
-                                    <div>
-                                        <p className="font-semibold">{user.name}</p>
-                                        <p className="text-sm">{user.email}</p>
-                                        <p className="text-xs">{user.description}</p>
-                                    </div>
-                                    <Button variant="destructive" size="sm" onClick={() => deleteUser(user.userId)}>
-                                        Delete
-                                    </Button>
-                                </li>
+                                <tr key={user.userId} className="hover:bg-gray-50 text-black">
+                                    <td className="px-4 py-2 font-semibold">{user.name}</td>
+                                    <td className="px-4 py-2">{user.email || 'none'}</td>
+                                    <td className="px-4 py-2 text-xs">{user.description}</td>
+                                    <td className="px-4 py-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => deleteUser(user.userId)}
+                                        >
+                                            <FaTrash className="text-red-600" size={18} />
+                                        </Button>
+                                    </td>
+                                </tr>
                             ))}
-                        </ul>
+                            </tbody>
+                        </table>
+
                     )}
                   </DialogContent>
                 </Dialog>
