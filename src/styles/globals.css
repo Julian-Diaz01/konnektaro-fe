@@ -5,6 +5,7 @@
 
 :root {
     --primary: #933DA7 /*oklch(0.208 0.042 265.755)*/;
+    --primary-60: #933DA760;
     --secondary: oklch(0.968 0.007 247.896);
     --terciary: #EFBBF5;
     --light-text: #F7F7F7;
