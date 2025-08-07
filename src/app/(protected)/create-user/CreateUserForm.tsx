@@ -106,6 +106,7 @@ export default function CreateUserForm() {
                     <Input
                         type="text"
                         placeholder="Name*"
+                        maxLength={30}
                         required
                         value={form.name}
                         onChange={(e) => handleChange('name', e.target.value)}
@@ -113,12 +114,14 @@ export default function CreateUserForm() {
                     <Input
                         type="email"
                         placeholder="Email"
+                        maxLength={30}
                         value={form.email}
                         onChange={(e) => handleChange('email', e.target.value)}
                     />
                     <Input
                         type="text"
                         placeholder="Job title"
+                        maxLength={100}
                         value={form.description}
                         onChange={(e) => handleChange('description', e.target.value)}
                     />
