@@ -30,8 +30,8 @@ export default function AddActivityForm({activityData}: Props) {
 
     return (
         <div className="mt-4 gap-3 flex flex-col">
-            <Input name="title" placeholder="Title" value={formData.title} onChange={handleChange}/>
-            <Input name="question" placeholder="Question" value={formData.question} onChange={handleChange}/>
+            <Input maxLength={50} name="title" placeholder="Title" value={formData.title} onChange={handleChange}/>
+            <Input maxLength={300} name="question" placeholder="Question" value={formData.question} onChange={handleChange}/>
             <select
                 name="type"
                 value={formData.type}
