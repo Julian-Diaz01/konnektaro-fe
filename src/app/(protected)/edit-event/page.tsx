@@ -20,10 +20,11 @@ export default function EventPage() {
         showForm,
         setShowForm,
         handleAddActivity,
+        handleCurrentActivityUpdate,
         handleDeleteEvent,
         deleteActivity,
     } = useEventPage();
-    const {activeActivityId} = useEventSocket(event?.eventId || null)
+    const {activeActivityId} = useEventSocket(event?.eventId || '')
 
     if (loading) {
         return <Spinner/>;
@@ -41,8 +42,19 @@ export default function EventPage() {
         </div>
     )
 
+    const CurrentActivityIndicator = () => {
+        const currentActivityName =
+            activities.filter(a => a.activityId === activeActivityId)[0]?.title ||
+            event?.currentActivityId ||
+            'No active activity'
+        return <div className="p-4 bg-white border rounded">
+            <h1><p className="font-bold">Current Activity:</p> {currentActivityName}</h1>
+        </div>
+
+    }
+
     const EventDetails = () => (
-        <div className="w-full mb-8 flex flex-row gap-6 items-start bg-white border">
+        <div className="w-full mb-8 flex flex-row gap-6 items-start bg-white border rounded">
             {event?.picture && (
                 <Image
                     src={`/avatars/${event.picture}`}
@@ -79,6 +91,11 @@ export default function EventPage() {
                                 </p>
                             </div>
                             <div className="ml-[auto] flex gap-2">
+                                <Button
+                                    variant="outlinePrimary"
+                                    onClick={() => handleCurrentActivityUpdate(activity.activityId)}
+                                    disabled={activeActivityId === activity.activityId}
+                                >Initiate Activity</Button>
                                 <ConfirmDeleteButton
                                     name="Activity"
                                     onConfirm={() => deleteActivity(activity.activityId)}
@@ -111,7 +128,7 @@ export default function EventPage() {
         <Suspense fallback={null}>
             <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
                 <Header/>
-                <h1>Event: {activeActivityId}</h1>
+                <CurrentActivityIndicator/>
                 <EventDetails/>
                 <UsersList eventId={event?.eventId}/>
                 <ShowActivities/>
