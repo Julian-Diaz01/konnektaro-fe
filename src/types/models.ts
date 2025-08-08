@@ -18,7 +18,7 @@ export interface User {
     email: string
     icon: string
     description: string
-    role: 'user'
+    role: string
     userActivityIds?: UserActivityLink[]
 }
 export type PartialUser = Pick<User, 'userId' | 'name' | 'email' | 'description'>
