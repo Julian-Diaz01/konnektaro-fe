@@ -6,6 +6,7 @@ import EventListAdmin from '@/components/EventListAdmin'
 import useAuthUser from "@/hooks/useAuthUser";
 import useOpenEvents from "@/hooks/useOpenEvents";
 import Spinner from "@/components/ui/spinner";
+import {disconnectSocket} from "@/lib/socket";
 
 export default function AdminPage() {
     const router = useRouter()
@@ -17,6 +18,7 @@ export default function AdminPage() {
     const handleCreateEvent = () => {
         router.push('/create-event')
     }
+    disconnectSocket()
 
     return (
             <div className="flex flex-col h-screen p-8 pt-16 white-background">

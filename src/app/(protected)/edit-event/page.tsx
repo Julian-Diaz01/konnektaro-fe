@@ -9,6 +9,7 @@ import {Button} from "@/components/ui/button";
 import useEventPage from "@/hooks/useEventPage";
 import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
+import useEventSocket from "@/hooks/useEventSocket";
 
 export default function EventPage() {
 
@@ -22,6 +23,7 @@ export default function EventPage() {
         handleDeleteEvent,
         deleteActivity,
     } = useEventPage();
+    const {activeActivityId} = useEventSocket(event?.eventId || null)
 
     if (loading) {
         return <Spinner/>;
@@ -109,6 +111,7 @@ export default function EventPage() {
         <Suspense fallback={null}>
             <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
                 <Header/>
+                <h1>Event: {activeActivityId}</h1>
                 <EventDetails/>
                 <UsersList eventId={event?.eventId}/>
                 <ShowActivities/>
