@@ -14,7 +14,8 @@ export const getEventById = (eventId: string) =>
     axios.get<Event>(`/event/${eventId}`)
 export const getEventStatus = (eventId: string) =>
     axios.get<Event>(`/event/status/${eventId}`)
-
+export const updateCurrentActivity = (eventId: string, activityId: string) =>
+    axios.patch<Event>(`/event/${eventId}/current-activity`, { activityId })
 export const getAllEvents = () =>
     axios.get<Event[]>('/event')
 export const deleteEvent = (eventId: string) =>
