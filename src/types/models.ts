@@ -8,6 +8,7 @@ export interface Event {
     activityIds?: string[]
     open: boolean
     userIds: string[]
+    currentActivityId?: string
 }
 
 export interface User {
