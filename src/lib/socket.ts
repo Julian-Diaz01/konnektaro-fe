@@ -6,6 +6,7 @@ export const getSocket = () => {
     if (!socket) {
         socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:8080', {
             transports: ['websocket', 'polling'], // Allow both transports
+            withCredentials: true,
             timeout: 20000,
             forceNew: true
         })
