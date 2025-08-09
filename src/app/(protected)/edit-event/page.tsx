@@ -3,13 +3,13 @@
 import {Suspense} from "react";
 import {BackLink} from "@/components/BackLink";
 import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
-import Image from "next/image";
 import AddActivityForm from "@/components/AddActivity";
 import {Button} from "@/components/ui/button";
 import useEventPage from "@/hooks/useEventPage";
 import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
 import useEventSocket from "@/hooks/useEventSocket";
+import {ShowEventDetails} from "@/components/EventDetails";
 
 export default function EventPage() {
 
@@ -52,25 +52,6 @@ export default function EventPage() {
         </div>
 
     }
-
-    const EventDetails = () => (
-        <div className="w-full mb-8 flex flex-row gap-6 items-start bg-white border rounded">
-            {event?.picture && (
-                <Image
-                    src={`/avatars/${event.picture}`}
-                    alt="Event"
-                    width={400}
-                    height={300}
-                    className="w-[30%] h-auto p-3 rounded shadow-none event-img"
-                />
-            )}
-
-            <div className="m-3 ml-0 flex flex-col flex-grow gap-3">
-                <h2 className="pb-3 border-b font-bold text-3xl">{event?.name}</h2>
-                <p className="text-gray-700">{event?.description}</p>
-            </div>
-        </div>
-    )
 
     const ShowActivities = () => (
         <div className="p-4 bg-white border rounded">
@@ -129,7 +110,7 @@ export default function EventPage() {
             <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
                 <Header/>
                 <CurrentActivityIndicator/>
-                <EventDetails/>
+                <ShowEventDetails event={event}/>
                 <UsersList eventId={event?.eventId}/>
                 <ShowActivities/>
                 <AddNewActivity/>
