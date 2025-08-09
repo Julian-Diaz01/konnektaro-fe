@@ -1,75 +1,61 @@
-import {useCallback, useState} from 'react'
-import {getAllUserByEvent} from '@/services/eventService'
-import {getUser, deleteUser as deleteUserApi} from '@/services/userService'
-import {PartialUser} from '@/types/models'
+import {useState, useEffect} from "react"
+import {
+    createUser,
+    deleteUser as deleteUserApi,
+    getUser,
+} from "@/services/userService"
+import {User} from "@/types/models"
 
-
-export function useUser() {
-    const [users, setUsers] = useState<PartialUser[]>([])
-    const [loading, setLoading] = useState(false)
+export default function useUser(userId: string | null) {
+    const [user, setUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    const fetchUsersByEvent = useCallback(async (eventId?: string) => {
-        setError(null)
-        if (!eventId) {
-            setError('No eventId provided')
-            return
-        }
-        try {
-            setLoading(true)
-            const response = await getAllUserByEvent(eventId)
-            setUsers(Array.isArray(response.data) ? response.data : [])
-        } catch (err) {
-            console.error("Failed to fetch users:", err)
-            setError("Failed to fetch users.")
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    useEffect(() => {
+        if (!userId) return
 
-    const fetchUser = useCallback(async (userId?: string) => {
-        setError(null)
-        if (!userId) {
-            setError('No userId provided')
-            return
+        const fetchEvent = async () => {
+            try {
+                setLoading(true)
+                const response = await getUser(userId)
+                setUser(response.data)
+            } catch (err) {
+                console.error("Failed to fetch user:", err)
+                setError("Failed to fetch user.")
+            } finally {
+                setLoading(false)
+            }
         }
-        try {
-            setLoading(true)
-            const response = await getUser(userId)
-            // Optionally update users state or return the user
-            return response.data
-        } catch (err) {
-            console.error("Failed to fetch user:", err)
-            setError("Failed to fetch user.")
-        } finally {
-            setLoading(false)
-        }
-    }, [])
 
-    const deleteUser = useCallback(async (userId?: string) => {
-        setError(null)
-        if (!userId) {
-            setError('No userId provided')
-            return
-        }
+        fetchEvent()
+    }, [userId])
+
+
+    const createNewUser = async (newUserData: User) => {
         try {
-            setLoading(true)
+            const userData = await createUser(newUserData)
+            setUser(userData.data)
+        } catch (error) {
+            console.error("Failed to create user:", error)
+            setError("Failed to create user.")
+        }
+    }
+
+    const deleteUser = async (userId: string) => {
+        if (!userId) return
+        try {
             await deleteUserApi(userId)
-            setUsers((prev) => prev.filter((user) => user.userId !== userId))
-        } catch (err) {
-            console.error("Failed to delete user:", err)
+        } catch (error) {
+            console.error("Failed to delete user:", error)
             setError("Failed to delete user.")
-        } finally {
-            setLoading(false)
         }
-    }, [])
+    }
 
     return {
-        users,
+        user,
         loading,
         error,
-        fetchUsersByEvent,
-        fetchUser,
+        createNewUser,
         deleteUser,
     }
 }
