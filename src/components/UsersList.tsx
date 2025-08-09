@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import {Button} from '@/components/ui/button'
 import Spinner from '@/components/ui/spinner'
-import {useUser} from '@/hooks/useUser'
+import {useAdminUser} from '@/hooks/useAdminUser'
 import {
   Dialog,
   DialogTrigger,
@@ -16,7 +16,7 @@ interface UsersListProps {
 
 export default function UsersList({eventId}: UsersListProps) {
     const [open, setOpen] = useState(false)
-    const {users, loading, error, fetchUsersByEvent, deleteUser} = useUser()
+    const {users, loading, error, fetchUsersByEvent, deleteUser} = useAdminUser()
 
     useEffect(() => {
         if (open && eventId) {
