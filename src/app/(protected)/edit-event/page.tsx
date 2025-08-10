@@ -67,11 +67,11 @@ export default function EventPage() {
                             <div>
                                 <p className="font-bold text-lg">{activity.title}</p>
                                 <p className="text-gray-600">{activity.question}</p>
-                                <p className="text-sm text-gray-500 italic">
-                                    Type: {activity.type}
-                                </p>
+                                <div className="text-m text-white bg-primary max-w-fit rounded pl-2 pr-2 ">
+                                    Type: {activity.type.toUpperCase()}
+                                </div>
                             </div>
-                            <div className="ml-[auto] flex gap-2">
+                            <div className="ml-[auto] flex flex-col gap-2">
                                 <Button
                                     variant="outlinePrimary"
                                     onClick={() => handleCurrentActivityUpdate(activity.activityId)}

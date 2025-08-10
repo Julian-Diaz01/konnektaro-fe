@@ -16,7 +16,7 @@ export default function useEventPage() {
         loading: activitiesLoading,
         createNewActivity,
         deleteActivity
-    } = useActivity(event?.activityIds || [])
+    } = useActivity({activityIds: event?.activityIds || []})
 
     const [showForm, setShowForm] = useState(false)
 
