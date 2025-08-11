@@ -18,7 +18,6 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
     const [activity, setActivity] = useState<Activity | null>(null)
 
     useEffect(() => {
-        console.log("Fetching activities for IDs:", activityIds)
         if (!activityIds.length) {
             setLoading(false)
             return
