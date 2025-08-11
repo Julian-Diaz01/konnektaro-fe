@@ -1,18 +1,24 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import {
-    getUserActivityByUserAndActivity,
     deleteUserActivity,
     createUserActivity,
     updateUserActivity,
+    getUserActivity,
 } from '@/services/userActivityService'
-import { UserActivity } from '@/types/models'
+import {UserActivity} from '@/types/models'
 
 interface UseUserActivityProps {
-    userId: string
-    activityId: string
+    userId?: string
+    activityId?: string | null
 }
 
-export default function useUserActivity({ userId, activityId }: UseUserActivityProps) {
+interface updateUserActivity {
+    groupId?: string | null
+    notes: string | ""
+    targetActivityId?: string // this is optional, used for saveOrUpdate logic
+}
+
+export default function useUserActivity({userId, activityId}: UseUserActivityProps) {
     const [userActivity, setUserActivity] = useState<UserActivity | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -23,7 +29,7 @@ export default function useUserActivity({ userId, activityId }: UseUserActivityP
         const fetchUserActivity = async () => {
             try {
                 setLoading(true)
-                const response = await getUserActivityByUserAndActivity(userId, activityId)
+                const response = await getUserActivity(userId, activityId)
                 setUserActivity(response.data)
             } catch (err) {
                 console.error('Failed to fetch user activity:', err)
@@ -54,7 +60,7 @@ export default function useUserActivity({ userId, activityId }: UseUserActivityP
         userId: string
     }) => {
         try {
-            const { data } = await createUserActivity(newUserActivityData)
+            const {data} = await createUserActivity(newUserActivityData)
             setUserActivity(data)
         } catch (error) {
             console.error('Failed to create user activity:', error)
@@ -62,12 +68,12 @@ export default function useUserActivity({ userId, activityId }: UseUserActivityP
         }
     }
 
-    const updateCurrentUserActivity = async (notes: string) => {
-        if (!userId || !activityId) return
+    const updateCurrentUserActivity = async ({groupId, notes, targetActivityId}: updateUserActivity) => {
+        if (!userId || !targetActivityId) return
         try {
-            await updateUserActivity(userId, activityId, notes)
+            await updateUserActivity(userId, targetActivityId, notes, groupId)
             // Optimistically update notes locally:
-            setUserActivity((prev) => (prev ? { ...prev, notes } : prev))
+            setUserActivity((prev) => (prev ? {...prev, notes} : prev))
         } catch (error) {
             console.error('Failed to update user activity:', error)
             setError('Failed to update user activity.')

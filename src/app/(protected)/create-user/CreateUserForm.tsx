@@ -99,7 +99,7 @@ export default function CreateUserForm() {
             ) : !eventOpen ? (
                 <EventClosedMessage eventName={eventName}/>
             ) : (
-                <div className="w-full gap-3 flex flex-col items-center">
+                <form className="w-full gap-3 flex flex-col items-center">
                     <p className="w-full mb-4 text-l font-medium text-gray-700 text-left">Select Avatar:*</p>
                     <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)}/>
 
@@ -146,7 +146,7 @@ export default function CreateUserForm() {
                     >
                         {loading ? 'Saving...' : 'Create Profile'}
                     </Button>
-                </div>
+                </form>
             )}
         </div>
     )
