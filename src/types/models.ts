@@ -42,7 +42,8 @@ export interface Activity {
 export interface UserActivity {
     userActivityId: string
     activityId: string
-    groupActivityId?: string
+    userId: string
+    groupId?: string
     date: string
     notes: string
 }
