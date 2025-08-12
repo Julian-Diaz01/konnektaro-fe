@@ -1,9 +1,11 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef, useCallback} from "react";
 import {getSocket} from "@/lib/socket";
 
 
 export default function useEventSocket(eventId: string) {
     const [activeActivityId, setActiveActivityId] = useState<string | null>(null)
+    const countdownRef = useRef<number>(0)
+    const prevActivityId = useRef<string | null>(null)
 
     useEffect(() => {
         if (!eventId) return
@@ -18,17 +20,45 @@ export default function useEventSocket(eventId: string) {
 
         socket.on('activityUpdate', ({eventId, activityId}: { eventId: string, activityId: string }) => {
             console.log('🔥 Received new activity ID:', activityId, 'for the event:', eventId)
-            setActiveActivityId(activityId)
-            // You can now trigger refetch or update local state
+            
+            if (prevActivityId.current && prevActivityId.current !== activityId) {
+                countdownRef.current = 3
+                
+                // Start countdown timer
+                const timer = setInterval(() => {
+                    countdownRef.current = countdownRef.current - 1
+                    if (countdownRef.current <= 0) {
+                        clearInterval(timer)
+                        setActiveActivityId(activityId)
+                        countdownRef.current = 0
+                    }
+                }, 1000)
+            } else {
+                // First time or same activity, set immediately
+                setActiveActivityId(activityId)
+            }
+            
+            prevActivityId.current = activityId
         })
 
         return () => {
             socket.off('activityUpdate')
             socket.off('connect')
-            // Don't disconnect here - let the socket stay connected
-            // socket.disconnect() // Remove this line
         }
     }, [eventId])
 
-    return {activeActivityId}
+    const skipCountdown = useCallback(() => {
+        if (countdownRef.current > 0) {
+            countdownRef.current = 0
+            // The next activityId will be set immediately
+        }
+    }, [])
+
+    const getCountdown = useCallback(() => countdownRef.current, [])
+
+    return {
+        activeActivityId,
+        getCountdown,
+        skipCountdown
+    }
 }
