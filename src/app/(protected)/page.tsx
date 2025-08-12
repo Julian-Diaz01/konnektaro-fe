@@ -14,7 +14,7 @@ export default function HomePage() {
 
     const {event} = useEvent(user?.eventId || '')
 
-    const {activeActivityId} = useEventSocket(event?.eventId || '')
+    const {activeActivityId, getCountdown, skipCountdown} = useEventSocket(event?.eventId || '')
 
     if (loading) return <Spinner color="white"/>
 
@@ -45,6 +45,8 @@ export default function HomePage() {
         return <CurrentActivity
             userId={user.userId}
             activityId={activeActivityId ?? event?.currentActivityId}
+            getCountdown={getCountdown}
+            onSkipCountdown={skipCountdown}
         />
     }
 

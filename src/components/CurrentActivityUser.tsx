@@ -3,77 +3,53 @@
 import {AutoGrowTextarea} from "@/components/ui/textarea"
 import {Button} from "@/components/ui/button"
 import Spinner from "@/components/ui/spinner"
-import React, {useState, useEffect, useRef} from "react"
-import useUserActivity from "@/hooks/useUserActivity"
-import useActivity from "@/hooks/useActivity"
+import React from "react"
+import useCurrentActivity from "@/hooks/useCurrentActivity"
+import useCountdown from "@/hooks/useCountdown"
 
 interface CurrentActivityProps {
     userId: string
     activityId: string | null | undefined
+    getCountdown: () => number
+    onSkipCountdown?: () => void
 }
 
-export default function CurrentActivity({userId, activityId}: CurrentActivityProps) {
+export default function CurrentActivity({
+    userId,
+    activityId,
+    getCountdown,
+    onSkipCountdown
+}: CurrentActivityProps) {
+    // Countdown logic hook
+    const {displayCountdown, skipCountdown, countdown} = useCountdown({
+        getCountdown,
+        onSkipCountdown
+    })
+
+    // Business logic hooks
     const {
         activity,
-        loading: activitiesLoading,
-    } = useActivity({activityId: activityId || null})
-    const {
         userActivity,
-        createNewUserActivity,
-        updateCurrentUserActivity,
-        loading: loadingUserActivity,
-        error: errorUserActivity
-    } = useUserActivity({userId, activityId: activityId})
+        notes,
+        activitiesLoading,
+        loadingUserActivity,
+        errorUserActivity,
+        setNotes,
+        handleSubmit
+    } = useCurrentActivity({
+        userId,
+        activityId,
+        countdown,
+        onSkipCountdown
+    })
 
-    const [notes, setNotes] = useState(userActivity?.notes || '')
-    //to do reassign groups
-    const [groupId] = useState(undefined)
-    const prevActivityId = useRef(activityId)
-
-    // Keep notes synced with fetched userActivity
-    useEffect(() => {
-        if (userActivity?.notes) {
-            setNotes(userActivity.notes)
-        }
-    }, [userActivity])
-
-    // Auto-save when activityId changes
-    //// TODO FIX THIS AUTO SAVE
-    useEffect(() => {
-        if (prevActivityId.current && prevActivityId.current !== activityId) {
-            saveOrUpdate(prevActivityId.current) // save for the *previous* activity
-        }
-        prevActivityId.current = activityId
-    }, [activityId])
-
-    async function saveOrUpdate(targetActivityId: string) {
-        if (!userId || !targetActivityId || !notes.trim()) return
-
-        if (userActivity?.notes && targetActivityId === activityId) {
-            await updateCurrentUserActivity({
-                targetActivityId: targetActivityId,
-                groupId,
-                notes
-            })
-        } else {
-            await createNewUserActivity({
-                activityId: targetActivityId,
-                userId,
-                groupId,
-                notes
-            })
-        }
-    }
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        if(!activityId) return
-        await saveOrUpdate(activityId)
-    }
+    // Early returns for loading states
     if (!userId || !activity) return null
     if (activitiesLoading) return <Spinner/>
+
     return (
         <div className="w-full p-4 bg-white border rounded">
+            {/* Activity Header */}
             <li
                 key={activity.activityId}
                 className="pb-3 space-y-1 flex flex-col justify-between items-start sm:flex-row sm:items-center"
@@ -87,6 +63,19 @@ export default function CurrentActivity({userId, activityId}: CurrentActivityPro
                 </div>
             </li>
 
+            {/* Countdown Notification */}
+            {displayCountdown > 0 && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-sm text-blue-800">
+                        <strong>🔄 New activity detected!</strong> Switching to new activity
+                        in {displayCountdown} seconds...
+                        <br/>
+                        <span className="text-xs">Click the button below to switch immediately</span>
+                    </p>
+                </div>
+            )}
+
+            {/* Activity Form */}
             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                 <AutoGrowTextarea
                     label="Answer"
@@ -96,14 +85,23 @@ export default function CurrentActivity({userId, activityId}: CurrentActivityPro
                     required
                 />
 
+                {/* Error Display */}
                 {errorUserActivity && (
                     <p className="mt-2 text-sm text-red-600">{errorUserActivity}</p>
                 )}
 
-                <Button type="submit">
-                    {loadingUserActivity
-                        ? (userActivity?.notes ? 'Updating...' : 'Saving...')
-                        : (userActivity?.notes ? 'Update' : 'Save')}
+                {/* Submit Button */}
+                <Button
+                    type="submit"
+                    onClick={skipCountdown}
+                    disabled={displayCountdown > 0}
+                >
+                    {displayCountdown > 0
+                        ? `Switching in ${displayCountdown}s...`
+                        : loadingUserActivity
+                            ? (userActivity?.notes ? 'Updating...' : 'Saving...')
+                            : (userActivity?.notes ? 'Update' : 'Save')
+                    }
                 </Button>
             </form>
         </div>
