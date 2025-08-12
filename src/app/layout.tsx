@@ -1,6 +1,7 @@
 import './../styles/globals.css'
 import type {Metadata} from 'next'
 import {SessionManager} from "@/components/SessionManager";
+import {Toaster} from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',
@@ -13,6 +14,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <body>
             <SessionManager />
             {children}
+            <Toaster />
         </body>
         </html>
     )

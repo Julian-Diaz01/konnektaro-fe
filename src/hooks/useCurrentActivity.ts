@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react'
+import {toast} from 'sonner'
 import useUserActivity from './useUserActivity'
 import useActivity from './useActivity'
 import {UserActivity} from '@/types/models'
@@ -29,25 +30,37 @@ export default function useCurrentActivity({
 
     const [notes, setNotes] = useState(userActivity?.notes || '')
     const [groupId] = useState(undefined)
+    
+    // Track initial notes to detect changes
+    const [initialNotes, setInitialNotes] = useState(userActivity?.notes || '')
+
+    // Helper function to check if notes have changed
+    const hasNotesChanged = () => {
+        return notes !== initialNotes
+    }
 
     // Keep notes synced with fetched userActivity
     useEffect(() => {
         if (userActivity?.notes) {
             setNotes(userActivity.notes)
+            setInitialNotes(userActivity.notes)
         }
     }, [userActivity])
 
     // Auto-save when countdown reaches 2 - save current notes to current activity
     useEffect(() => {
         if (countdown === 2 && activityId && notes.trim()) {
-            // Save current notes to current activity before switching
-            saveOrUpdate(activityId, userActivity, notes)
+            // Only save if notes have actually changed
+            if (hasNotesChanged()) {
+                toast.info('🔄 Saving notes before switching activity...')
+                saveOrUpdate(activityId, userActivity, notes)
+            }
         }
-    }, [countdown])
+    }, [countdown, activityId, userActivity, notes, initialNotes])
 
     async function saveOrUpdate(targetActivityId: string, targetUserActivity?: UserActivity | null, targetNotes?: string) {
         if (!userId || !targetActivityId || !targetNotes?.trim()) {
-            console.log('❌ Save cancelled:', {userId, targetActivityId, targetNotes, hasNotes: !!targetNotes?.trim()})
+            toast.error('❌ Save cancelled - missing required data')
             return
         }
 
@@ -55,14 +68,12 @@ export default function useCurrentActivity({
         const hasExistingActivity = targetUserActivity && targetUserActivity.activityId === targetActivityId
 
         if (hasExistingActivity) {
-            console.log('✅ Updating existing user activity')
             await updateCurrentUserActivity({
                 targetActivityId: targetActivityId,
                 groupId,
                 notes: targetNotes
             })
         } else {
-            console.log('🆕 Creating new user activity')
             await createNewUserActivity({
                 activityId: targetActivityId,
                 userId,
@@ -70,7 +81,7 @@ export default function useCurrentActivity({
                 notes: targetNotes
             })
         }
-        console.log('✅ Save completed successfully')
+        toast.success('✅ Save completed successfully')
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -85,15 +96,17 @@ export default function useCurrentActivity({
         userActivity,
         notes,
         groupId,
-
+        
         // Loading states
         activitiesLoading,
         loadingUserActivity,
         errorUserActivity,
-
+        
         // Actions
         setNotes,
-        saveOrUpdate,
-        handleSubmit
+        handleSubmit,
+        
+        // Utilities
+        hasNotesChanged
     }
 }
