@@ -45,7 +45,7 @@ export default function HomePage() {
         return <CurrentActivity
             userId={user.userId}
             activityId={activeActivityId ?? event?.currentActivityId}
-            getCountdown={getCountdown}
+            getCountdownAction={getCountdown}
             onSkipCountdown={skipCountdown}
         />
     }

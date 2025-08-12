@@ -7,6 +7,7 @@ import {logout} from '@/utils/authenticationService'
 import Spinner from '@/components/ui/spinner'
 import {Button} from "@/components/ui/button";
 import LoginPage from "@/app/login/page";
+import {Toaster} from "@/components/ui/sonner";
 
 interface Props {
     children: React.ReactNode
@@ -109,6 +110,7 @@ const AuthenticatedLayout = ({children}: Props) => {
             <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
                 {children}
             </main>
+            <Toaster/>
         </div>
     )
 }

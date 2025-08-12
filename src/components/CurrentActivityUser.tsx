@@ -10,19 +10,19 @@ import useCountdown from "@/hooks/useCountdown"
 interface CurrentActivityProps {
     userId: string
     activityId: string | null | undefined
-    getCountdown: () => number
+    getCountdownAction: () => number
     onSkipCountdown?: () => void
 }
 
 export default function CurrentActivity({
-    userId,
-    activityId,
-    getCountdown,
-    onSkipCountdown
-}: CurrentActivityProps) {
+                                            userId,
+                                            activityId,
+                                            getCountdownAction,
+                                            onSkipCountdown
+                                        }: CurrentActivityProps) {
     // Countdown logic hook
     const {displayCountdown, skipCountdown, countdown} = useCountdown({
-        getCountdown,
+        getCountdown: getCountdownAction,
         onSkipCountdown
     })
 
@@ -33,14 +33,12 @@ export default function CurrentActivity({
         notes,
         activitiesLoading,
         loadingUserActivity,
-        errorUserActivity,
         setNotes,
-        handleSubmit
+        handleSubmit,
     } = useCurrentActivity({
         userId,
         activityId,
-        countdown,
-        onSkipCountdown
+        countdown
     })
 
     // Early returns for loading states
@@ -63,18 +61,6 @@ export default function CurrentActivity({
                 </div>
             </li>
 
-            {/* Countdown Notification */}
-            {displayCountdown > 0 && (
-                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <p className="text-sm text-blue-800">
-                        <strong>🔄 New activity detected!</strong> Switching to new activity
-                        in {displayCountdown} seconds...
-                        <br/>
-                        <span className="text-xs">Click the button below to switch immediately</span>
-                    </p>
-                </div>
-            )}
-
             {/* Activity Form */}
             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                 <AutoGrowTextarea
@@ -85,11 +71,6 @@ export default function CurrentActivity({
                     required
                 />
 
-                {/* Error Display */}
-                {errorUserActivity && (
-                    <p className="mt-2 text-sm text-red-600">{errorUserActivity}</p>
-                )}
-
                 {/* Submit Button */}
                 <Button
                     type="submit"
@@ -97,7 +78,7 @@ export default function CurrentActivity({
                     disabled={displayCountdown > 0}
                 >
                     {displayCountdown > 0
-                        ? `Switching in ${displayCountdown}s...`
+                        ? 'Switch Now'
                         : loadingUserActivity
                             ? (userActivity?.notes ? 'Updating...' : 'Saving...')
                             : (userActivity?.notes ? 'Update' : 'Save')

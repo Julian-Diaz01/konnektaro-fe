@@ -1,4 +1,5 @@
 import {useEffect, useState, useRef, useCallback} from "react";
+import {toast} from "sonner";
 import {getSocket} from "@/lib/socket";
 
 
@@ -22,6 +23,8 @@ export default function useEventSocket(eventId: string) {
             console.log('🔥 Received new activity ID:', activityId, 'for the event:', eventId)
             
             if (prevActivityId.current && prevActivityId.current !== activityId) {
+                console.log('🔄 Starting 3-second delay before switching to:', activityId)
+                toast.info('🔄 New activity detected! Switching in 3 seconds...')
                 countdownRef.current = 3
                 
                 // Start countdown timer
@@ -31,6 +34,7 @@ export default function useEventSocket(eventId: string) {
                         clearInterval(timer)
                         setActiveActivityId(activityId)
                         countdownRef.current = 0
+                        toast.success('✅ Switched to new activity')
                     }
                 }, 1000)
             } else {
