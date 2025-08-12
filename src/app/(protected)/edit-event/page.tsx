@@ -24,7 +24,20 @@ export default function EventPage() {
         handleDeleteEvent,
         deleteActivity,
     } = useEventPage();
+
     const {activeActivityId} = useEventSocket(event?.eventId || '')
+
+    // Priority: Live socket data > Static event data
+    // This ensures we use the most up-to-date information
+    const currentActivityId = activeActivityId || event?.currentActivityId || null
+
+    // Find the current activity object
+    const currentActivity = activities.find(a => a.activityId === currentActivityId)
+
+    // Determine if an activity is currently active (either from socket or event)
+    const isActivityActive = (activityId: string) => {
+        return currentActivityId === activityId
+    }
 
     if (loading) {
         return <Spinner/>;
@@ -43,14 +56,27 @@ export default function EventPage() {
     )
 
     const CurrentActivityIndicator = () => {
-        const currentActivityName =
-            activities.filter(a => a.activityId === activeActivityId)[0]?.title ||
-            event?.currentActivityId ||
-            'No active activity'
-        return <div className="p-4 bg-white border rounded">
-            <h1><p className="font-bold">Current Activity:</p> {currentActivityName}</h1>
-        </div>
+        const currentActivityName = currentActivity?.title || 'No active activity'
+        const isUsingLiveData = activeActivityId !== null
 
+        return (
+            <div className={`p-4 bg-white border rounded ${
+                !event?.open ? 'border-r-4 border-r-red-700' :
+                    isUsingLiveData
+                        ? 'border-r-4 border-r-green-500'
+                        : 'border-r-4 border-r-yellow-500'
+            }`}>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="font-bold">Current Activity:</h1>
+                        <p className="text-lg">{currentActivityName}</p>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                        {!event?.open ? 'Event Closed' : isUsingLiveData ? 'Live' : ''}
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     const ShowActivities = () => (
@@ -75,8 +101,12 @@ export default function EventPage() {
                                 <Button
                                     variant="outlinePrimary"
                                     onClick={() => handleCurrentActivityUpdate(activity.activityId)}
-                                    disabled={activeActivityId === activity.activityId}
-                                >Initiate Activity</Button>
+                                    // Button is disabled if this activity is currently active
+                                    // Uses live socket data if available, falls back to static event data
+                                    disabled={isActivityActive(activity.activityId)}
+                                >
+                                    {isActivityActive(activity.activityId) ? 'Currently Active' : 'Initiate Activity'}
+                                </Button>
                                 <ConfirmDeleteButton
                                     name="Activity"
                                     onConfirm={() => deleteActivity(activity.activityId)}
