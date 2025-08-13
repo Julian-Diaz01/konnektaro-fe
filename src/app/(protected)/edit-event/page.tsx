@@ -137,7 +137,7 @@ export default function EventPage() {
 
     return (
         <Suspense fallback={null}>
-            <div className="max-w-3xl mx-auto p-6 pt-8 space-y-6 white-background">
+            <div className="page-background">
                 <Header/>
                 <CurrentActivityIndicator/>
                 <ShowEventDetails event={event}/>

@@ -90,7 +90,7 @@ export default function CreateUserForm() {
     }
 
     return (
-        <div className="min-h-screen px-6 py-4 flex flex-col justify-start items-center white-background">
+        <div className="page-background">
             <BackLink/>
             {eventLoading ? (
                 <Spinner/>
