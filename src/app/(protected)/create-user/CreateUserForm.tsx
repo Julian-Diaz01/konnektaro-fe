@@ -120,7 +120,8 @@ export default function CreateUserForm() {
                     />
                     <Input
                         type="text"
-                        placeholder="Job title"
+                        placeholder="Job/ Something about you*"
+                        required
                         maxLength={100}
                         value={form.description}
                         onChange={(e) => handleChange('description', e.target.value)}

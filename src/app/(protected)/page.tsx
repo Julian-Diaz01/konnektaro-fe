@@ -7,6 +7,8 @@ import useEvent from "@/hooks/useEvent";
 import {ShowEventDetails} from "@/components/EventDetails";
 import useEventSocket from "@/hooks/useEventSocket";
 import CurrentActivity from "@/components/CurrentActivityUser";
+import Matchup from "@/components/Matchup";
+import Image from "next/image";
 
 export default function HomePage() {
 
@@ -17,6 +19,23 @@ export default function HomePage() {
     const {activeActivityId, getCountdown, skipCountdown} = useEventSocket(event?.eventId || '')
 
     if (loading) return <Spinner color="white"/>
+
+    const UserDetails = () => {
+        if (!user) return
+        return <div className="w-full flex flex-col align-center justify-center mb-8" style={{alignItems: "center"}}>
+            <div className="rounded-full bg-primary p-3">
+                <Image
+                    src={`/avatars/${user.icon}`}
+                    alt={name}
+                    width={70}
+                    height={70}
+                />
+            </div>
+            <h2 className="text-2xl font-semibold text-primary mb-2">{user.name}</h2>
+            <p className="text-gray-800">{user.email}</p>
+            <p className="text-gray-600">{user.description}</p>
+        </div>
+    }
 
     const JoinEvent = () => {
         if (!user)
@@ -38,7 +57,6 @@ export default function HomePage() {
                 )}</>
     }
 
-
     const Activity = () => {
         if (!event || !user) return
 
@@ -50,12 +68,28 @@ export default function HomePage() {
         />
     }
 
+    const PartnerActivity = () => {
+        return <Matchup
+            user1={{
+                name: user?.name,
+                avatar: user?.icon,
+                description: 'Loves hiking'
+            }}
+            user2={{
+                name: 'Mango',
+                avatar: '/cat.svg',
+                description: 'Enjoys coding'
+            }}
+        />
+    }
+
 
     return (
-        <div className="flex flex-col h-screen p-8 pt-16 white-background rounded border">
-            <h1 className="text-3xl font-semibold text-gray-800 mb-6">Hi {name}</h1>
+        <div className="page-background">
+            <UserDetails/>
             <JoinEvent/>
             <ShowEventDetails event={event}/>
+            <PartnerActivity/>
             <Activity/>
         </div>
     )

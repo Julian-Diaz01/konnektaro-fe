@@ -49,14 +49,29 @@ body {
     background-repeat: repeat;
     background-size: cover;
 }
+
 p, h1, h2, h3, h4, h5, h6 {
     color: var(--dark-text);
 }
+
 .white-background {
     background-color: #f4f4f4 !important;
     background-image: url('/assets/background_10.png');
     background-size: cover;
 }
+
+.page-background {
+    display: flex; /* flex */
+    flex-direction: column; /* flex-col */
+    padding: 4rem 2rem 2rem;
+    background-color: white; /* white-background */
+    border-radius: 0.25rem; /* rounded (default ~4px) */
+    border: 1px solid #e5e7eb; /* border (Tailwind's gray-200) */
+    overflow: auto; /* overlay-auto → likely meant overflow-auto */
+    height: 87vh; /* height-[87vh] */
+    background-image: url('/assets/background_10.png');
+}
+
 .light-background {
     background-color: #f4f4f4 !important;
 }
@@ -87,9 +102,11 @@ p, h1, h2, h3, h4, h5, h6 {
 .bg-primary {
     background-color: var(--primary);
 }
+
 .bg-secondary {
     background-color: var(--light-text);
 }
+
 .bg-primary-main {
     background-color: var(--primary);
     inset: 0;
@@ -101,7 +118,8 @@ p, h1, h2, h3, h4, h5, h6 {
 .text-base {
     color: var(--dark-text) !important;
 }
-.text-primary{
+
+.text-primary {
     color: var(--primary) !important;
 }
 
@@ -111,15 +129,18 @@ p, h1, h2, h3, h4, h5, h6 {
         background-size: 50%;
         background-position: left;
     }
+
     .bg-primary::before {
         background-size: 50%;
         background-position: left;
     }
 }
+
 @media (min-width: 1024px) {
     .bg-primary {
         background-size: 33.3%;
     }
+
     .bg-primary::before {
         background-size: 33.3%;
     }
@@ -134,10 +155,12 @@ p, h1, h2, h3, h4, h5, h6 {
     font-family: "Meta", sans-serif;
     animation: shadow-dance 3s forwards;
 }
+
 .event-img {
     height: auto;
     border-radius: var(--radius);
 }
+
 @keyframes shadow-dance {
     0% {
         text-shadow: 0 0 0 #07bccc,
@@ -228,10 +251,11 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }
