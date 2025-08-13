@@ -21,7 +21,7 @@ export default function AdminPage() {
     disconnectSocket()
 
     return (
-            <div className="flex flex-col h-screen p-8 pt-16 white-background">
+            <div className="page-background mt-6">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6">
                     Welcome {user?.displayName || ''}
                 </h1>

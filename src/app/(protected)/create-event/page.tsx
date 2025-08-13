@@ -47,7 +47,7 @@ export default function CreateEventPage() {
     const isFormValid = eventData.name.trim() !== '' && eventData.description.trim() !== ''
 
     return (
-            <div className="p-4  w-full h-[88vh] white-background ">
+            <div className="page-background">
                 <BackLink href="/admin"/>
                 <h1 className="text-2xl font-semibold mb-4">Create New Event</h1>
                 <div className="space-y-3">

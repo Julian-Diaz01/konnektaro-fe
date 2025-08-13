@@ -1,3 +1,4 @@
+/*
 'use client';
 
 import {useEffect, useState} from 'react';
@@ -85,7 +86,7 @@ export default function EventPage() {
 
     return (
         <div className="max-w-4xl mx-auto p-6 pt-8 white-background">
-            {/* Welcome message */}
+            {/!* Welcome message *!/}
             <div className="mb-6 text-center">
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                     Welcome to {event.name}!
@@ -95,7 +96,7 @@ export default function EventPage() {
                 </p>
             </div>
 
-            {/* User info header */}
+            {/!* User info header *!/}
             <div className="flex items-center justify-between mb-6 bg-white p-3 rounded-lg">
                 <div className="flex items-center space-x-4 bg-white">
                     {userData.icon && (
@@ -117,7 +118,7 @@ export default function EventPage() {
                 </div>
             </div>
 
-            {/* Event details */}
+            {/!* Event details *!/}
             <div className="bg-white border rounded-lg p-4 mb-6">
                 <div className="flex items-start space-x-4">
                     {event.picture && (
@@ -138,7 +139,7 @@ export default function EventPage() {
                 </div>
             </div>
 
-            {/* Activities section */}
+            {/!* Activities section *!/}
             <div className="bg-white border rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Activities</h3>
                 {activities.length === 0 ? (
@@ -169,4 +170,4 @@ export default function EventPage() {
             </div>
         </div>
     );
-}
+}*/
