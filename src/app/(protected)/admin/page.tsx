@@ -20,6 +20,7 @@ export default function AdminPage() {
     }
     disconnectSocket()
 
+
     return (
             <div className="page-background mt-6">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6">
