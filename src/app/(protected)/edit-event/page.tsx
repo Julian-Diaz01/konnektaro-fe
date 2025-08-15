@@ -6,6 +6,7 @@ import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
 import AddActivityForm from "@/components/AddActivity";
 import {Button} from "@/components/ui/button";
 import useEventPage from "@/hooks/useEventPage";
+import useGroupedUsersDisplay from "@/hooks/useGroupedUsersDisplay";
 import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
 import useEventSocket from "@/hooks/useEventSocket";
@@ -28,6 +29,7 @@ export default function EventPage() {
     } = useEventPage();
 
     const {activeActivityId} = useEventSocket(event?.eventId || '')
+    const {handleShowGroupedUsers} = useGroupedUsersDisplay(groupActivity)
 
     // Priority: Live socket data > Static event data
     // This ensures we use the most up-to-date information
@@ -100,19 +102,31 @@ export default function EventPage() {
                                 </div>
                             </div>
                             <div className="ml-[auto] flex flex-col gap-2">
-                                <Button
-                                    onClick={() => handlePairUsers(activity.activityId)}
-                                    disabled={isActivityActive(activity.activityId) || activity.type !== 'partner'}
-                                >
-                                    Pair Users
-                                </Button>
-                                <Button
+                                {activity.type === 'partner' && (
+                                    <Button
+                                        onClick={() => handlePairUsers(activity.activityId)}
+                                        disabled={!isActivityActive(activity.activityId)}
+                                    >
+                                        Pair Users
+                                    </Button>
+                                )}
+                                {activity.type === 'partner' && groupActivity && groupActivity.activityId === activity.activityId && (
+                                    <UsersList
+                                        eventId={event?.eventId}
+                                        groupActivity={groupActivity}
+                                        mode="grouped-users"
+                                        activityId={activity.activityId}
+                                        inline={true}
+                                        onShowUsers={handleShowGroupedUsers}
+                                    />
+                                )}
+                                {!isActivityActive(activity.activityId) ? <Button
                                     variant="outlinePrimary"
                                     onClick={() => handleCurrentActivityUpdate(activity.activityId)}
                                     disabled={isActivityActive(activity.activityId)}
                                 >
                                     {isActivityActive(activity.activityId) ? 'Currently Active' : 'Initiate Activity'}
-                                </Button>
+                                </Button> : null}
                                 <ConfirmDeleteButton
                                     name="Activity"
                                     onConfirm={() => deleteActivity(activity.activityId)}
@@ -147,7 +161,7 @@ export default function EventPage() {
                 <Header/>
                 <CurrentActivityIndicator/>
                 <ShowEventDetails event={event}/>
-                <UsersList eventId={event?.eventId}/>
+                <UsersList eventId={event?.eventId} mode="all-users"/>
                 <ShowActivities/>
                 <AddNewActivity/>
             </div>
