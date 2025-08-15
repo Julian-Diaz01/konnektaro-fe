@@ -27,7 +27,7 @@ export default function UsersList({eventId}: UsersListProps) {
     if (!eventId) return null
     
     return (
-        <div className="my-8 border rounded bg-white p-3">
+        <div className="mb-6 border rounded bg-white p-3">
             <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold">Users</h3>
                 <Dialog open={open} onOpenChange={setOpen}>

@@ -10,7 +10,7 @@ export default function useEventPage() {
     const searchParams = useSearchParams()
     const eventId = searchParams.get("id")
 
-    const {event, loading: eventLoading, deleteCurrentEvent} = useEvent(eventId || "")
+    const {event, loading: eventLoading, deleteCurrentEvent, pairUsersEvent} = useEvent(eventId || "")
     const {
         activities,
         loading: activitiesLoading,
@@ -43,6 +43,11 @@ export default function useEventPage() {
         router.push("/admin")
     }
 
+    const handlePairUsers = async (activityId: string) => {
+        if (!eventId || !activityId) return
+        const data = await pairUsersEvent(activityId)
+        console.log(data)
+    }
     return {
         event,
         eventId,
@@ -53,6 +58,7 @@ export default function useEventPage() {
         handleAddActivity,
         handleCurrentActivityUpdate,
         handleDeleteEvent,
+        handlePairUsers,
         deleteActivity,
     }
 }
