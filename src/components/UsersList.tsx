@@ -102,7 +102,7 @@ export default function UsersList({
                             {group.participants.map((participant) => (
                                 <div key={participant.userId}
                                      className="flex items-center gap-3 p-2 bg-gray-50 rounded">
-                                    <Image
+                                    <img
                                         src={`/avatars/${participant.icon}`}
                                         alt={participant.name}
                                         className="w-8 h-8"
