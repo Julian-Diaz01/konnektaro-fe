@@ -2,7 +2,7 @@ import {useState, useEffect} from "react"
 import {
     getEventById,
     deleteEvent,
-    createEvent, pairUsersInActivity,
+    createEvent,
 } from "@/services/eventService"
 import {Event} from "@/types/models"
 
@@ -50,19 +50,11 @@ export default function useEvent(eventId: string) {
         }
     }
 
-    const pairUsersEvent = async (activityId: string) => {
-        if (!eventId || !activityId) return
-            const {data} = await pairUsersInActivity(eventId, activityId)
-        console.log(data)
-        return data
-    }
-
     return {
         event,
         loading,
         error,
         deleteCurrentEvent,
         createNewEvent,
-        pairUsersEvent
     }
 }

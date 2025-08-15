@@ -24,6 +24,7 @@ export default function EventPage() {
         handleDeleteEvent,
         deleteActivity,
         handlePairUsers,
+        groupActivity
     } = useEventPage();
 
     const {activeActivityId} = useEventSocket(event?.eventId || '')
