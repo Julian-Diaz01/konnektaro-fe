@@ -10,7 +10,6 @@ import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
 import useEventSocket from "@/hooks/useEventSocket";
 import {ShowEventDetails} from "@/components/EventDetails";
-import {ActivityType} from "@/types/models";
 
 export default function EventPage() {
 
