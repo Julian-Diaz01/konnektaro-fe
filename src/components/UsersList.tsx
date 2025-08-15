@@ -1,15 +1,16 @@
 import {useState, useEffect} from 'react'
+import Image from 'next/image'
 import {Button} from '@/components/ui/button'
 import Spinner from '@/components/ui/spinner'
 import {useAdminUser} from '@/hooks/useAdminUser'
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogTitle,
 } from '@/components/ui/dialog'
-import { FaTrash } from 'react-icons/fa'
-import { GroupActivity, User } from '@/types/models'
+import {FaTrash} from 'react-icons/fa'
+import {GroupActivity} from '@/types/models'
 
 interface UsersListProps {
     eventId?: string
@@ -20,7 +21,14 @@ interface UsersListProps {
     inline?: boolean // Add inline prop to control layout
 }
 
-export default function UsersList({eventId, groupActivity, mode = 'all-users', onShowUsers, activityId, inline = false}: UsersListProps) {
+export default function UsersList({
+                                      eventId,
+                                      groupActivity,
+                                      mode = 'all-users',
+                                      onShowUsers,
+                                      activityId,
+                                      inline = false
+                                  }: UsersListProps) {
     const [open, setOpen] = useState(false)
     const {users, loading, error, fetchUsersByEvent, deleteUser} = useAdminUser()
 
@@ -31,12 +39,12 @@ export default function UsersList({eventId, groupActivity, mode = 'all-users', o
     }, [open, eventId, fetchUsersByEvent, mode])
 
     if (!eventId) return null
-    
+
     // Filter groups to only show those belonging to the specific activity
-    const filteredGroups = groupActivity?.groups?.filter(group => 
+    const filteredGroups = groupActivity?.groups?.filter(() =>
         !activityId || groupActivity.activityId === activityId
     ) || []
-    
+
     const renderAllUsersTable = () => (
         <div className="overflow-x-auto">
             <table className="min-w-full table-auto border divide-y divide-gray-200 text-sm max-h-80 overflow-y-auto">
@@ -60,7 +68,7 @@ export default function UsersList({eventId, groupActivity, mode = 'all-users', o
                                 size="sm"
                                 onClick={() => deleteUser(user.userId)}
                             >
-                                <FaTrash className="text-red-600" size={18} />
+                                <FaTrash className="text-red-600" size={18}/>
                             </Button>
                         </td>
                     </tr>
@@ -84,17 +92,18 @@ export default function UsersList({eventId, groupActivity, mode = 'all-users', o
                 {filteredGroups.map((group) => (
                     <div key={group.groupId} className="border rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-3">
-                            <div 
-                                className="w-4 h-4 rounded-full" 
-                                style={{ backgroundColor: group.groupColor }}
+                            <div
+                                className="w-4 h-4 rounded-full"
+                                style={{backgroundColor: group.groupColor}}
                             />
                             <h4 className="font-semibold text-lg">Group {group.groupNumber}</h4>
                         </div>
                         <div className="space-y-2">
                             {group.participants.map((participant) => (
-                                <div key={participant.userId} className="flex items-center gap-3 p-2 bg-gray-50 rounded">
-                                    <img 
-                                        src={`/avatars/${participant.icon}`} 
+                                <div key={participant.userId}
+                                     className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                                    <Image
+                                        src={`/avatars/${participant.icon}`}
                                         alt={participant.name}
                                         className="w-8 h-8"
                                     />
@@ -115,7 +124,7 @@ export default function UsersList({eventId, groupActivity, mode = 'all-users', o
         if (loading) {
             return <Spinner/>
         }
-        
+
         if (error) {
             return <div className="text-red-600">{error}</div>
         }
@@ -146,7 +155,7 @@ export default function UsersList({eventId, groupActivity, mode = 'all-users', o
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button 
+                    <Button
                         variant="secondary"
                         size="sm"
                         onClick={onShowUsers}
@@ -184,13 +193,13 @@ export default function UsersList({eventId, groupActivity, mode = 'all-users', o
             <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold">Users</h3>
                 <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
-                    <Button>{getButtonText()}</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle>{getTitle()}</DialogTitle>
-                    {renderContent()}
-                  </DialogContent>
+                    <DialogTrigger asChild>
+                        <Button>{getButtonText()}</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogTitle>{getTitle()}</DialogTitle>
+                        {renderContent()}
+                    </DialogContent>
                 </Dialog>
             </div>
         </div>
