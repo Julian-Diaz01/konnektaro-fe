@@ -4,19 +4,22 @@ import useActivity from "./useActivity"
 import {useState, useMemo} from "react"
 import {ActivityType} from "@/types/models"
 import {updateCurrentActivity} from "@/services/eventService"
+import useGroupActivity from "@/hooks/useGroupActivity";
 
 export default function useEventPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const eventId = searchParams.get("id")
 
-    const {event, loading: eventLoading, deleteCurrentEvent, pairUsersEvent} = useEvent(eventId || "")
+    const {event, loading: eventLoading, deleteCurrentEvent} = useEvent(eventId || "")
     const {
         activities,
         loading: activitiesLoading,
         createNewActivity,
         deleteActivity
     } = useActivity({activityIds: event?.activityIds || []})
+
+    const {groupActivity, pairUsersInGroupActivity} = useGroupActivity(eventId)
 
     const [showForm, setShowForm] = useState(false)
 
@@ -44,14 +47,15 @@ export default function useEventPage() {
     }
 
     const handlePairUsers = async (activityId: string) => {
-        if (!eventId || !activityId) return
-        const data = await pairUsersEvent(activityId)
-        console.log(data)
+        if (!event || !activityId) return
+        await pairUsersInGroupActivity(activityId)
     }
+
     return {
         event,
         eventId,
         activities,
+        groupActivity,
         loading,
         showForm,
         setShowForm,
