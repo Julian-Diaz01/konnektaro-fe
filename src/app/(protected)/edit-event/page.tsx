@@ -10,6 +10,7 @@ import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
 import useEventSocket from "@/hooks/useEventSocket";
 import {ShowEventDetails} from "@/components/EventDetails";
+import {ActivityType} from "@/types/models";
 
 export default function EventPage() {
 
@@ -23,6 +24,7 @@ export default function EventPage() {
         handleCurrentActivityUpdate,
         handleDeleteEvent,
         deleteActivity,
+        handlePairUsers,
     } = useEventPage();
 
     const {activeActivityId} = useEventSocket(event?.eventId || '')
@@ -99,10 +101,14 @@ export default function EventPage() {
                             </div>
                             <div className="ml-[auto] flex flex-col gap-2">
                                 <Button
+                                    onClick={() => handlePairUsers(activity.activityId)}
+                                    disabled={isActivityActive(activity.activityId) || activity.type !== 'partner'}
+                                >
+                                    Pair Users
+                                </Button>
+                                <Button
                                     variant="outlinePrimary"
                                     onClick={() => handleCurrentActivityUpdate(activity.activityId)}
-                                    // Button is disabled if this activity is currently active
-                                    // Uses live socket data if available, falls back to static event data
                                     disabled={isActivityActive(activity.activityId)}
                                 >
                                     {isActivityActive(activity.activityId) ? 'Currently Active' : 'Initiate Activity'}

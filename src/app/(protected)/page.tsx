@@ -39,7 +39,7 @@ export default function HomePage() {
 
     const JoinEvent = () => {
         if (!user)
-            return <><h2 className="text-2xl font-semibold text-primary mb-6">Join an Event</h2>
+            return <><h2 className="text-2xl font-semibold text-primary mb-3">Join an Event</h2>
                 {events.length === 0 ? (
                     <p className="text-gray-500">No open events available</p>
                 ) : (

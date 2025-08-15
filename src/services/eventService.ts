@@ -25,10 +25,6 @@ export const getAllUserByEvent = (eventId: string) =>
 // 👥 GROUP (PAIRING)
 export const pairUsersInActivity = (
     eventId: string,
-    activityId: string,
-    share: boolean
+    activityId: string
 ) =>
-    axios.post<GroupActivity>(
-        `/event/${eventId}/activity-group/${activityId}`,
-        {share}
-    )
+    axios.post<GroupActivity>(`/event/${eventId}/activity-group/${activityId}`)
