@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react'
-import Image from 'next/image'
 import {Button} from '@/components/ui/button'
 import Spinner from '@/components/ui/spinner'
 import {useAdminUser} from '@/hooks/useAdminUser'
