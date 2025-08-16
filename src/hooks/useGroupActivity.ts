@@ -1,11 +1,33 @@
-import {useState,} from "react"
-import {pairUsersInActivity,} from "@/services/eventService"
+import {useState, useEffect} from "react"
 import {GroupActivity} from "@/types/models"
+import {pairUsersInActivity, fetchGroupActivityByActivityId} from "@/services/groupActivityService";
 
-export default function useGroupActivity(eventId: string | null) {
+export default function useGroupActivity(eventId: string | null, activityId?: string) {
     const [groupActivity, setGroupActivity] = useState<GroupActivity | null>(null)
-    // const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    // Fetch group activity by activityId when provided
+    useEffect(() => {
+        if (activityId) {
+            setLoading(true)
+            setError(null)
+            
+            fetchGroupActivityByActivityId(activityId)
+                .then(response => {
+                    setGroupActivity(response.data)
+                })
+                .catch(err => {
+                    console.error("Failed to fetch group activity:", err)
+                    setError("Failed to fetch group activity.")
+                })
+                .finally(() => {
+                    setLoading(false)
+                })
+        } else {
+            setLoading(false)
+        }
+    }, [activityId])
 
     const pairUsersInGroupActivity = async (activityId: string) => {
         if (!eventId || !activityId) return
@@ -20,7 +42,7 @@ export default function useGroupActivity(eventId: string | null) {
 
     return {
         groupActivity,
-        // loading,
+        loading,
         error,
         pairUsersInGroupActivity
     }
