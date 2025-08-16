@@ -19,11 +19,26 @@ export default function useEventPage() {
         deleteActivity
     } = useActivity({activityIds: event?.activityIds || []})
 
-    const {groupActivity, pairUsersInGroupActivity} = useGroupActivity(eventId)
+    // Get the current activity to determine if we need to fetch group activity
+    const currentActivityId = event?.currentActivityId || null
+    const currentActivity = activities.find(a => a.activityId === currentActivityId)
+    
+    // Use the hook to fetch group activity when current activity is of type 'partner'
+    const { 
+        groupActivity, 
+        loading: groupActivityLoading,
+        pairUsersInGroupActivity 
+    } = useGroupActivity(
+        eventId, 
+        currentActivity?.type === 'partner' ? currentActivity.activityId : undefined
+    )
 
     const [showForm, setShowForm] = useState(false)
 
-    const loading = useMemo(() => eventLoading || activitiesLoading, [eventLoading, activitiesLoading])
+    const loading = useMemo(() => 
+        eventLoading || activitiesLoading || groupActivityLoading, 
+        [eventLoading, activitiesLoading, groupActivityLoading]
+    )
 
     const handleAddActivity = async (activityData: {
         title: string
@@ -55,7 +70,6 @@ export default function useEventPage() {
         event,
         eventId,
         activities,
-        groupActivity,
         loading,
         showForm,
         setShowForm,
@@ -64,5 +78,7 @@ export default function useEventPage() {
         handleDeleteEvent,
         handlePairUsers,
         deleteActivity,
+        groupActivity,
+        currentActivity,
     }
 }
