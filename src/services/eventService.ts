@@ -3,7 +3,7 @@
 import axios from '../utils/axiosInstance'
 import {
     Event,
-    GroupActivity, PartialUser,
+    PartialUser,
 } from '@/types/models'
 
 // 📚 EVENT
@@ -15,16 +15,10 @@ export const getEventById = (eventId: string) =>
 export const getEventStatus = (eventId: string) =>
     axios.get<Event>(`/event/status/${eventId}`)
 export const updateCurrentActivity = (eventId: string, activityId: string) =>
-    axios.patch<Event>(`/event/${eventId}/current-activity`, { activityId })
+    axios.patch<Event>(`/event/${eventId}/current-activity`, {activityId})
 export const getAllEvents = () =>
     axios.get<Event[]>('/event')
 export const deleteEvent = (eventId: string) =>
     axios.delete(`/event/${eventId}`)
 export const getAllUserByEvent = (eventId: string) =>
     axios.get<PartialUser[]>(`/event/${eventId}/users`)
-// 👥 GROUP (PAIRING)
-export const pairUsersInActivity = (
-    eventId: string,
-    activityId: string
-) =>
-    axios.post<GroupActivity>(`/event/${eventId}/activity-group/${activityId}`)
