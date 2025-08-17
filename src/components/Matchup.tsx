@@ -46,7 +46,7 @@ export default function Matchup({user1, user2}: MatchupProps) {
                 <div
                     className="absolute"
                     style={{
-                        width: '15vh',
+                        width: '13vh',
                         height: '2px',
                         top: '100%',
                         left: '42%',
