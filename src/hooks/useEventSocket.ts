@@ -5,6 +5,8 @@ import {getSocket} from "@/lib/socket";
 
 export default function useEventSocket(eventId: string) {
     const [activeActivityId, setActiveActivityId] = useState<string | null>(null)
+    const [shouldFetchGroups, setShouldFetchGroups] = useState(false)
+    const [hasActivityChanged, setHasActivityChanged] = useState(false)
     const countdownRef = useRef<number>(0)
     const prevActivityId = useRef<string | null>(null)
 
@@ -19,13 +21,14 @@ export default function useEventSocket(eventId: string) {
             }
         })
 
-        socket.on('activityUpdate', ({eventId, activityId}: { eventId: string, activityId: string }) => {
-            console.log('🔥 Received new activity ID:', activityId, 'for the event:', eventId)
+        socket.on('activityUpdate', ({eventId: socketEventId, activityId}: { eventId: string, activityId: string }) => {
+            console.log('🔥 Received new activity ID:', activityId, 'for the event:', socketEventId)
             
             if (prevActivityId.current && prevActivityId.current !== activityId) {
                 console.log('🔄 Starting 3-second delay before switching to:', activityId)
                 toast.info('🔄 New activity detected! Switching in 3 seconds...')
                 countdownRef.current = 3
+                setHasActivityChanged(true)
                 
                 // Start countdown timer
                 const timer = setInterval(() => {
@@ -40,13 +43,25 @@ export default function useEventSocket(eventId: string) {
             } else {
                 // First time or same activity, set immediately
                 setActiveActivityId(activityId)
+                setHasActivityChanged(false)
             }
             
             prevActivityId.current = activityId
         })
 
+        // Listen for when groups are created
+        socket.on('groupsCreated', (data: { eventId: string, activityId: string }) => {
+            console.log('👥 Socket: Received groupsCreated event:', data)
+            if (data.eventId === eventId) {
+                console.log('🚀 Socket: Setting shouldFetchGroups to true for event:', eventId)
+                setShouldFetchGroups(true)
+                toast.success('👥 New partner groups created!')
+            }
+        })
+
         return () => {
             socket.off('activityUpdate')
+            socket.off('groupsCreated')
             socket.off('connect')
         }
     }, [eventId])
@@ -60,9 +75,21 @@ export default function useEventSocket(eventId: string) {
 
     const getCountdown = useCallback(() => countdownRef.current, [])
 
+    const resetShouldFetchGroups = useCallback(() => {
+        setShouldFetchGroups(false)
+    }, [])
+
+    const resetActivityChanged = useCallback(() => {
+        setHasActivityChanged(false)
+    }, [])
+
     return {
         activeActivityId,
+        shouldFetchGroups,
+        hasActivityChanged,
         getCountdown,
-        skipCountdown
+        skipCountdown,
+        resetShouldFetchGroups,
+        resetActivityChanged
     }
 }
