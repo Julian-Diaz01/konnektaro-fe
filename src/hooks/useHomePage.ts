@@ -19,7 +19,7 @@ export default function useHomePage() {
 
     const userId = user?.userId || ''
     // Event management
-    const {event} = useEvent(userId)
+    const {event} = useEvent(user?.eventId || '')
 
     const eventId = event?.eventId || ''
     // Socket management
