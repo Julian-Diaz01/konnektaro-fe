@@ -19,8 +19,8 @@ export default function useHomePage() {
 
     // Refs to prevent duplicate API calls and unnecessary re-renders
     const fetchTriggeredRef = useRef(false)
-    const lastActivityIdRef = useRef<string | undefined>()
-    const lastEventIdRef = useRef<string | undefined>()
+    const lastActivityIdRef = useRef<string | undefined>(undefined)
+    const lastEventIdRef = useRef<string | undefined>(undefined)
 
     const userId = user?.userId || ''
     // Event management - only fetch if user has an eventId
