@@ -1,5 +1,5 @@
 import {useRouter} from "next/navigation";
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import useOpenEvents from "@/hooks/useOpenEvents";
 import useUser from "@/hooks/useUser";
 import useAuthUser from "@/hooks/useAuthUser";
@@ -17,12 +17,17 @@ export default function useHomePage() {
     const {user, loading: loadingUser} = useUser(firebaseUser?.uid || null)
     const name = user?.name || '👋'
 
-    const userId = user?.userId || ''
-    // Event management
-    const {event} = useEvent(user?.eventId || '')
+    // Refs to prevent duplicate API calls and unnecessary re-renders
+    const fetchTriggeredRef = useRef(false)
+    const lastActivityIdRef = useRef<string | undefined>()
+    const lastEventIdRef = useRef<string | undefined>()
 
-    const eventId = event?.eventId || ''
-    // Socket management
+    const userId = user?.userId || ''
+    // Event management - only fetch if user has an eventId
+    const eventId = user?.eventId || ''
+    const {event} = useEvent(eventId)
+
+    // Socket management - only connect if we have an eventId
     const {
         activeActivityId,
         shouldFetchGroups,
@@ -36,21 +41,23 @@ export default function useHomePage() {
     // Activity ID management
     const activityId = activeActivityId || event?.currentActivityId || undefined
 
-    // Group activity management
+    // Group activity management - only fetch if we have both eventId and activityId
     const {
         groupActivity,
         loading: groupLoading,
         fetchGroupActivity,
-        clearGroupActivity
-    } = useGroupActivity(eventId, activityId)
+    } = useGroupActivity(eventId || null, activityId)
 
     // Trigger group activity fetch when socket indicates groups are created
     useEffect(() => {
         console.log('🔍 useHomePage useEffect: shouldFetchGroups:', shouldFetchGroups, 'activityId:', activityId)
+        
         if (shouldFetchGroups && activityId) {
             console.log('🚀 useHomePage: Triggering group activity refresh for activityId:', activityId)
-            // Manually refresh the group activity data
+            
+            // Fetch immediately when socket triggers - no delay needed
             fetchGroupActivity()
+            
             // Reset the flag after triggering
             resetShouldFetchGroups()
         }
@@ -60,11 +67,32 @@ export default function useHomePage() {
     useEffect(() => {
         console.log('🔍 useHomePage useEffect: hasActivityChanged:', hasActivityChanged)
         if (hasActivityChanged) {
-            console.log('🔄 useHomePage: Clearing group activity due to activity change')
-            clearGroupActivity()
+            console.log('🔄 useHomePage: Activity changed detected, but keeping PartnerActivity visible until new activity loads')
+            // Don't clear group activity immediately - let it stay until new activity loads
+            // This ensures PartnerActivity remains visible during the transition
             resetActivityChanged()
         }
-    }, [hasActivityChanged, clearGroupActivity, resetActivityChanged])
+    }, [hasActivityChanged, resetActivityChanged])
+
+    // Reset fetch trigger when activity changes
+    useEffect(() => {
+        if (activityId !== lastActivityIdRef.current) {
+            console.log('🔄 useHomePage: Activity ID changed, resetting fetch trigger')
+            console.log('🔄 useHomePage: Previous activityId:', lastActivityIdRef.current, 'New activityId:', activityId)
+            fetchTriggeredRef.current = false
+            lastActivityIdRef.current = activityId
+        }
+    }, [activityId])
+
+    // Also reset fetch trigger when eventId changes (user switches events)
+    useEffect(() => {
+        if (eventId !== lastEventIdRef.current) {
+            console.log('🔄 useHomePage: Event ID changed, resetting fetch trigger')
+            console.log('🔄 useHomePage: Previous eventId:', lastEventIdRef.current, 'New eventId:', eventId)
+            fetchTriggeredRef.current = false
+            lastEventIdRef.current = eventId
+        }
+    }, [eventId])
 
     // Find the current user's group and partner
     const currentUserGroup = useMemo(() => {
@@ -93,8 +121,28 @@ export default function useHomePage() {
 
     // Partner activity render conditions
     const shouldRenderPartnerActivity = useMemo(() => {
-        return Boolean(activityId && !groupLoading && groupActivity && currentUserPartner)
-    }, [activityId, groupLoading, groupActivity, currentUserPartner])
+        // Keep PartnerActivity visible if:
+        // 1. We have an activity ID AND
+        // 2. Groups are not loading AND
+        // 3. We have group activity data AND
+        // 4. We have a partner
+        // OR if we're transitioning between activities (keep showing old partner until new one loads)
+        const hasBasicRequirements = Boolean(activityId && !groupLoading && groupActivity && currentUserPartner)
+        const isTransitioning = hasActivityChanged && groupActivity && currentUserPartner
+        
+        const shouldRender = hasBasicRequirements || isTransitioning
+        
+        console.log('🔍 useHomePage: shouldRenderPartnerActivity calculation:', {
+            activityId,
+            groupLoading,
+            hasGroupActivity: !!groupActivity,
+            hasPartner: !!currentUserPartner,
+            hasBasicRequirements,
+            isTransitioning,
+            shouldRender
+        })
+        return shouldRender as boolean
+    }, [activityId, groupLoading, groupActivity, currentUserPartner, hasActivityChanged])
 
     return {
         // User data
