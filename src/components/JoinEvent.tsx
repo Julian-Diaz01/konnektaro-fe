@@ -1,16 +1,10 @@
 'use client';
 
 import EventCard from '@/components/EventCard';
-
-interface Event {
-    eventId: string;
-    name: string;
-    description: string;
-    picture?: string;
-}
+import {User, Event} from "@/types/models";
 
 interface JoinEventProps {
-    user: any | null;
+    user: User | null;
     events: Event[];
     onEventClick: (eventId: string) => void;
 }
