@@ -67,9 +67,21 @@ p, h1, h2, h3, h4, h5, h6 {
     background-color: white; /* white-background */
     border-radius: 0.25rem; /* rounded (default ~4px) */
     border: 1px solid #e5e7eb; /* border (Tailwind's gray-200) */
-    overflow: auto; /* overlay-auto → likely meant overflow-auto */
-    height: 87vh; /* height-[87vh] */
+    overflow-y: auto; /* Ensure vertical scrolling works */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    height: 87vh; /* Fixed height for desktop */
     background-image: url('/assets/background_10.png');
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Mobile-specific improvements for scrolling */
+@media (max-width: 768px) {
+    .page-background {
+        padding: 1rem;
+        height: 100vh; /* Full viewport height on mobile */
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 .light-background {
