@@ -42,7 +42,7 @@ export default function HomePage() {
 
     return (
         <div className="page-background">
-            <UserDetails user={user} />
+            <UserDetails user={user} activityId={activityId} />
             <JoinEvent user={user} events={events} onEventClick={handleJoinEvent} />
             <ShowEventDetails event={event}/>
             <PartnerActivity 
