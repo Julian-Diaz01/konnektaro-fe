@@ -47,6 +47,7 @@ export default function useHomePage() {
         groupActivity,
         loading: groupLoading,
         fetchGroupActivity,
+        clearGroupActivity,
     } = useGroupActivity(eventId || null, activityId)
 
     // Trigger group activity fetch when socket indicates groups are created
@@ -62,22 +63,22 @@ export default function useHomePage() {
         }
     }, [shouldFetchGroups, activityId, resetShouldFetchGroups, fetchGroupActivity])
 
-    // Clear group activity when activity changes to stop rendering PartnerActivity
+    // Reset activity changed flag when activity changes
     useEffect(() => {
         if (hasActivityChanged) {
-            // Don't clear group activity immediately - let it stay until new activity loads
-            // This ensures PartnerActivity remains visible during the transition
             resetActivityChanged()
         }
     }, [hasActivityChanged, resetActivityChanged])
 
-    // Reset fetch trigger when activity changes
+    // Reset fetch trigger and clear old group activity when activity changes
     useEffect(() => {
         if (activityId !== lastActivityIdRef.current) {
             fetchTriggeredRef.current = false
             lastActivityIdRef.current = activityId
+            // Clear old group activity immediately when activity changes
+            clearGroupActivity()
         }
-    }, [activityId])
+    }, [activityId, clearGroupActivity])
 
     // Also reset fetch trigger when eventId changes (user switches events)
     useEffect(() => {
@@ -114,19 +115,22 @@ export default function useHomePage() {
 
     // Partner activity render conditions
     const shouldRenderPartnerActivity = useMemo(() => {
-        // Keep PartnerActivity visible if:
+        // Only render PartnerActivity if:
         // 1. We have an activity ID AND
         // 2. Groups are not loading AND
         // 3. We have group activity data AND
-        // 4. We have a partner
-        // OR if we're transitioning between activities (keep showing old partner until new one loads)
-        const hasBasicRequirements = Boolean(activityId && !groupLoading && groupActivity)
-        const isTransitioning = hasActivityChanged && groupActivity && currentUserPartner
+        // 4. We have a partner AND
+        // 5. The group activity corresponds to the current activity (extra safety check)
+        const hasBasicRequirements = Boolean(
+            activityId && 
+            !groupLoading && 
+            groupActivity && 
+            groupActivity.activityId === activityId && // Ensure group activity matches current activity
+            currentUserPartner
+        )
         
-        const shouldRender = hasBasicRequirements || isTransitioning
-        
-        return shouldRender as boolean
-    }, [activityId, groupLoading, groupActivity, currentUserPartner, hasActivityChanged])
+        return hasBasicRequirements
+    }, [activityId, groupLoading, groupActivity, currentUserPartner])
 
     return {
         // User data
@@ -153,6 +157,7 @@ export default function useHomePage() {
         groupActivity,
         currentUserGroup,
         currentUserPartner,
+        clearGroupActivity,
 
         // Partner activity rendering
         shouldRenderPartnerActivity,
