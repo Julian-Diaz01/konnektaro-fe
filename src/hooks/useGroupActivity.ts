@@ -27,6 +27,9 @@ export default function useGroupActivity(eventId: string | null, activityId?: st
     // Fetch group activity by activityId when provided
     useEffect(() => {
         if (activityId) {
+            // Clear old data immediately when activity changes
+            setGroupActivity(null)
+            setLoading(true)
             fetchGroupActivity()
         } else {
             // Clear group activity when no activity is selected
@@ -50,6 +53,15 @@ export default function useGroupActivity(eventId: string | null, activityId?: st
         setGroupActivity(null)
         setLoading(false)
         setError(null)
+    }, [])
+
+    // Cleanup effect to clear data when component unmounts or dependencies change
+    useEffect(() => {
+        return () => {
+            setGroupActivity(null)
+            setLoading(false)
+            setError(null)
+        }
     }, [])
 
     return {
