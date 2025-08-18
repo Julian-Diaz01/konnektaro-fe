@@ -98,7 +98,9 @@ function EventPageContent() {
                         return (
                             <li
                                 key={activity.activityId}
-                                className="pb-3 space-y-1 flex flex-col justify-between items-start border-b sm:flex-row sm:items-center"
+                                className={`pb-6 space-y-1 flex flex-col justify-between items-start border-b sm:flex-row sm:items-center ${
+                                    isActive ? 'm-[-15px] p-3 bg-[var(--terciary)]' : 'mt-6'
+                                }`}
                             >
                                 <div>
                                     <p className="font-bold text-lg">{activity.title}</p>
