@@ -24,7 +24,7 @@ export default function useEventSocket(eventId: string) {
         socket.on('activityUpdate', ({eventId: socketEventId, activityId}: { eventId: string, activityId: string }) => {
             console.log('🔥 Received new activity ID:', activityId, 'for the event:', socketEventId)
             
-            if (prevActivityId.current && prevActivityId.current !== activityId) {
+           
                 console.log('🔄 Starting 3-second delay before switching to:', activityId)
                 toast.info('🔄 New activity detected! Switching in 3 seconds...')
                 countdownRef.current = 3
@@ -40,11 +40,7 @@ export default function useEventSocket(eventId: string) {
                         toast.success('✅ Switched to new activity')
                     }
                 }, 1000)
-            } else {
-                // First time or same activity, set immediately
-                setActiveActivityId(activityId)
-                setHasActivityChanged(false)
-            }
+            
             
             prevActivityId.current = activityId
         })
