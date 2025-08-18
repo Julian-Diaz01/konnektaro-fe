@@ -104,7 +104,6 @@ export default function useCurrentActivity({
 				writeStoredNotes(notesToSave)
 				toast.success('✅ Saved')
 			} else {
-				console.error('❌ Save failed:', err)
 				toast.error('❌ Save failed')
 			}
 		}
