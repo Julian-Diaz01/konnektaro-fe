@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import {FaTrash} from 'react-icons/fa'
 import {GroupActivity} from '@/types/models'
+import Image from 'next/image'
 
 interface UsersListProps {
     eventId?: string
@@ -101,10 +102,12 @@ export default function UsersList({
                             {group.participants.map((participant) => (
                                 <div key={participant.userId}
                                      className="flex items-center gap-3 p-2 bg-gray-50 rounded">
-                                    <img
+                                    <Image
                                         src={`/avatars/${participant.icon}`}
                                         alt={participant.name}
                                         className="w-8 h-8"
+                                        width={32}
+                                        height={32}
                                     />
                                     <div>
                                         <p className="font-medium">{participant.name}</p>

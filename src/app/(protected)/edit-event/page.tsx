@@ -82,7 +82,7 @@ export default function EventPage() {
                     </div>
                 </div>
             </div>
-        ), [currentActivityName, isUsingLiveData, event?.open])
+        ), [currentActivityName, isUsingLiveData])
     }
 
     const ShowActivities = () => {
@@ -147,7 +147,7 @@ export default function EventPage() {
             ) : (
                 <p className="mt-2 text-sm text-gray-500">No activities yet</p>
             )
-        ), [activities, groupActivity, event?.eventId, handlePairUsers, handleCurrentActivityUpdate, deleteActivity, handleShowGroupedUsers, isActivityActive])
+        ), [])
 
         return (
             <div className="p-4 bg-white border rounded">
