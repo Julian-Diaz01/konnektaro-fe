@@ -1,170 +1,143 @@
-import {useState, useEffect, useCallback, useRef} from 'react'
+import {useState, useEffect, useCallback, useRef, useMemo} from 'react'
 import {toast} from 'sonner'
 import useUserActivity from './useUserActivity'
 import useActivity from './useActivity'
 import {UserActivity} from '@/types/models'
+import { updateUserActivity as updateUserActivityApi, createUserActivity as createUserActivityApi } from '@/services/userActivityService'
 
 interface UseCurrentActivityProps {
-    userId: string
-    activityId: string | null | undefined
-    countdown: number
+	userId: string
+	activityId: string | null | undefined
+	countdown: number
 }
 
 export default function useCurrentActivity({
-    userId,
-    activityId,
-    countdown,
+	userId,
+	activityId,
+	countdown,
 }: UseCurrentActivityProps) {
-    const {
-        activity,
-        loading: activitiesLoading,
-    } = useActivity({activityId: activityId || null})
+	const {
+		activity,
+		loading: activitiesLoading,
+	} = useActivity({activityId: activityId || null})
 
-    const {
-        userActivity,
-        createNewUserActivity,
-        updateCurrentUserActivity,
-        loading: loadingUserActivity,
-        error: errorUserActivity
-    } = useUserActivity({userId, activityId})
+	const {
+		userActivity,
+		loading: loadingUserActivity,
+		error: errorUserActivity
+	} = useUserActivity({userId, activityId})
 
-    const [notes, setNotesState] = useState('')
-    const [groupId] = useState(undefined)
-    
-    // Track if user has typed locally to avoid overwriting with server value
-    const userHasTypedRef = useRef(false)
-    // Track the previous activityId to detect actual activity changes
-    const prevActivityIdRef = useRef<string | null | undefined>(null)
-    // Track if we're in the initial load phase
-    const isInitialLoadRef = useRef(true)
+	// Local state
+	const [notes, setNotesState] = useState('')
+	const [groupId] = useState(undefined)
+	const [initialNotes, setInitialNotes] = useState('')
 
-    // Expose setter that marks notes as dirty
-    const setNotes = useCallback((value: string) => {
-        if (!isInitialLoadRef.current) {
-            userHasTypedRef.current = true
-        }
-        setNotesState(value)
-    }, [])
-    
-    // Track initial notes to detect changes
-    const [initialNotes, setInitialNotes] = useState('')
+	// Autosave guard
+	const lastAutoSavedActivityIdRef = useRef<string | null>(null)
+	// Prevent server override while user is typing
+	const userHasTypedRef = useRef(false)
 
-    // Helper function to check if notes have changed - memoized with useCallback
-    const hasNotesChanged = useCallback(() => {
-        // If user hasn't typed anything, no changes
-        if (!userHasTypedRef.current) return false
-        // Compare current notes with initial notes
-        return notes !== initialNotes
-    }, [notes, initialNotes])
+	// Persistent key per user/activity
+	const storageKey = useMemo(() => {
+		return userId && activityId ? `notes:${userId}:${activityId}` : null
+	}, [userId, activityId])
 
-    // Only initialize notes when we actually switch to a different activity (not during countdown)
-    useEffect(() => {
-        // Check if this is a real activity change (not just countdown starting)
-        if (prevActivityIdRef.current !== activityId) {
-            // Save current notes if they've changed before switching
-            if (prevActivityIdRef.current && notes.trim() && hasNotesChanged()) {
-                console.log('Saving notes before activity switch:', notes)
-            }
-            
-            // Clear notes and reset state for new activity
-            userHasTypedRef.current = false
-            isInitialLoadRef.current = true
-            setNotesState(userActivity?.notes || '')
-            setInitialNotes(userActivity?.notes || '')
-            prevActivityIdRef.current = activityId
-        }
-    }, [activityId, userActivity?.notes, notes, hasNotesChanged])
+	const readStoredNotes = useCallback(() => {
+		if (!storageKey) return null
+		try { return localStorage.getItem(storageKey) } catch { return null }
+	}, [storageKey])
 
-    // Sync from server when userActivity changes for the same activity
-    useEffect(() => {
-        if (userActivity?.notes !== undefined) {
-            if (isInitialLoadRef.current) {
-                // Initial load - set notes without marking as user input
-                setNotesState(userActivity.notes)
-                setInitialNotes(userActivity.notes)
-                isInitialLoadRef.current = false
-                console.log('Initial load - notes:', userActivity.notes)
-            } else if (!userHasTypedRef.current) {
-                // User hasn't typed - sync from server
-                setNotesState(userActivity.notes)
-                setInitialNotes(userActivity.notes)
-                console.log('Syncing notes from server:', userActivity.notes)
-            }
-            // If user has typed, don't overwrite their input
-        }
-    }, [userActivity?.notes])
+	const writeStoredNotes = useCallback((value: string) => {
+		if (!storageKey) return
+		try { localStorage.setItem(storageKey, value) } catch {}
+	}, [storageKey])
 
-    // Memoize saveOrUpdate function to prevent unnecessary re-renders
-    const saveOrUpdate = useCallback(async (targetActivityId: string, targetUserActivity?: UserActivity | null, targetNotes?: string) => {
-        if (!userId || !targetActivityId || !targetNotes?.trim()) {
-            toast.error('❌ Save cancelled - missing required data')
-            return
-        }
+	// Setter: updates state and storage
+	const setNotes = useCallback((value: string) => {
+		userHasTypedRef.current = true
+		setNotesState(value)
+		writeStoredNotes(value)
+	}, [writeStoredNotes])
 
-        // Check if there's existing user activity for the target activity
-        const hasExistingActivity = targetUserActivity && targetUserActivity.activityId === targetActivityId
+	// On activity change, prefer stored notes immediately
+	useEffect(() => {
+		userHasTypedRef.current = false
+		const stored = readStoredNotes()
+		if (stored !== null) {
+			setNotesState(stored)
+		}
+	}, [readStoredNotes])
 
-        if (hasExistingActivity) {
-            await updateCurrentUserActivity({
-                targetActivityId: targetActivityId,
-                groupId,
-                notes: targetNotes
-            })
-        } else {
-            await createNewUserActivity({
-                activityId: targetActivityId,
-                userId,
-                groupId,
-                notes: targetNotes
-            })
-        }
-        // After a successful save, reset dirty flag and baseline
-        userHasTypedRef.current = false
-        setInitialNotes(targetNotes)
-        toast.success('✅ Save completed successfully')
-    }, [userId, groupId, updateCurrentUserActivity, createNewUserActivity])
+	// Server sync: update baseline; only override UI if safe and different
+	useEffect(() => {
+		if (userActivity && userActivity.activityId === activityId && userActivity.notes !== undefined) {
+			const serverNotes = userActivity.notes
+			setInitialNotes(serverNotes)
+			const stored = readStoredNotes()
+			// If nothing stored and safe to show, set from server when different
+			if (!stored && (!userHasTypedRef.current || countdown <= 1)) {
+				if (serverNotes !== notes) {
+					setNotesState(serverNotes)
+					writeStoredNotes(serverNotes)
+				}
+			}
+		}
+	}, [userActivity, userActivity?.notes, userActivity?.activityId, activityId, countdown, notes, readStoredNotes, writeStoredNotes])
 
-    // Auto-save when countdown reaches 2 - save current notes to current activity
-    useEffect(() => {
-        if (countdown === 2 && activityId && notes.trim()) {
-            console.log('Countdown 2 - checking if notes changed:', {
-                notes,
-                initialNotes,
-                userHasTyped: userHasTypedRef.current,
-                hasNotesChanged: hasNotesChanged()
-            })
-            // Save if user has typed something (regardless of whether it's different from initial)
-            if (userHasTypedRef.current) {
-                console.log('Auto-saving notes on countdown 2:', notes)
-                saveOrUpdate(activityId, userActivity, notes)
-            }
-        }
-    }, [countdown, activityId, userActivity, notes, initialNotes, hasNotesChanged, saveOrUpdate])
+	// Save or update current activity
+	const saveOrUpdate = useCallback(async (targetActivityId: string, _targetUserActivity?: UserActivity | null, targetNotes?: string) => {
+		const notesToSave = (targetNotes ?? notes ?? '').trim()
+		if (!userId || !targetActivityId || !notesToSave) {
+			// Silent no-op if missing data
+			return
+		}
+		try {
+			await updateUserActivityApi(userId, targetActivityId, notesToSave, groupId)
+			setInitialNotes(notesToSave)
+			writeStoredNotes(notesToSave)
+			toast.success('✅ Saved')
+		} catch (err: unknown) {
+			const status = (err as { response?: { status?: number }, status?: number })?.response?.status ?? (err as { status?: number })?.status
+			if (status === 404) {
+				await createUserActivityApi({ activityId: targetActivityId, userId, groupId, notes: notesToSave })
+				setInitialNotes(notesToSave)
+				writeStoredNotes(notesToSave)
+				toast.success('✅ Saved')
+			} else {
+				console.error('❌ Save failed:', err)
+				toast.error('❌ Save failed')
+			}
+		}
+	}, [userId, groupId, notes, writeStoredNotes])
 
-    const handleSubmit = useCallback(async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!activityId) return
-        await saveOrUpdate(activityId, userActivity, notes)
-    }, [activityId, userActivity, notes, saveOrUpdate])
+	// Autosave once per activity at countdown 2 if notes changed
+	useEffect(() => {
+		if (!activityId) return
+		if (countdown === 2 && (notes ?? '') !== (initialNotes ?? '')) {
+			if (lastAutoSavedActivityIdRef.current !== activityId) {
+				void saveOrUpdate(activityId, userActivity, notes)
+				lastAutoSavedActivityIdRef.current = activityId
+			}
+		}
+	}, [countdown, activityId, notes, initialNotes, saveOrUpdate, userActivity])
 
-    return {
-        // Data
-        activity,
-        userActivity,
-        notes,
-        groupId,
-        
-        // Loading states
-        activitiesLoading,
-        loadingUserActivity,
-        errorUserActivity,
-        
-        // Actions
-        setNotes,
-        saveOrUpdate,
-        handleSubmit,
-        
-        // Utilities
-        hasNotesChanged
-    }
+	const handleSubmit = useCallback(async (e: React.FormEvent) => {
+		e.preventDefault()
+		if (!activityId) return
+		await saveOrUpdate(activityId, userActivity, notes)
+	}, [activityId, userActivity, notes, saveOrUpdate])
+
+	return {
+		activity,
+		userActivity,
+		notes,
+		groupId,
+		activitiesLoading,
+		loadingUserActivity,
+		errorUserActivity,
+		setNotes,
+		saveOrUpdate,
+		handleSubmit,
+		hasNotesChanged: () => (notes ?? '') !== (initialNotes ?? '')
+	}
 }
