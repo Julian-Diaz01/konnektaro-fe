@@ -1,4 +1,5 @@
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
+import useSWR from 'swr'
 import {
     deleteUserActivity,
     createUserActivity,
@@ -6,6 +7,7 @@ import {
     getUserActivity,
 } from '@/services/userActivityService'
 import {UserActivity} from '@/types/models'
+import { swrConfigFrequent } from '@/lib/swr-config'
 
 interface UseUserActivityProps {
     userId?: string
@@ -18,35 +20,59 @@ interface updateUserActivity {
     targetActivityId?: string // this is optional, used for saveOrUpdate logic
 }
 
+// Fetcher function for SWR (handles array key)
+const fetcher = async (key: unknown) => {
+    const arr = Array.isArray(key) ? key : [key]
+    const [, userId, activityId] = arr as [string, string, string]
+    if (!userId || !activityId) {
+        throw new Error('Missing userId or activityId')
+    }
+    const response = await getUserActivity(userId, activityId)
+    return response.data
+}
+
 export default function useUserActivity({userId, activityId}: UseUserActivityProps) {
-    const [userActivity, setUserActivity] = useState<UserActivity | null>(null)
-    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
-        if (!userId || !activityId) return
+    // Stable array key - only create when we have valid data
+    const swrKey = userId && activityId ? ['user-activity', userId, activityId] : null
 
-        const fetchUserActivity = async () => {
-            try {
-                setLoading(true)
-                const response = await getUserActivity(userId, activityId)
-                setUserActivity(response.data)
-            } catch (err) {
-                console.error('Failed to fetch user activity:', err)
-                setError('Failed to fetch user activity.')
-            } finally {
-                setLoading(false)
+    // Use SWR for data fetching with caching - only when we have valid keys
+    const {
+        data: userActivity,
+        isLoading: loading,
+        mutate
+    } = useSWR<UserActivity>(
+        swrKey,
+        fetcher,
+        {
+            ...swrConfigFrequent,
+            onErrorRetry: (
+                err: Error & { status?: number },
+                _key,
+                config,
+                revalidate,
+                { retryCount }
+            ) => {
+                // For 404, retry once then stop
+                if (err?.status === 404) {
+                    if (retryCount >= 1) return
+                    setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 500)
+                    return
+                }
+                // Default behavior for other errors: up to 3 retries
+                if (retryCount >= 3) return
+                setTimeout(() => revalidate({ retryCount: retryCount + 1 }), config.errorRetryInterval ?? 5000)
             }
         }
-
-        fetchUserActivity()
-    }, [userId, activityId])
+    )
 
     const deleteCurrentUserActivity = async () => {
         if (!userId || !activityId) return
         try {
             await deleteUserActivity(userId, activityId)
-            setUserActivity(null)
+            // Optimistically update the cache
+            mutate(undefined, false)
         } catch (error) {
             console.error('Failed to delete user activity:', error)
             setError('Failed to delete user activity.')
@@ -61,7 +87,8 @@ export default function useUserActivity({userId, activityId}: UseUserActivityPro
     }) => {
         try {
             const {data} = await createUserActivity(newUserActivityData)
-            setUserActivity(data)
+            // Update the cache with new data
+            mutate(data, false)
         } catch (error) {
             console.error('Failed to create user activity:', error)
             setError('Failed to create user activity.')
@@ -72,8 +99,8 @@ export default function useUserActivity({userId, activityId}: UseUserActivityPro
         if (!userId || !targetActivityId) return
         try {
             await updateUserActivity(userId, targetActivityId, notes, groupId)
-            // Optimistically update notes locally:
-            setUserActivity((prev) => (prev ? {...prev, notes} : prev))
+            // Optimistically update the cache
+            mutate((prev) => (prev ? {...prev, notes} : prev), false)
         } catch (error) {
             console.error('Failed to update user activity:', error)
             setError('Failed to update user activity.')
@@ -87,5 +114,6 @@ export default function useUserActivity({userId, activityId}: UseUserActivityPro
         deleteCurrentUserActivity,
         createNewUserActivity,
         updateCurrentUserActivity,
+        refresh: mutate, // Expose refresh function for manual updates
     }
 }

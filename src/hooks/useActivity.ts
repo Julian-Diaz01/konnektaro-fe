@@ -1,64 +1,68 @@
-import {useState, useEffect} from "react"
+import {useState} from "react"
+import useSWR from "swr"
 import {
     createActivity,
-    deleteActivity as deleteActivityApi, getActivityById,
+    deleteActivity as deleteActivityApi,
+    getActivityById,
 } from "@/services/activityService"
 import {Activity, ActivityType} from "@/types/models"
-import axios from "@/utils/axiosInstance"
+import { swrConfigFrequent } from '@/lib/swr-config'
 
 interface ActivityOptions {
     activityId?: string | null;
     activityIds?: string[];
 }
 
+// Fetcher function for single activity (array key form)
+const fetcherSingle = async (key: unknown) => {
+    const arr = Array.isArray(key) ? key : [key]
+    const [, activityId] = arr as [string, string]
+    if (!activityId) throw new Error('Missing activityId')
+    const response = await getActivityById(activityId)
+    return response.data
+}
+
+// Fetcher function for multiple activities using service API (array key form)
+const fetcherMultiple = async (key: unknown) => {
+    const arr = Array.isArray(key) ? key : [key]
+    const [, joinedIds] = arr as [string, string]
+    if (!joinedIds) return []
+    const ids = joinedIds.split(',')
+    const responses = await Promise.all(ids.map((id) => getActivityById(id)))
+    return responses.map((res) => res.data)
+}
+
 export default function useActivity({activityId = null, activityIds = []}: ActivityOptions) {
-    const [activities, setActivities] = useState<Activity[]>([])
-    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [activity, setActivity] = useState<Activity | null>(null)
 
-    useEffect(() => {
-        if (!activityIds.length) {
-            setLoading(false)
-            return
-        }
+    // Stable SWR keys - only create when we have valid data
+    const singleKey = activityId ? ['activity', activityId] : null
+    const sortedIds = activityIds && activityIds.length > 0 ? [...activityIds].sort() : []
+    const listKey = sortedIds.length > 0 ? ['activities', sortedIds.join(',')] : null
 
-        const fetchActivities = async () => {
-            try {
-                setLoading(true)
-                const responses = await Promise.all(
-                    activityIds.map((id) => axios.get<Activity>(`/activity/${id}`))
-                )
-                setActivities(responses.map((res) => res.data))
-            } catch (err) {
-                console.error("Failed to fetch activities:", err)
-                setError("Failed to fetch activities.")
-            } finally {
-                setLoading(false)
-            }
-        }
+    // Use SWR for single activity - only when we have a valid activityId
+    const { 
+        data: activity, 
+        isLoading: loadingSingle 
+    } = useSWR<Activity>(
+        singleKey,
+        fetcherSingle,
+        swrConfigFrequent
+    )
 
-        fetchActivities()
-    }, [activityIds])
+    // Use SWR for multiple activities - only when we have valid activityIds
+    const { 
+        data: activities = [], 
+        isLoading: loadingMultiple,
+        mutate: mutateActivities
+    } = useSWR<Activity[]>(
+        listKey,
+        fetcherMultiple,
+        swrConfigFrequent
+    )
 
-    useEffect(() => {
-        if (!activityId) return
-
-        const fetchEvent = async () => {
-            try {
-                setLoading(true)
-                const response = await getActivityById(activityId)
-                setActivity(response.data)
-            } catch (err) {
-                console.error("Failed to fetch activity:", err)
-                setError("Failed to fetch activity.")
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchEvent()
-    }, [activityId])
+    // Combined loading state
+    const loading = Boolean(loadingSingle || loadingMultiple)
 
     const createNewActivity = async (activityData: {
         title: string
@@ -68,7 +72,8 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
     }) => {
         try {
             const createdActivity = await createActivity(activityData)
-            setActivities((prev) => [...prev, createdActivity])
+            // Update the cache with new activity
+            mutateActivities((prev) => [...(prev || []), createdActivity], false)
         } catch (error) {
             console.error("Failed to create activity:", error)
             setError("Failed to create activity.")
@@ -78,8 +83,10 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
     const deleteActivity = async (activityId: string) => {
         try {
             await deleteActivityApi(activityId)
-            setActivities((prev) =>
-                prev.filter((activity) => activity.activityId !== activityId)
+            // Update the cache by removing the deleted activity
+            mutateActivities((prev) => 
+                (prev || []).filter((activity) => activity.activityId !== activityId), 
+                false
             )
         } catch (error) {
             console.error("Failed to delete activity:", error)
@@ -94,5 +101,6 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
         error,
         createNewActivity,
         deleteActivity,
+        refresh: mutateActivities, // Expose refresh function for manual updates
     }
 }

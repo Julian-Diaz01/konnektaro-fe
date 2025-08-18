@@ -1,17 +1,18 @@
 import {useRouter, useSearchParams} from "next/navigation"
-import useEvent from "./useEvent"
-import useActivity from "./useActivity"
 import {useState, useMemo} from "react"
 import {ActivityType} from "@/types/models"
 import {updateCurrentActivity} from "@/services/eventService"
 import useGroupActivity from "@/hooks/useGroupActivity";
+import { useEventContext } from "@/contexts/EventContext"
+import useActivity from "@/hooks/useActivity";
 
 export default function useEventPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const eventId = searchParams.get("id")
 
-    const {event, loading: eventLoading, deleteCurrentEvent} = useEvent(eventId || "")
+    // Use context instead of hook for event data
+    const {event, loading: eventLoading, deleteCurrentEvent} = useEventContext()
     const {
         activities,
         loading: activitiesLoading,
@@ -57,7 +58,9 @@ export default function useEventPage() {
     }
 
     const handleDeleteEvent = async () => {
-        await deleteCurrentEvent()
+        if (eventId) {
+            await deleteCurrentEvent(eventId)
+        }
         router.push("/admin")
     }
 

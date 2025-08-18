@@ -15,7 +15,7 @@ interface MatchupProps {
 }
 
 export default function Matchup({user1, user2}: MatchupProps) {
-    if (!user1 || !user2 || !user1.name || !user2.name || !user1.avatar || !user2.avatar) return null
+    if (!user1 || !user1.name || !user1.avatar ) return null
 
     return (
         <div className="p-8 bg-white rounded border mb-8">
@@ -68,7 +68,7 @@ export default function Matchup({user1, user2}: MatchupProps) {
                 </div>
 
                 {/* User 2 - bottom right */}
-                <motion.div
+                {user2 && user2.name && user2.avatar && <motion.div
                     initial={{x: '50%', y: '50%'}}
                     animate={{x: '0%', y: '0%'}}
                     transition={{duration: 0.6, ease: 'easeOut'}}
@@ -87,7 +87,7 @@ export default function Matchup({user1, user2}: MatchupProps) {
                     {user2.description && (
                         <div className="text-[10px] text-gray-500">{user2.description}</div>
                     )}
-                </motion.div>
+                </motion.div>}
             </div>
         </div>
     )

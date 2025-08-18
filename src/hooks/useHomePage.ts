@@ -1,11 +1,10 @@
 import {useRouter} from "next/navigation";
 import {useEffect, useMemo, useRef} from "react";
 import useOpenEvents from "@/hooks/useOpenEvents";
-import useUser from "@/hooks/useUser";
-import useAuthUser from "@/hooks/useAuthUser";
-import useEvent from "@/hooks/useEvent";
 import useEventSocket from "@/hooks/useEventSocket";
 import useGroupActivity from "@/hooks/useGroupActivity";
+import { useEventContext } from "@/contexts/EventContext";
+import { useUserContext } from "@/contexts/UserContext";
 import {ParticipantUser} from "@/types/models";
 
 // This hook handles the logic for the home page, including user checks, event loading, socket management, and group activity
@@ -13,8 +12,11 @@ import {ParticipantUser} from "@/types/models";
 export default function useHomePage() {
     const router = useRouter()
     const {events, loading: eventsLoading} = useOpenEvents()
-    const {user: firebaseUser, loading: firebaseLoading} = useAuthUser()
-    const {user, loading: loadingUser} = useUser(firebaseUser?.uid || null)
+    
+    // Use contexts instead of hooks for static data
+    const {user, loading: loadingUser} = useUserContext()
+    const {event} = useEventContext()
+    
     const name = user?.name || '👋'
 
     // Refs to prevent duplicate API calls and unnecessary re-renders
@@ -25,7 +27,6 @@ export default function useHomePage() {
     const userId = user?.userId || ''
     // Event management - only fetch if user has an eventId
     const eventId = user?.eventId || ''
-    const {event} = useEvent(eventId)
 
     // Socket management - only connect if we have an eventId
     const {
@@ -50,10 +51,8 @@ export default function useHomePage() {
 
     // Trigger group activity fetch when socket indicates groups are created
     useEffect(() => {
-        console.log('🔍 useHomePage useEffect: shouldFetchGroups:', shouldFetchGroups, 'activityId:', activityId)
         
         if (shouldFetchGroups && activityId) {
-            console.log('🚀 useHomePage: Triggering group activity refresh for activityId:', activityId)
             
             // Fetch immediately when socket triggers - no delay needed
             fetchGroupActivity()
@@ -65,9 +64,7 @@ export default function useHomePage() {
 
     // Clear group activity when activity changes to stop rendering PartnerActivity
     useEffect(() => {
-        console.log('🔍 useHomePage useEffect: hasActivityChanged:', hasActivityChanged)
         if (hasActivityChanged) {
-            console.log('🔄 useHomePage: Activity changed detected, but keeping PartnerActivity visible until new activity loads')
             // Don't clear group activity immediately - let it stay until new activity loads
             // This ensures PartnerActivity remains visible during the transition
             resetActivityChanged()
@@ -77,8 +74,6 @@ export default function useHomePage() {
     // Reset fetch trigger when activity changes
     useEffect(() => {
         if (activityId !== lastActivityIdRef.current) {
-            console.log('🔄 useHomePage: Activity ID changed, resetting fetch trigger')
-            console.log('🔄 useHomePage: Previous activityId:', lastActivityIdRef.current, 'New activityId:', activityId)
             fetchTriggeredRef.current = false
             lastActivityIdRef.current = activityId
         }
@@ -87,8 +82,6 @@ export default function useHomePage() {
     // Also reset fetch trigger when eventId changes (user switches events)
     useEffect(() => {
         if (eventId !== lastEventIdRef.current) {
-            console.log('🔄 useHomePage: Event ID changed, resetting fetch trigger')
-            console.log('🔄 useHomePage: Previous eventId:', lastEventIdRef.current, 'New eventId:', eventId)
             fetchTriggeredRef.current = false
             lastEventIdRef.current = eventId
         }
@@ -117,7 +110,7 @@ export default function useHomePage() {
     }
 
     // Loading state
-    const loading = eventsLoading && firebaseLoading && loadingUser
+    const loading = eventsLoading && loadingUser
 
     // Partner activity render conditions
     const shouldRenderPartnerActivity = useMemo(() => {
@@ -127,20 +120,11 @@ export default function useHomePage() {
         // 3. We have group activity data AND
         // 4. We have a partner
         // OR if we're transitioning between activities (keep showing old partner until new one loads)
-        const hasBasicRequirements = Boolean(activityId && !groupLoading && groupActivity && currentUserPartner)
+        const hasBasicRequirements = Boolean(activityId && !groupLoading && groupActivity)
         const isTransitioning = hasActivityChanged && groupActivity && currentUserPartner
         
         const shouldRender = hasBasicRequirements || isTransitioning
         
-        console.log('🔍 useHomePage: shouldRenderPartnerActivity calculation:', {
-            activityId,
-            groupLoading,
-            hasGroupActivity: !!groupActivity,
-            hasPartner: !!currentUserPartner,
-            hasBasicRequirements,
-            isTransitioning,
-            shouldRender
-        })
         return shouldRender as boolean
     }, [activityId, groupLoading, groupActivity, currentUserPartner, hasActivityChanged])
 
