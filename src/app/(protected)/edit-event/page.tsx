@@ -1,6 +1,6 @@
 'use client';
 
-import {Suspense, useMemo} from "react";
+import {Suspense, useMemo, useCallback} from "react";
 import {BackLink} from "@/components/BackLink";
 import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
 import AddActivityForm from "@/components/AddActivity";
@@ -46,6 +46,19 @@ function EventPageContent() {
         return currentActivityId === activityId
     }, [currentActivityId])
 
+    // Memoize handler functions to prevent unnecessary re-renders
+    const memoizedHandlePairUsers = useCallback((activityId: string) => {
+        handlePairUsers(activityId)
+    }, [handlePairUsers])
+
+    const memoizedHandleCurrentActivityUpdate = useCallback((activityId: string) => {
+        handleCurrentActivityUpdate(activityId)
+    }, [handleCurrentActivityUpdate])
+
+    const memoizedDeleteActivity = useCallback((activityId: string) => {
+        deleteActivity(activityId)
+    }, [deleteActivity])
+
     if (loading) {
         return <Spinner/>;
     }
@@ -83,7 +96,7 @@ function EventPageContent() {
                     </div>
                 </div>
             </div>
-        ), [currentActivityName, isUsingLiveData])
+        ), [currentActivityName, isUsingLiveData, event?.open])
     }
 
     const ShowActivities = () => {
@@ -112,7 +125,7 @@ function EventPageContent() {
                                 <div className="ml-[auto] flex flex-col gap-2">
                                     {activity.type === 'partner' && isActive && (
                                         <Button
-                                            onClick={() => handlePairUsers(activity.activityId)}
+                                            onClick={() => memoizedHandlePairUsers(activity.activityId)}
                                         >
                                             Pair Users
                                         </Button>
@@ -130,7 +143,7 @@ function EventPageContent() {
                                     {!isActive ? (
                                         <Button
                                             variant="outlinePrimary"
-                                            onClick={() => handleCurrentActivityUpdate(activity.activityId)}
+                                            onClick={() => memoizedHandleCurrentActivityUpdate(activity.activityId)}
                                             disabled={isActive}
                                         >
                                             Initiate Activity
@@ -138,7 +151,7 @@ function EventPageContent() {
                                     ) : null}
                                     <ConfirmDeleteButton
                                         name="Activity"
-                                        onConfirm={() => deleteActivity(activity.activityId)}
+                                        onConfirm={() => memoizedDeleteActivity(activity.activityId)}
                                         buttonText="Delete Activity"
                                         buttonVariant="destructiveOutline"
                                     />
@@ -150,7 +163,7 @@ function EventPageContent() {
             ) : (
                 <p className="mt-2 text-sm text-gray-500">No activities yet</p>
             )
-        ), [])
+        ), [activities, currentActivityId, groupActivity, event?.eventId, memoizedHandlePairUsers, memoizedHandleCurrentActivityUpdate, memoizedDeleteActivity, handleShowGroupedUsers])
 
         return (
             <div className="p-4 bg-white border rounded">
