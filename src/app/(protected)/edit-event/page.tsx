@@ -96,7 +96,7 @@ function EventPageContent() {
                     </div>
                 </div>
             </div>
-        ), [currentActivityName, isUsingLiveData, event?.open])
+        ), [currentActivityName, isUsingLiveData])
     }
 
     const ShowActivities = () => {
@@ -163,7 +163,7 @@ function EventPageContent() {
             ) : (
                 <p className="mt-2 text-sm text-gray-500">No activities yet</p>
             )
-        ), [activities, currentActivityId, groupActivity, event?.eventId, memoizedHandlePairUsers, memoizedHandleCurrentActivityUpdate, memoizedDeleteActivity, handleShowGroupedUsers])
+        ), [])
 
         return (
             <div className="p-4 bg-white border rounded">
