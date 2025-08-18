@@ -16,7 +16,7 @@ interface PartnerActivityProps {
 }
 
 export default function PartnerActivity({ shouldRender, currentUser, partner }: PartnerActivityProps) {
-    if (!shouldRender || !currentUser || !partner) return null;
+    if (!shouldRender || !currentUser) return null;
 
     return (
         <Matchup
@@ -26,9 +26,9 @@ export default function PartnerActivity({ shouldRender, currentUser, partner }: 
                 description: currentUser.description
             }}
             user2={{
-                name: partner.name,
-                avatar: partner.icon,
-                description: partner.description
+                name: partner?.name,
+                avatar: partner?.icon,
+                description: partner?.description
             }}
         />
     );

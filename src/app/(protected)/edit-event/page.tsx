@@ -11,9 +11,10 @@ import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
 import useEventSocket from "@/hooks/useEventSocket";
 import {ShowEventDetails} from "@/components/EventDetails";
+import { EventProvider } from "@/contexts/EventContext";
+import { useSearchParams } from "next/navigation";
 
-export default function EventPage() {
-
+function EventPageContent() {
     const {
         event,
         activities,
@@ -170,15 +171,26 @@ export default function EventPage() {
     )
 
     return (
+        <div className="page-background">
+            <Header/>
+            <CurrentActivityIndicator/>
+            <ShowEventDetails event={event}/>
+            <UsersList eventId={event?.eventId} mode="all-users"/>
+            <ShowActivities/>
+            <AddNewActivity/>
+        </div>
+    );
+}
+
+export default function EventPage() {
+    const searchParams = useSearchParams()
+    const eventId = searchParams.get("id")
+
+    return (
         <Suspense fallback={null}>
-            <div className="page-background">
-                <Header/>
-                <CurrentActivityIndicator/>
-                <ShowEventDetails event={event}/>
-                <UsersList eventId={event?.eventId} mode="all-users"/>
-                <ShowActivities/>
-                <AddNewActivity/>
-            </div>
+            <EventProvider eventId={eventId || ""}>
+                <EventPageContent />
+            </EventProvider>
         </Suspense>
     );
 }

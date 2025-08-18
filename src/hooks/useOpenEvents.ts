@@ -1,30 +1,33 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import { getAllEvents } from '@/services/eventService'
 import { Event } from '@/types/models'
+import { swrConfigStatic } from '@/lib/swr-config'
+
+// Fetcher function for SWR
+const fetcher = async () => {
+  const response = await getAllEvents()
+  return response.data.filter((event: Event) => event.open)
+}
+
 /**
- * This hook fetches all open events from the server and returns them along with a loading state.
- * **/
+ * This hook fetches all open events from the server using SWR for caching
+ * and returns them along with a loading state.
+ */
 export default function useOpenEvents() {
-    const [events, setEvents] = useState<Event[]>([])
-    const [loading, setLoading] = useState(true)
+  const { data: events = [], error, isLoading, mutate } = useSWR<Event[]>(
+    'open-events',
+    fetcher,
+    swrConfigStatic
+  )
 
-    useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                const response = await getAllEvents()
-                const openEvents = response.data.filter((event: Event) => event.open)
-                setEvents(openEvents)
-            } catch (err) {
-                console.error('Failed to fetch events:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
+  const loading = isLoading
 
-        fetchEvents()
-    }, [])
-
-    return { events, loading }
+  return { 
+    events, 
+    loading, 
+    error, 
+    refresh: mutate 
+  }
 }

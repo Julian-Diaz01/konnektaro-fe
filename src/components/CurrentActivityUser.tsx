@@ -25,7 +25,6 @@ export default function CurrentActivity({
         getCountdown: getCountdownAction,
         onSkipCountdown
     })
-
     // Business logic hooks
     const {
         activity,

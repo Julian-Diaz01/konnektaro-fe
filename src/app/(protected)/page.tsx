@@ -15,7 +15,7 @@ export default function HomePage() {
         event,
         // Loading states
         loading,
-        activeActivityId,
+        activityId,
         // Socket functions
         getCountdown,
         skipCountdown,
@@ -30,11 +30,10 @@ export default function HomePage() {
 
     const Activity = () => {
         if (!event || !user) return null
-
         return (
             <CurrentActivity
                 userId={user.userId}
-                activityId={activeActivityId ?? event?.currentActivityId}
+                activityId={activityId}
                 getCountdownAction={getCountdown}
                 onSkipCountdown={skipCountdown}
             />

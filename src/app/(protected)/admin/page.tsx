@@ -10,7 +10,7 @@ import {disconnectSocket} from "@/lib/socket";
 
 export default function AdminPage() {
     const router = useRouter()
-    const { user } = useAuthUser() // Remove userLoading since AuthenticatedLayout handles it
+    const { firebaseUser } = useAuthUser() // Remove userLoading since AuthenticatedLayout handles it
     const { events, loading: eventsLoading } = useOpenEvents()
 
     const loading = eventsLoading // Only keep eventsLoading since AuthenticatedLayout handles user loading
@@ -24,7 +24,7 @@ export default function AdminPage() {
     return (
             <div className="page-background mt-6">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6">
-                    Welcome {user?.displayName || ''}
+                    Welcome {firebaseUser?.displayName || ''}
                 </h1>
 
                 <Button

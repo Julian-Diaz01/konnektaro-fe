@@ -8,6 +8,8 @@ import Spinner from '@/components/ui/spinner'
 import {Button} from "@/components/ui/button";
 import LoginPage from "@/app/login/page";
 import {Toaster} from "@/components/ui/sonner";
+import {AppContext} from '@/contexts/AppContext'
+import useUser from "@/hooks/useUser";
 
 interface Props {
     children: React.ReactNode
@@ -31,8 +33,9 @@ export const USER_URLS = {
 const AuthenticatedLayout = ({children}: Props) => {
     const router = useRouter()
     const pathname = usePathname()
-    const {user, loading} = useAuthUser()
+    const {firebaseUser, loading} = useAuthUser()
     const [isAllowed, setIsAllowed] = useState(false)
+    const {user} = useUser(firebaseUser?.uid || null)
 
     const handleLogout = async () => {
         await logout()
@@ -42,7 +45,7 @@ const AuthenticatedLayout = ({children}: Props) => {
     useEffect(() => {
         if (loading) return // Wait for user to load
 
-        if (!user) {
+        if (!firebaseUser) {
             if (pathname === '/login') {
                 console.log('User not found, staying on login page')
                 setIsAllowed(true) // Allow staying on login page
@@ -54,7 +57,7 @@ const AuthenticatedLayout = ({children}: Props) => {
         }
 
         // Determine isAdmin/inAdminPage and handle logic
-        const isAdmin = !user?.isAnonymous
+        const isAdmin = !firebaseUser?.isAnonymous
         const inAdminPage = Object.values(ADMIN_URLS).includes(pathname)
         const inUserPage = Object.values(USER_URLS).includes(pathname)
 
@@ -65,16 +68,16 @@ const AuthenticatedLayout = ({children}: Props) => {
         } else if (isAdmin && inUserPage && pathname !== USER_URLS.login) {
             console.log('Admin user visiting a user-only URL. Redirecting to /admin')
             router.replace(ADMIN_URLS.admin)
-        } else if (!inAdminPage && !user) {
+        } else if (!inAdminPage && !firebaseUser) {
             console.log('Anonymous users cannot access personal pages. Redirecting.')
             if (pathname === '/login') return;
             router.replace('/login')
         } else {
             setIsAllowed(true)
         }
-    }, [user, loading, pathname, router])
+    }, [firebaseUser, loading, pathname, router])
 
-    if (pathname === '/login' && !user) {
+    if (pathname === '/login' && !firebaseUser) {
         return <LoginPage/>
     }
     // Show loading spinner while checking auth
@@ -93,6 +96,8 @@ const AuthenticatedLayout = ({children}: Props) => {
         router.push('/')
     }
 
+    const eventId = user?.eventId || ''
+
     return (
         <div className="min-h-screen flex flex-col">
             <header className="bg-gray-100 text-center py-4 border-b border-gray-200">
@@ -108,7 +113,9 @@ const AuthenticatedLayout = ({children}: Props) => {
             </header>
 
             <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
-                {children}
+                <AppContext eventId={eventId} userId={user?.userId || null}>
+                    {children}
+                </AppContext>
             </main>
             <Toaster/>
         </div>

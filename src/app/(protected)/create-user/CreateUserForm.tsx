@@ -14,7 +14,7 @@ import {BackLink} from "@/components/BackLink";
 export default function CreateUserForm() {
     const router = useRouter()
     const eventId = useSearchParams().get('eventId') || ''
-    const {user: firebaseUser} = useAuthUser() // Remove authLoading since AuthenticatedLayout handles it
+    const {firebaseUser} = useAuthUser() // Remove authLoading since AuthenticatedLayout handles it
     const [eventLoading, setEventLoading] = useState(true)
     const [eventOpen, setEventOpen] = useState(false)
     const [eventName, setEventName] = useState('')
