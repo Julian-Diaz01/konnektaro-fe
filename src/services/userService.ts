@@ -13,3 +13,7 @@ export const getUser = (userId: string) =>
 // Delete a user by ID
 export const deleteUser = (userId: string) =>
     axios.delete(`/user/${userId}`)
+
+// Get user reviews by user ID
+export const getUserReviews = (userId: string, eventId: string) =>
+    axios.get(`/user/${userId}/review/${eventId}`)
