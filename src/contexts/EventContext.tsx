@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { Event } from '@/types/models'
 import { getEventById, deleteEvent, createEvent } from '@/services/eventService'
+import { mutate } from 'swr'
 
 interface EventContextType {
   event: Event | null
@@ -51,6 +52,8 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     try {
       await deleteEvent(id)
       setEvent(null)
+      // Invalidate the open-events cache to ensure admin page shows updated data
+      mutate('open-events')
     } catch (error) {
       console.error("Failed to delete event:", error)
       setError("Failed to delete event.")
