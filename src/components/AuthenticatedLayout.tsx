@@ -28,6 +28,7 @@ export const USER_URLS = {
     createUser: '/create-user',
     event: '/event',
     login: '/login',
+    review: '/review',
 };
 
 const AuthenticatedLayout = ({children}: Props) => {
