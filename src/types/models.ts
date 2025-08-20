@@ -87,7 +87,7 @@ export interface Review {
 
 export interface ReviewActivity {
     activityId: string
-    type: 'individual' | 'partner' | 'group'
+    type: 'partner' | 'self'
     title: string
     question: string
     selfAnswer: string | null
