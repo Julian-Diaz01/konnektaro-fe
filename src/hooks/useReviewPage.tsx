@@ -95,7 +95,6 @@ export default function useReviewPage() {
                 if (activity.partnerAnswer?.icon && !partnerSvgs[activity.partnerAnswer.icon]) {
                     try {
                         const response = await fetch(`/avatars/${activity.partnerAnswer.icon}`)
-                        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
                         const svgText = await response.text()
                         const cleanedSvg = cleanSvg(svgText)
                         partnerSvgs[activity.partnerAnswer.icon] = cleanedSvg || ''
