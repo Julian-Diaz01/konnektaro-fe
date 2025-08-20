@@ -27,17 +27,20 @@ export default function useReviewPage() {
 
     useEffect(() => {
         const loadPdfMake = async () => {
-            const pdfMakeModule = await import('pdfmake/build/pdfmake')
-            const pdfFontsModule = await import('pdfmake/build/vfs_fonts')
-            pdfMake = pdfMakeModule.default
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if ((pdfFontsModule as any).pdfMake && (pdfFontsModule as any).pdfMake.vfs) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                pdfMake.vfs = (pdfFontsModule as any).pdfMake.vfs
-            } else {
-                throw new Error('Fonts not found in local import')
+            try {
+                const pdfMakeModule = await import("pdfmake/build/pdfmake")
+                const pdfFontsModule = await import("pdfmake/build/vfs_fonts")
+
+                const pdfMakeInstance = (pdfMakeModule.default || pdfMakeModule) as typeof import("pdfmake/build/pdfmake")
+                const fonts = pdfFontsModule as { vfs: { [file: string]: string } }
+
+                pdfMakeInstance.vfs = fonts.vfs
+                pdfMake = pdfMakeInstance
+
+                setPdfMakeLoaded(true)
+            } catch (err) {
+                console.error("Failed to load pdfmake:", err)
             }
-            setPdfMakeLoaded(true)
         }
         loadPdfMake()
     }, [])
@@ -127,80 +130,245 @@ export default function useReviewPage() {
 
             const docDefinition = {
                 content: [
-                    {text: 'Konnektaro', style: 'header', alignment: 'center', margin: [0, 0, 0, 20]},
+                    // Header
                     {
-                        text: `Date: ${new Date(review.createdAt).toLocaleDateString()}`,
-                        style: 'date',
-                        alignment: 'center',
-                        margin: [0, 0, 0, 20]
-                    },
-                    ...(currentUser ? [
-                        {text: 'Your Information', style: 'subheader', margin: [0, 0, 0, 10]},
-                        ...(currentUserSvg ? [{
-                            svg: currentUserSvg,
-                            width: 60,
-                            height: 60,
-                            alignment: 'center',
-                            margin: [0, 0, 0, 10]
-                        }] : [{
-                            text: `Avatar: ${currentUser.icon}`,
-                            style: 'userInfo',
-                            margin: [0, 0, 0, 5]
-                        }]),
-                        {text: `Name: ${currentUser.name}`, style: 'userInfo', margin: [0, 0, 0, 5]},
-                        {text: `Description: ${currentUser.description}`, style: 'description', margin: [0, 0, 0, 15]}
-                    ] : []),
-                    {text: 'Event Details', style: 'subheader', margin: [0, 0, 0, 10]},
-                    {text: review.event.name, style: 'title', margin: [0, 0, 0, 5]},
-                    {text: review.event.description, style: 'description', margin: [0, 0, 0, 15]},
-                    {text: 'Activities', style: 'subheader', margin: [0, 0, 0, 10]},
-                    ...review.activities.map((activity, index) => [
-                        {text: `Activity ${index + 1}: ${activity.title}`, style: 'title', margin: [0, 0, 0, 5]},
-                        {text: `Question: ${activity.question}`, style: 'text', margin: [0, 0, 0, 8]},
-                        ...(activity.selfAnswer ? [{
-                            text: `Your Answer: ${activity.selfAnswer}`,
-                            style: 'answer',
-                            margin: [20, 0, 0, 8]
-                        }] : []),
-                        ...(activity.partnerAnswer ? [
-                            {text: 'Partner Information', style: 'subheader', margin: [20, 10, 0, 5]},
-                            ...(partnerSvgs[activity.partnerAnswer.icon] ? [{
-                                svg: partnerSvgs[activity.partnerAnswer.icon],
-                                width: 40,
-                                height: 40,
-                                margin: [20, 0, 0, 5]
-                            }] : []),
-                            {text: `Name: ${activity.partnerAnswer.name}`, style: 'partnerInfo', margin: [20, 0, 0, 3]},
+                        columns: [
+                            {text: new Date(review.createdAt).toLocaleDateString(), style: "date"},
                             {
-                                text: `Description: ${activity.partnerAnswer.description}`,
-                                style: 'partnerInfo',
-                                margin: [20, 0, 0, 3]
+                                text: "Konnektaro Review",
+                                style: "header",
+                                alignment: "right",
                             },
-                            ...(activity.partnerAnswer.email ? [{
-                                text: `Email: ${activity.partnerAnswer.email}`,
-                                style: 'partnerInfo',
-                                margin: [20, 0, 0, 3]
-                            }] : []),
+                        ],
+                        margin: [0, 0, 0, 20],
+                    },
+
+                    // Current User
+                    ...(currentUser
+                        ? [
+                            {text: "Your Information", style: "subheader", margin: [0, 0, 0, 10]},
                             {
-                                text: `Partner Answer: ${activity.partnerAnswer.notes || ''}`,
-                                style: 'partnerAnswer',
-                                margin: [20, 0, 0, 8]
+                                columns: [
+                                    currentUserSvg
+                                        ? {
+                                            svg: currentUserSvg,
+                                            width: 60,
+                                            height: 60,
+                                            margin: [0, 0, 10, 0],
+                                        }
+                                        : {
+                                            text: `Avatar: ${currentUser.icon}`,
+                                            style: "userInfo",
+                                        },
+                                    [
+                                        {text: currentUser.name, style: "userInfo"},
+                                        {text: currentUser.description, style: "description"},
+                                    ],
+                                ],
+                                columnGap: 10,
+                                margin: [0, 0, 0, 20],
+                            },
+                        ]
+                        : []),
+
+                    // Event Info
+                    {text: review.event.name, style: "title", margin: [0, 0, 0, 5]},
+                    {text: review.event.description, style: "description", margin: [0, 0, 0, 20]},
+
+                    // Activities
+                    {text: "Activities", style: "subheader", margin: [0, 0, 0, 10]},
+                    ...review.activities.map((activity, index) => {
+                            const parts = [
+                                {
+                                    text: `Activity ${index + 1}`,
+                                    style: "badge",
+                                    margin: [0, 10, 0, 10],
+                                },
+                                // Activity Info (gray background like preview)
+                                {
+                                    table: {
+                                        body: [[{
+                                            stack: [
+                                                {
+                                                    text: `Activity with ${activity.type.toUpperCase()}`,
+                                                    style: "textSmall",
+                                                },
+                                                {text: activity.title, style: "title"},
+                                                {text: activity.question, style: "text"},
+                                            ],
+                                            margin: [0, 0, 0, 10],
+                                            style: "activityBox",
+                                        }]]
+                                    },
+                                    layout: {
+                                        defaultBorder: false,
+                                        paddingLeft: () => 10,
+                                        paddingRight: () => 10,
+                                        paddingTop: () => 10,
+                                        paddingBottom: () => 10,
+                                    },
+                                    margin: [0, 5, 100, 15],
+                                    width: 500,
+
+                                },
+                                {
+                                    table: {
+                                        widths: [100, "auto"],
+                                        body: [
+                                            [
+                                                {text: ""}, // left spacer
+                                                {
+                                                    stack: [
+                                                        {text: "Your Answer: ", style: "answerLabel"},
+                                                        {text: activity.selfAnswer ?? 'No answer', style: "answer"},
+                                                    ],
+                                                    margin: [5, 5, 5, 5] // inner padding
+                                                }
+                                            ]
+                                        ]
+                                    },
+                                    layout: {
+                                        defaultBorder: false,
+                                        paddingLeft: () => 10,
+                                        paddingRight: () => 10,
+                                        paddingTop: () => 10,
+                                        paddingBottom: () => 10,
+                                        fillColor: (rowIndex: number, node: never, columnIndex: number) => {
+                                            if (columnIndex === 0) return "#ffffff"
+                                            if (columnIndex === 1) return "#BBF7D0"
+                                            return null
+                                        }
+                                    }
+                                },
+                            ]
+
+                            if (activity.type === 'partner' && activity.partnerAnswer) {
+                                parts.push(
+                                    {
+                                        table: {
+                                            widths: [100, "auto"],
+                                            body: [
+                                                [
+                                                    {text: ""}, // left spacer
+                                                    {
+                                                        stack: [
+                                                            {
+                                                                columns: [
+                                                                    partnerSvgs[activity.partnerAnswer.icon]
+                                                                        ? {
+                                                                            svg: partnerSvgs[activity.partnerAnswer.icon],
+                                                                            width: 30,
+                                                                            height: 30
+                                                                        }
+                                                                        : {},
+                                                                    [
+                                                                        {
+                                                                            text: `Partner Answer (${activity.partnerAnswer.name ?? "Name"})`,
+                                                                            style: "partnerLabel",
+                                                                        },
+                                                                        {
+                                                                            text: activity.partnerAnswer.description ?? "Partner description",
+                                                                            style: "partnerInfo",
+                                                                        },
+                                                                        activity.partnerAnswer.email
+                                                                            ? {
+                                                                                text: activity.partnerAnswer.email,
+                                                                                style: "partnerInfo"
+                                                                            }
+                                                                            : {},
+                                                                    ],
+                                                                ],
+                                                                columnGap: 10,
+                                                                margin: [0, 0, 0, 10]
+                                                            },
+                                                            {
+                                                                text: activity.partnerAnswer.notes ?? "No answer",
+                                                                style: "partnerAnswer",
+                                                            },
+
+                                                        ],
+                                                        margin: [5, 5, 5, 5] // inner padding
+                                                    }
+                                                ]
+                                            ]
+                                        },
+                                        layout: {
+                                            defaultBorder: false,
+                                            paddingLeft: () => 10,
+                                            paddingRight: () => 10,
+                                            paddingTop: () => 10,
+                                            paddingBottom: () => 10,
+                                            fillColor: (rowIndex: number, node: never, columnIndex: number) => {
+                                                if (columnIndex === 0) return "#ffffff"
+                                                if (columnIndex === 1) return "#E5E5E5"
+                                                return null
+                                            }
+                                        }
+                                    },)
                             }
-                        ] : [])
-                    ]).flat()
-                ],
+
+                            return parts
+
+                        }
+                    ),
+                ].flat(),
+                footer: () => {
+                    return {
+                        stack: [
+                            {text: "https://konnektaro.com", style: "footerText"},
+                            {text: "https://www.linkedin.com/company/konnektaro", style: "footerText"},
+
+                        ],
+                        margin: [0, 5, 0, 5] // optional top/bottom spacing
+                    }
+                },
                 styles: {
-                    header: {fontSize: 24, bold: true, color: '#933DA7'},
-                    date: {fontSize: 11, color: '#6b7280'},
-                    subheader: {fontSize: 18, bold: true, color: '#171717', margin: [0, 0, 0, 10]},
-                    title: {fontSize: 16, bold: true, color: '#933DA7', margin: [0, 0, 0, 5]},
-                    text: {fontSize: 12, color: '#171717', margin: [0, 0, 0, 8]},
-                    userInfo: {fontSize: 14, bold: true, color: '#1e40af', margin: [0, 0, 0, 5]},
-                    description: {fontSize: 12, italic: true, color: '#6b7280', margin: [0, 0, 0, 15]},
-                    answer: {fontSize: 11, color: '#059669', margin: [20, 0, 0, 8]},
-                    partnerInfo: {fontSize: 10, color: '#7c3aed', margin: [20, 0, 0, 3]},
-                    partnerAnswer: {fontSize: 11, color: '#7c3aed', margin: [20, 0, 0, 8]}
-                }
+                    header: {fontSize: 18, bold: true, color: "#933DA7"},
+                    date: {fontSize: 10, color: "#6b7280"},
+                    subheader: {fontSize: 14, bold: true, margin: [0, 10, 0, 5]},
+                    title: {fontSize: 13, bold: true, color: "#171717", padding: 10},
+                    text: {fontSize: 11, color: "#171717", padding: 10},
+                    textSmall: {fontSize: 9, color: "#444", alignment: "right", padding: 10},
+                    description: {fontSize: 10, italic: true, color: "#6b7280", padding: 10},
+                    userInfo: {fontSize: 12, bold: true},
+                    badge: {
+                        fontSize: 9,
+                        color: "black",
+                        bold: true,
+                        fillColor: "#404345", // Tailwind gray-500
+                        alignment: "center",
+                        margin: [0, 0, 0, 5],
+                        decoration: "underline",
+                    },
+                    activityBox: {
+                        fillColor: "#F6DDF9", // primary
+                        padding: 20,
+                        alignment: "left"
+                    },
+                    selfAnswerBox: {
+                        fillColor: "#defde8", // green-300/20 vibe
+                        padding: 20,
+                        width: "*",
+                    },
+                    partnerBox: {
+                        fillColor: "#E5E5E5", // gray-400/20 vibe
+                        padding: 8,
+                        margin: [20, 5, 0, 10],
+                        alignment: "right"
+                    },
+                    footerText: {
+                        fontSize: 10,
+                        color: "#933DA7", // purple
+                        alignment: "center",
+                        italics: false,
+                        lineHeight: 1.2
+                    },
+                    answerLabel: {fontSize: 10, bold: true, color: "#000"},
+                    answer: {fontSize: 11, color: "#000"},
+                    partnerLabel: {fontSize: 10, bold: true, color: "#000"},
+                    partnerInfo: {fontSize: 9, color: "#555"},
+                    partnerAnswer: {fontSize: 10, color: "#333"},
+                },
             }
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
