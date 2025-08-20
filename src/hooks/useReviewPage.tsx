@@ -66,7 +66,7 @@ export default function useReviewPage() {
         }
 
         try {
-            let currentUserSvg: string | null = null
+            let currentUserSvg: string | null
             const partnerSvgs: { [key: string]: string } = {}
 
             const cleanSvg = (svgText: string): string | null => {
