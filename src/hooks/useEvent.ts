@@ -5,6 +5,7 @@ import {
     createEvent,
 } from "@/services/eventService"
 import {Event} from "@/types/models"
+import { mutate } from 'swr'
 
 export default function useEvent(eventId: string) {
     const [event, setEvent] = useState<Event | null>(null)
@@ -34,6 +35,8 @@ export default function useEvent(eventId: string) {
         if (!eventId) return
         try {
             await deleteEvent(eventId)
+            // Invalidate the open-events cache to ensure admin page shows updated data
+            mutate('open-events')
         } catch (error) {
             console.error("Failed to delete event:", error)
             setError("Failed to delete event.")

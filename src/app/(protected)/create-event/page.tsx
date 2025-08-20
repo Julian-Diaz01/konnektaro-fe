@@ -6,6 +6,7 @@ import {createEvent} from '@/services/eventService'
 import {BackLink} from "@/components/BackLink";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { mutate } from 'swr'
 
 export default function CreateEventPage() {
     const router = useRouter()
@@ -31,7 +32,11 @@ export default function CreateEventPage() {
                 ...eventData,
             })
 
-            if (event) router.push('/')
+            if (event) {
+                // Invalidate the open-events cache to ensure admin page shows the new event
+                mutate('open-events')
+                router.push('/')
+            }
         } catch (err: unknown) {
             if (typeof err === 'object' && err !== null && 'response' in err) {
                 const errorResponse = err as { response?: { data?: { error?: string } } }
