@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 interface ReviewButtonProps {
     userId: string
     eventId: string
-    loading: boolean
     currentUser: {
         name: string
         icon: string
@@ -14,7 +13,7 @@ interface ReviewButtonProps {
     } | null
 }
 
-const ReviewButton: FC<ReviewButtonProps> = ({ userId, eventId, loading, currentUser }) => {
+const ReviewButton: FC<ReviewButtonProps> = ({ userId, eventId, currentUser }) => {
     const router = useRouter()
 
     const handleReviewClick = () => {
@@ -31,7 +30,6 @@ const ReviewButton: FC<ReviewButtonProps> = ({ userId, eventId, loading, current
         <Button 
             onClick={handleReviewClick} 
             className="bg-secondary text-primary hover:bg-secondary/90"
-            disabled={loading}
         >
             <FileText className="w-4 h-4" />
             Review
