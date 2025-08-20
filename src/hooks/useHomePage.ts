@@ -16,7 +16,6 @@ export default function useHomePage() {
     // Use contexts instead of hooks for static data
     const {user, loading: loadingUser} = useUserContext()
     const {event, refreshEvent} = useEventContext()
-    console.log(event)
     const name = user?.name || '👋'
 
     useEffect(() => {
@@ -24,7 +23,7 @@ export default function useHomePage() {
             refreshEvent(user?.eventId)
         }
     }, []);
-    
+
     // Refs to prevent duplicate API calls and unnecessary re-renders
     const fetchTriggeredRef = useRef(false)
     const lastActivityIdRef = useRef<string | undefined>(undefined)
