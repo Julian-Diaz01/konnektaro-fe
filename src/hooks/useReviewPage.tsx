@@ -3,7 +3,7 @@
 import {useCallback, useEffect, useMemo, useState} from "react"
 import {useSearchParams, useRouter} from "next/navigation"
 import useReview from "@/hooks/useReview"
-import {CurrentUser, PdfFileFormat} from "@/components/pdfFileFormat";
+import {CurrentUser, pdfFileFormat} from "@/components/pdfFileFormat";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let pdfMake: any = null
@@ -80,31 +80,31 @@ export default function useReviewPage() {
                 }
             }
 
-            if (currentUser?.icon) {
-                try {
-                    const response = await fetch(`/avatars/${currentUser.icon}`)
-                    const svgText = await response.text()
-                    const cleanedSvg = cleanSvg(svgText)
-                    currentUserSvg = cleanedSvg || null
-                } catch {
-                    currentUserSvg = null
-                }
+            try {
+                const currentUserIcon = currentUser?.icon || 'bear.svg'
+                const response = await fetch(`/avatars/${currentUserIcon}`)
+                const svgText = await response.text()
+                const cleanedSvg = cleanSvg(svgText)
+                currentUserSvg = cleanedSvg || null
+            } catch {
+                currentUserSvg = null
             }
 
             for (const activity of review.activities) {
-                if (activity.partnerAnswer?.icon && !partnerSvgs[activity.partnerAnswer.icon]) {
+                const iconKey = activity.partnerAnswer?.icon || 'bear.svg'
+                if (!partnerSvgs[iconKey]) {
                     try {
-                        const response = await fetch(`/avatars/${activity.partnerAnswer.icon}`)
+                        const response = await fetch(`/avatars/${iconKey}`)
                         const svgText = await response.text()
                         const cleanedSvg = cleanSvg(svgText)
-                        partnerSvgs[activity.partnerAnswer.icon] = cleanedSvg || ''
+                        partnerSvgs[iconKey] = cleanedSvg || ''
                     } catch {
-                        partnerSvgs[activity.partnerAnswer.icon] = ''
+                        partnerSvgs[iconKey] = ''
                     }
                 }
             }
 
-            const docDefinition = PdfFileFormat(review, currentUser, currentUserSvg, partnerSvgs)
+            const docDefinition = pdfFileFormat(review, currentUser, currentUserSvg, partnerSvgs)
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const pdfDoc = (pdfMake as any).createPdf(docDefinition as any)
@@ -134,8 +134,6 @@ export default function useReviewPage() {
             alert('Error generating PDF. Please try again.')
         }
     }, [currentUser, pdfMakeLoaded, review])
-
-    console.log(pdfMakeLoaded)
 
     return {
         review,

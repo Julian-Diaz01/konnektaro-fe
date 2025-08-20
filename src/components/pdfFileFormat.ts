@@ -8,13 +8,13 @@ export type CurrentUser = {
 } | null
 
 // Define the PDF document structure type
-export interface PdfDocumentDefinition {
+export interface pdfDocumentDefinition {
     content: Content[]
     footer: () => Content
     styles: StyleDictionary
 }
 
-export const PdfFileFormat = (review: Review, currentUser: CurrentUser, currentUserSvg: string | null, partnerSvgs: { [key: string]: string }): PdfDocumentDefinition => {
+export const pdfFileFormat = (review: Review, currentUser: CurrentUser, currentUserSvg: string | null, partnerSvgs: { [key: string]: string }): pdfDocumentDefinition => {
 
     const content: Content[] = [];
 
@@ -67,7 +67,7 @@ export const PdfFileFormat = (review: Review, currentUser: CurrentUser, currentU
 
     // Activities
     content.push({text: "Activities", style: "subheader", margin: [0, 0, 0, 10]});
-    
+
     review.activities.forEach((activity, index) => {
         const parts: Content[] = [
             {
@@ -102,7 +102,7 @@ export const PdfFileFormat = (review: Review, currentUser: CurrentUser, currentU
             },
             {
                 table: {
-                    widths: [100, "auto"],
+                    widths: [100, "*"],
                     body: [
                         [
                             {text: ""}, // left spacer
@@ -131,11 +131,11 @@ export const PdfFileFormat = (review: Review, currentUser: CurrentUser, currentU
             },
         ];
 
-        if (activity.type === 'partner' && activity.partnerAnswer) {
+        if (activity.type === 'partner') {
             parts.push(
                 {
                     table: {
-                        widths: [100, "auto"],
+                        widths: [100, "*"],
                         body: [
                             [
                                 {text: ""}, // left spacer
@@ -143,23 +143,23 @@ export const PdfFileFormat = (review: Review, currentUser: CurrentUser, currentU
                                     stack: [
                                         {
                                             columns: [
-                                                partnerSvgs[activity.partnerAnswer.icon]
+                                                partnerSvgs[activity?.partnerAnswer?.icon || "bear.svg"]
                                                     ? {
-                                                        svg: partnerSvgs[activity.partnerAnswer.icon],
+                                                        svg: partnerSvgs[activity?.partnerAnswer?.icon ?? "bear.svg"],
                                                         width: 30,
                                                         height: 30
                                                     }
                                                     : {},
                                                 [
                                                     {
-                                                        text: `Partner Answer (${activity.partnerAnswer.name ?? "Name"})`,
+                                                        text: `Partner Answer (${activity?.partnerAnswer?.name ?? "Name"})`,
                                                         style: "partnerLabel",
                                                     },
                                                     {
-                                                        text: activity.partnerAnswer.description ?? "Partner description",
+                                                        text: activity?.partnerAnswer?.description ?? "Partner description",
                                                         style: "partnerInfo",
                                                     },
-                                                    activity.partnerAnswer.email
+                                                    activity?.partnerAnswer?.email
                                                         ? {
                                                             text: activity.partnerAnswer.email,
                                                             style: "partnerInfo"
@@ -171,7 +171,7 @@ export const PdfFileFormat = (review: Review, currentUser: CurrentUser, currentU
                                             margin: [0, 0, 0, 10]
                                         },
                                         {
-                                            text: activity.partnerAnswer.notes ?? "No answer",
+                                            text: activity?.partnerAnswer?.notes ?? "No answer",
                                             style: "partnerAnswer",
                                         },
 
