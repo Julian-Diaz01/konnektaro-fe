@@ -7,7 +7,6 @@ import CurrentActivity from "@/components/CurrentActivityUser";
 import UserDetails from "@/components/UserDetails";
 import JoinEvent from "@/components/JoinEvent";
 import PartnerActivity from "@/components/PartnerActivity";
-import useReview from "@/hooks/useReview";
 import ReviewButton from "@/components/DisplayReview";
 
 export default function HomePage() {
@@ -28,7 +27,6 @@ export default function HomePage() {
         handleJoinEvent
     } = useHomePage()
 
-    const {fetchReview, review, loading: reviewLoading} = useReview()
     const ReviewEvent = () => {
         
         if (!event || !user) return null
@@ -36,8 +34,6 @@ export default function HomePage() {
             <ReviewButton
                 userId={user.userId}
                 eventId={event.eventId}
-                review={review}
-                loading={reviewLoading}
                 currentUser={{
                     name: user.name,
                     icon: user.icon,
