@@ -3,13 +3,13 @@
 import {useEffect, useState} from 'react'
 import {useRouter, useSearchParams} from 'next/navigation'
 import AvatarSelector from '@/components/AvatarSelector'
-import {createUser} from '@/services/userService'
 import {getEventStatus} from '@/services/eventService'
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
 import useAuthUser from '@/hooks/useAuthUser'
 import {BackLink} from "@/components/BackLink";
+import {useUserContext} from "@/contexts/UserContext";
 
 export default function CreateUserForm() {
     const router = useRouter()
@@ -18,6 +18,7 @@ export default function CreateUserForm() {
     const [eventLoading, setEventLoading] = useState(true)
     const [eventOpen, setEventOpen] = useState(false)
     const [eventName, setEventName] = useState('')
+    const {createNewUser} = useUserContext()
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -67,7 +68,7 @@ export default function CreateUserForm() {
 
         try {
             setLoading(true)
-            await createUser({
+            await createNewUser({
                 userId: firebaseUser.uid,
                 name: form.name,
                 email: form.email,
@@ -75,8 +76,10 @@ export default function CreateUserForm() {
                 description: form.description,
                 eventId,
                 role: 'user',
+            }).then(() => {
+                router.push('/')
             })
-            router.push('/')
+
         } catch (err: unknown) {
             if (typeof err === 'object' && err !== null && 'response' in err) {
                 const errorResponse = err as { response?: { data?: { error?: string } } }
@@ -141,7 +144,7 @@ export default function CreateUserForm() {
                     {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                     <Button
-                        disabled={loading || !form.name || !form.avatar || !form.consent || !firebaseUser}
+                        disabled={loading || !form.name || !form.avatar || !form.consent || !firebaseUser || !form.description}
                         onClick={handleSubmit}
                         className=" w-full py-3 font-semibold disabled:opacity-50"
                     >
