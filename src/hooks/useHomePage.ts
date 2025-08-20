@@ -15,10 +15,16 @@ export default function useHomePage() {
     
     // Use contexts instead of hooks for static data
     const {user, loading: loadingUser} = useUserContext()
-    const {event} = useEventContext()
-    
+    const {event, refreshEvent} = useEventContext()
+    console.log(event)
     const name = user?.name || '👋'
 
+    useEffect(() => {
+        if(!event && user?.eventId) {
+            refreshEvent(user?.eventId)
+        }
+    }, []);
+    
     // Refs to prevent duplicate API calls and unnecessary re-renders
     const fetchTriggeredRef = useRef(false)
     const lastActivityIdRef = useRef<string | undefined>(undefined)
@@ -121,15 +127,13 @@ export default function useHomePage() {
         // 3. We have group activity data AND
         // 4. We have a partner AND
         // 5. The group activity corresponds to the current activity (extra safety check)
-        const hasBasicRequirements = Boolean(
-            activityId && 
-            !groupLoading && 
-            groupActivity && 
+        return Boolean(
+            activityId &&
+            !groupLoading &&
+            groupActivity &&
             groupActivity.activityId === activityId && // Ensure group activity matches current activity
             currentUserPartner
         )
-        
-        return hasBasicRequirements
     }, [activityId, groupLoading, groupActivity, currentUserPartner])
 
     return {
