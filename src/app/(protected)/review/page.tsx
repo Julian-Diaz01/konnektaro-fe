@@ -57,7 +57,7 @@ const ReviewPage: FC = () => {
                         disabled={!pdfMakeLoaded}
                     >
                         <Download className="w-4 h-4 mr-2"/>
-                        {pdfMakeLoaded ? 'Download PDF' : 'Loading PDF...'}
+                        Download PDF
                     </Button>
                 </div>
             </div>
@@ -98,7 +98,7 @@ const ReviewPage: FC = () => {
                                 key={a.activityId}
                             >
                                 <div
-                                    className='text-white pt-1 pb-1 pl-3 pr-3 m-2 place-self-center bg-gray-500 text-sm border max-w-min rounded-2xl'>Activity{i + 1}</div>
+                                    className='text-white pt-1 pb-1 pl-3 pr-3 m-2 place-self-center bg-gray-500 text-sm border rounded-2xl'>Activity{i + 1}</div>
                                 {/* Activity description */}
                                 <div className="p-4 bg-[var(--terciary)]/50 rounded-lg mr-16">
                                     <div className="text-black justify-self-end">Activity

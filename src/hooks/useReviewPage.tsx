@@ -80,32 +80,14 @@ export default function useReviewPage() {
                 }
             }
 
-            const createFallbackSvg = (iconName: string): string => {
-                const colors = {
-                    bear: '#8B4513',
-                    cat: '#FFA500',
-                    dog: '#8B4513',
-                    bunny: '#FF69B4',
-                    mouse: '#808080',
-                    chicken: '#FFD700'
-                } as const
-                const color = (colors as Record<string, string>)[iconName] || '#933DA7'
-
-                return `<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="30" cy="30" r="25" fill="${color}" stroke="#333" stroke-width="2"/>
-                    <text x="30" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">${iconName.charAt(0).toUpperCase()}</text>
-                </svg>`
-            }
-
             if (currentUser?.icon) {
                 try {
                     const response = await fetch(`/avatars/${currentUser.icon}`)
-                    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
                     const svgText = await response.text()
                     const cleanedSvg = cleanSvg(svgText)
-                    currentUserSvg = cleanedSvg || createFallbackSvg(currentUser.icon)
+                    currentUserSvg = cleanedSvg || null
                 } catch {
-                    currentUserSvg = createFallbackSvg(currentUser?.icon || 'user')
+                    currentUserSvg = null
                 }
             }
 
@@ -116,9 +98,9 @@ export default function useReviewPage() {
                         if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
                         const svgText = await response.text()
                         const cleanedSvg = cleanSvg(svgText)
-                        partnerSvgs[activity.partnerAnswer.icon] = cleanedSvg || createFallbackSvg(activity.partnerAnswer.icon)
+                        partnerSvgs[activity.partnerAnswer.icon] = cleanedSvg || ''
                     } catch {
-                        partnerSvgs[activity.partnerAnswer.icon] = createFallbackSvg(activity.partnerAnswer.icon)
+                        partnerSvgs[activity.partnerAnswer.icon] = ''
                     }
                 }
             }
@@ -153,6 +135,8 @@ export default function useReviewPage() {
             alert('Error generating PDF. Please try again.')
         }
     }, [currentUser, pdfMakeLoaded, review])
+
+    console.log(pdfMakeLoaded)
 
     return {
         review,
