@@ -111,6 +111,11 @@ p, h1, h2, h3, h4, h5, h6 {
     background-color: var(--primary);
 }
 
+
+.bg-terciary-50{
+    background-color: var(--terciary);
+}
+
 .bg-primary {
     background-color: var(--primary);
 }
@@ -176,17 +181,15 @@ p, h1, h2, h3, h4, h5, h6 {
 @keyframes shadow-dance {
     0% {
         text-shadow: 0 0 0 #07bccc,
-        0 0 0 #e601c0,
         0 0 0 #e9019a,
         0 0 0 #f40468,
         0 0 0 #482896;
     }
     100% {
         text-shadow: 5px 5px 0 #07bccc,
-        10px 10px 0 #e601c0,
-        15px 15px 0 #e9019a,
-        20px 20px 0 #f40468,
-        25px 25px 10px #482896;
+        10px 10px 0 #e9019a,
+        15px 15px 0 #f40468,
+        20px 20px 10px #482896;
     }
 }
 
