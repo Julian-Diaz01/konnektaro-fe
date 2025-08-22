@@ -1,61 +1,62 @@
-import {useState, useEffect} from "react"
+import useSWR from 'swr'
 import {
     createUser,
     deleteUser as deleteUserApi,
     getUser,
 } from "@/services/userService"
 import {User} from "@/types/models"
+import { swrConfigStatic } from '@/lib/swr-config'
+
+// Fetcher function for SWR
+const fetcher = async (userId: string) => {
+    const response = await getUser(userId)
+    return response.data
+}
 
 export default function useUser(userId: string | null) {
-    const [user, setUser] = useState<User | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-
-    useEffect(() => {
-        if (!userId) return
-
-        const fetchEvent = async () => {
-            try {
-                setLoading(true)
-                const response = await getUser(userId)
-                setUser(response.data)
-            } catch (err) {
-                console.error("Failed to fetch user:", err)
-                setError("Failed to fetch user.")
-            } finally {
-                setLoading(false)
-            }
+    // Use SWR for data fetching with automatic caching and deduplication
+    const { data: user, error, isLoading, mutate } = useSWR<User>(
+        userId ? `user-${userId}` : null, // Only fetch when userId exists
+        () => fetcher(userId!), // userId is guaranteed to exist when this runs
+        {
+            ...swrConfigStatic,
+            // Don't revalidate on focus for user data to reduce unnecessary calls
+            revalidateOnFocus: false,
+            // Keep data in cache for 5 minutes
+            dedupingInterval: 5 * 60 * 1000,
         }
-
-        fetchEvent()
-    }, [userId])
-
+    )
 
     const createNewUser = async (newUserData: User) => {
         try {
             const userData = await createUser(newUserData)
-            setUser(userData.data)
+            // Update the SWR cache with the new user data
+            mutate(userData.data, false)
+            return userData
         } catch (error) {
             console.error("Failed to create user:", error)
-            setError("Failed to create user.")
+            throw error
         }
     }
 
-    const deleteUser = async (userId: string) => {
-        if (!userId) return
+    const deleteUser = async (userIdToDelete: string) => {
+        if (!userIdToDelete) return
         try {
-            await deleteUserApi(userId)
+            await deleteUserApi(userIdToDelete)
+            // Remove the user from SWR cache
+            mutate(undefined, false)
         } catch (error) {
             console.error("Failed to delete user:", error)
-            setError("Failed to delete user.")
+            throw error
         }
     }
 
     return {
-        user,
-        loading,
-        error,
+        user: user || null,
+        loading: isLoading,
+        error: error?.message || null,
         createNewUser,
         deleteUser,
+        refresh: mutate,
     }
 }
