@@ -25,4 +25,6 @@ export const swrConfigStatic: SWRConfiguration = {
   ...swrConfig,
   refreshInterval: 300000, // Refresh every 5 minutes
   dedupingInterval: 120000, // Dedupe requests within 2 minutes
+  revalidateOnMount: true, // Always fetch on mount
+  revalidateIfStale: true, // Always revalidate stale data
 }
