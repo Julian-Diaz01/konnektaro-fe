@@ -230,7 +230,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                         <HomePageWrapper />
                 </main>
             </div>
@@ -241,7 +241,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+            <main className="flex-1 pt-4 max-w-screen-md mx-auto w-full">
                 <AppContext  userId={firebaseUser?.uid || null}>
                     {children}
                 </AppContext>
