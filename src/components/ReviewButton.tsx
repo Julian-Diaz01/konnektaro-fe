@@ -29,7 +29,7 @@ const ReviewButton: FC<ReviewButtonProps> = ({ userId, eventId, currentUser }) =
     return (
         <Button 
             onClick={handleReviewClick} 
-            className="bg-secondary text-primary hover:bg-secondary/90"
+            className="w-full bg-secondary text-primary hover:bg-secondary/90"
         >
             <FileText className="w-4 h-4" />
             Review
