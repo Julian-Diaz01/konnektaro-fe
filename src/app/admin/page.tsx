@@ -19,20 +19,18 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="page-background">
-            <div className="container mx-auto px-4 py-8">
-                <div className="flex justify-between items-center mb-8">
+        <div className="page-background mt-6">
+            <div className="container mx-auto px-4 py-8 w-full">
                     <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-                    <Button 
+                    <Button
                         onClick={() => router.push('/create-event')}
-                        className="bg-primary text-white hover:bg-primary/90"
+                        className="cursor-pointer text-lg mb-6 mt-3 w-full"
                     >
-                        Create New Event
+                        Create a New Event
                     </Button>
-                </div>
 
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Events</h2>
+                    <h2 className="w-full text-xl font-semibold text-white mb-4">Events</h2>
                     <EventListAdmin events={events} />
                 </div>
 

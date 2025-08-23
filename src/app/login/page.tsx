@@ -49,14 +49,14 @@ export default function LoginPage() {
             <Head>
                 <title>Konnektaro Login</title>
             </Head>
-            <div className="h-screen w-full flex flex-col justify-center items-center bg-primary-main text-center px-4">
+            <div className="h-[80vh] w-full flex flex-col justify-center items-center bg-primary-main text-center px-4">
                 <div className="flex-grow flex items-center justify-center w-full">
                     <h1  ref={textRef} onClick={restartAnimation} className="text-4xl font-bold shadow-dance-text">Konnektaro</h1>
                 </div>
                 <div className="w-full max-w-sm flex flex-col gap-4 mb-5">
                     <Button variant="secondary"
                         onClick={loginAnonymously}
-                        className=" w-full h-[10vh] rounded-full font-semibold text-lg sm:text-xl"
+                        className=" w-full h-[8vh] rounded-full font-semibold text-lg sm:text-xl"
                     >
                         Sign in as Guest
                     </Button>
@@ -64,7 +64,7 @@ export default function LoginPage() {
                     <Button
                         variant="outline"
                         onClick={loginWithGoogle}
-                        className=" w-full h-[10vh] rounded-full font-semibold text-lg sm:text-xl"
+                        className=" w-full h-[8vh] rounded-full font-semibold text-lg sm:text-xl"
                     >
                         Sign in as Moderator
                     </Button>
