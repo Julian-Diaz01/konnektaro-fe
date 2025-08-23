@@ -10,6 +10,7 @@ import Spinner from "@/components/ui/spinner";
 import useAuthUser from '@/hooks/useAuthUser'
 import {BackLink} from "@/components/BackLink";
 import {useUserContext} from "@/contexts/UserContext";
+import { mutate } from 'swr'
 
 export default function CreateUserForm() {
     const router = useRouter()
@@ -77,6 +78,19 @@ export default function CreateUserForm() {
                 eventId,
                 role: 'user',
             }).then(() => {
+                // Trigger data refreshes before redirecting
+                // This ensures fresh user and event data when landing on home page
+                
+                // 1. Refresh user data (since user was just created)
+                mutate(`user-${firebaseUser.uid}`)
+                
+                // 2. Refresh events data (to show the event they just joined)
+                mutate('open-events')
+                
+                // 3. Refresh specific event data (for the event they joined)
+                mutate(`event-${eventId}`)
+                
+                // 4. Redirect to home page
                 router.push('/')
             })
 

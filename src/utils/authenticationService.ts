@@ -21,8 +21,8 @@ export const loginWithGoogle = async (): Promise<firebaseUser | null> => {
       return undefined
     }, undefined, { revalidate: false })
     
-    // Force refresh events after login
-    mutate('open-events')
+    // Force fresh events data after login (not from cache)
+    mutate('open-events', undefined, { revalidate: true })
     
     return result.user
   } catch (error: unknown) {
@@ -46,8 +46,8 @@ export const loginAnonymously = async (): Promise<firebaseUser | null> => {
       return undefined
     }, undefined, { revalidate: false })
     
-    // Force refresh events after login
-    mutate('open-events')
+    // Force fresh events data after login (not from cache)
+    mutate('open-events', undefined, { revalidate: true })
     
     return result.user
   } catch (error: unknown) {

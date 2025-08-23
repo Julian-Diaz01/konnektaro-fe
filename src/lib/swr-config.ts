@@ -27,6 +27,7 @@ export const swrConfigStatic: SWRConfiguration = {
   dedupingInterval: 120000, // Dedupe requests within 2 minutes
   revalidateOnMount: true, // Always fetch on mount
   revalidateIfStale: true, // Always revalidate stale data
+  revalidateOnFocus: true, // Revalidate when window regains focus
 }
 
 // Configuration for user data - less aggressive polling
@@ -36,5 +37,16 @@ export const swrConfigUser: SWRConfiguration = {
   dedupingInterval: 300000, // Dedupe requests within 5 minutes
   revalidateOnMount: true, // Always fetch on mount
   revalidateIfStale: false, // Don't automatically revalidate stale data
+  errorRetryCount: 2, // Only retry 2 times
+}
+
+// Configuration for events - always fresh data
+export const swrConfigEvents: SWRConfiguration = {
+  ...swrConfig,
+  refreshInterval: 0, // No automatic polling
+  dedupingInterval: 0, // No deduplication - always fetch fresh
+  revalidateOnMount: true, // Always fetch on mount
+  revalidateIfStale: true, // Always revalidate stale data
+  revalidateOnFocus: true, // Revalidate when window regains focus
   errorRetryCount: 2, // Only retry 2 times
 }

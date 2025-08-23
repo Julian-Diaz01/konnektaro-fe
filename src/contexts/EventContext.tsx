@@ -43,6 +43,8 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     }
   }
 
+  console.log(event, "event")
+
   const refreshEvent = async (id: string) => {
     await fetchEvent(id)
   }
