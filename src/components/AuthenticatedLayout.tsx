@@ -15,14 +15,13 @@ import CreateUserPage from '@/app/create-user/page'
 import HomePageWrapper from '@/components/HomePageWrapper'
 import AdminPage from '@/app/admin/page'
 import LoginPage from '@/app/login/page'
+import ReviewPage from "@/app/review/page";
 
 // Define constants locally
 const ADMIN_URLS = {
     admin: '/admin',
     createEvent: '/create-event',
     editEvent: '/edit-event',
-    createUser: '/create-user',
-    review: '/review',
 };
 
 interface AuthenticatedLayoutProps {
@@ -209,7 +208,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
                 <Header />
                 <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
                     <AppContext userId={firebaseUser?.uid || null}>
-                        <CreateUserPage />
+                        <ReviewPage />
                     </AppContext>
                 </main>
             </div>
