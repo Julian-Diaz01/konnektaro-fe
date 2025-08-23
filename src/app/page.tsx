@@ -32,7 +32,7 @@ export default function HomePage() {
     return (
         <div className="page-background">
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-4xl font-bold text-center text-white mb-8">
+                <h1 className="text-3xl font-bold text-center text-white mb-8">
                     Welcome to Konnektaro, {name}!
                 </h1>
 
