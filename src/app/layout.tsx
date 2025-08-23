@@ -3,6 +3,7 @@ import type {Metadata} from 'next'
 import {SessionManager} from "@/components/SessionManager";
 import {Toaster} from "@/components/ui/sonner";
 import AuthenticatedLayout from "@/components/AuthenticatedLayout";
+import EventsInitializer from "@/components/EventsInitializer";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',
@@ -13,6 +14,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
         <body>
+            <EventsInitializer />
             <SessionManager />
             <AuthenticatedLayout>
                 {children}

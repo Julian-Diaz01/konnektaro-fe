@@ -3,7 +3,7 @@
 import useSWR from 'swr'
 import { getAllEvents } from '@/services/eventService'
 import { Event } from '@/types/models'
-import { swrConfigStatic } from '@/lib/swr-config'
+import { swrConfigEvents } from '@/lib/swr-config'
 
 // Fetcher function for SWR
 const fetcher = async () => {
@@ -19,7 +19,7 @@ export default function useOpenEvents() {
   const { data: events = [], error, isLoading, mutate } = useSWR<Event[]>(
     'open-events',
     fetcher,
-    swrConfigStatic
+    swrConfigEvents
   )
 
   const loading = isLoading

@@ -65,6 +65,16 @@ export function UserProvider({ children, userId }: UserProviderProps) {
             const userData = await createUser(newUserData)
             setUser(userData.data)
             console.log('done creating user')
+            
+            // Force a fresh fetch of user data to ensure we have the complete user object
+            // This is important because the user was just created and we need to fetch
+            // any additional data that might not be in the creation response
+            if (userId && userId === newUserData.userId) {
+                // Reset the last fetched ID so the useEffect will trigger a refetch
+                lastFetchedUserId.current = null
+                // Trigger immediate refetch
+                fetchUser(userId)
+            }
         } catch (error) {
             console.error("Failed to create user:", error)
             setError("Failed to create user.")
