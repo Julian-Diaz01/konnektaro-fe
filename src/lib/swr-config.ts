@@ -6,7 +6,7 @@ export const swrConfig: SWRConfiguration = {
   revalidateOnReconnect: true, // Only refetch on reconnect
   dedupingInterval: 60000, // Dedupe requests within 1 minute
   refreshInterval: 300000, // Refresh every 5 minutes (default)
-  errorRetryCount: 3, // Retry failed requests 3 times
+  errorRetryCount: 2, // Retry failed requests only 2 times
   errorRetryInterval: 5000, // Wait 5 seconds between retries
 }
 
@@ -27,4 +27,14 @@ export const swrConfigStatic: SWRConfiguration = {
   dedupingInterval: 120000, // Dedupe requests within 2 minutes
   revalidateOnMount: true, // Always fetch on mount
   revalidateIfStale: true, // Always revalidate stale data
+}
+
+// Configuration for user data - less aggressive polling
+export const swrConfigUser: SWRConfiguration = {
+  ...swrConfig,
+  refreshInterval: 0, // No automatic polling - only fetch on mount and manual refresh
+  dedupingInterval: 300000, // Dedupe requests within 5 minutes
+  revalidateOnMount: true, // Always fetch on mount
+  revalidateIfStale: false, // Don't automatically revalidate stale data
+  errorRetryCount: 2, // Only retry 2 times
 }
