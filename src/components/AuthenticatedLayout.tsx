@@ -3,7 +3,7 @@
 import {useEffect, useState, useMemo} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
 import useAuthUser from "@/hooks/useAuthUser"
-import useUser from "@/hooks/useUser"
+
 import Spinner from "@/components/ui/spinner"
 import { AppContext } from "@/contexts/AppContext"
 import Header from "@/components/Header"
@@ -12,7 +12,7 @@ import Header from "@/components/Header"
 import CreateEventPage from '@/app/create-event/page'
 import EditEventPage from '@/app/edit-event/page'
 import CreateUserPage from '@/app/create-user/page'
-import HomePage from '@/app/page'
+import HomePageWrapper from '@/components/HomePageWrapper'
 import AdminPage from '@/app/admin/page'
 import LoginPage from '@/app/login/page'
 
@@ -36,14 +36,8 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     
     const isAdminPage = useMemo(() => Object.values(ADMIN_URLS).includes(pathname), [pathname])
     
-    const shouldFetchUser = useMemo(() => {
-        return !isAdminPage && 
-               firebaseUser?.uid && 
-               !authLoading &&
-               firebaseUser?.isAnonymous // Only fetch user data for anonymous/disposable users
-    }, [isAdminPage, firebaseUser?.uid, authLoading, firebaseUser?.isAnonymous])
-    
-    const {loading: userLoading} = useUser(shouldFetchUser ? (firebaseUser?.uid || null) : null)
+    // UserContext will handle user data fetching, no need for additional useUser hook
+    const userLoading = false // UserContext handles its own loading state
     
     // Route guard to ensure correct page rendering
     const [currentRoute, setCurrentRoute] = useState<string | null>(null)
@@ -238,9 +232,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
             <div className="min-h-screen flex flex-col">
                 <Header />
                 <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
-                    <AppContext  userId={firebaseUser?.uid || null}>
-                        <HomePage />
-                    </AppContext>
+                        <HomePageWrapper />
                 </main>
             </div>
         )

@@ -5,7 +5,7 @@ import {
     getUser,
 } from "@/services/userService"
 import {User} from "@/types/models"
-import { swrConfigStatic } from '@/lib/swr-config'
+import { swrConfigUser } from '@/lib/swr-config'
 
 // Fetcher function for SWR
 const fetcher = async (userId: string) => {
@@ -19,7 +19,7 @@ export default function useUser(userId: string | null) {
         userId ? `user-${userId}` : null, // Only fetch when userId exists
         () => fetcher(userId!), // userId is guaranteed to exist when this runs
         {
-            ...swrConfigStatic,
+            ...swrConfigUser,
             // Don't revalidate on focus for user data to reduce unnecessary calls
             revalidateOnFocus: false,
             // Keep data in cache for 5 minutes

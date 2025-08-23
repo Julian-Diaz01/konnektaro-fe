@@ -11,8 +11,18 @@ export const loginWithGoogle = async (): Promise<firebaseUser | null> => {
     console.log('User logged in (Google):', result.user)
     setLoginTimestamp()
     
-    // Clear any existing SWR cache to ensure fresh data
-    mutate(() => true, undefined, { revalidate: false })
+    // Clear user-specific SWR cache but keep events cache
+    // Events should be fetched fresh for all users
+    mutate((key: string) => {
+      // Only clear user-related cache keys, keep events
+      if (key.includes('user')) {
+        return undefined
+      }
+      return undefined
+    }, undefined, { revalidate: false })
+    
+    // Force refresh events after login
+    mutate('open-events')
     
     return result.user
   } catch (error: unknown) {
@@ -27,8 +37,17 @@ export const loginAnonymously = async (): Promise<firebaseUser | null> => {
     console.log('User logged in (Anonymous):', result.user)
     setLoginTimestamp()
     
-    // Clear any existing SWR cache to ensure fresh data
-    mutate(() => true, undefined, { revalidate: false })
+    // Clear user-specific SWR cache but keep events cache
+    mutate((key: string) => {
+      // Only clear user-related cache keys, keep events
+      if (key.includes('user')) {
+        return undefined
+      }
+      return undefined
+    }, undefined, { revalidate: false })
+    
+    // Force refresh events after login
+    mutate('open-events')
     
     return result.user
   } catch (error: unknown) {
@@ -46,8 +65,14 @@ export const logout = async () => {
   localStorage.removeItem('loginTimestamp')
   deleteCookie('__session')
   
-  // Clear all SWR cache to ensure fresh data on next login
-  mutate(() => true, undefined, { revalidate: false })
+  // Clear user-specific SWR cache but keep events cache
+  mutate((key: string) => {
+    // Only clear user-related cache keys, keep events
+    if (key.includes('user')) {
+      return undefined
+    }
+    return undefined
+  }, undefined, { revalidate: false })
 }
 
 type firebaseUser = {

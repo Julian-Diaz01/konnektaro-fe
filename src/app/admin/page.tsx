@@ -21,7 +21,7 @@ export default function AdminPage() {
     return (
         <div className="page-background mt-6">
             <div className="container mx-auto px-4 py-8 w-full">
-                    <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
                     <Button
                         onClick={() => router.push('/create-event')}
                         className="cursor-pointer text-lg mb-6 mt-3 w-full"
