@@ -64,7 +64,7 @@ function EventPageContent() {
     }
 
     const Header = () => (
-        <div className="mb-4 flex justify-between items-center">
+        <div className="mb-4 flex">
             <BackLink href="/admin"/>
             <ConfirmDeleteButton
                 name="event"

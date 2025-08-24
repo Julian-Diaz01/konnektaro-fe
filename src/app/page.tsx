@@ -29,7 +29,7 @@ export default function HomePage() {
             </div>
         );
     }
-
+    
     return (
         <div className="page-background">
             <div className="container mx-auto px-4 py-8">

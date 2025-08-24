@@ -19,14 +19,14 @@ const buttonVariants = cva(
           "border bg-[transparent] shadow-xs cursor-pointer hover:shadow-xs dark:bg-input/30 dark:border-input",
         outlinePrimary:
             "border border-primary bg-[transparent] text-primary shadow-xs cursor-pointer hover:shadow-xs dark:bg-input/30 dark:border-input",
-        secondary: "bg-secondary text-primary cursor-pointer hover:shadow-xs",
+        secondary: "bg-secondary text-primary cursor-pointer border",
         ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         disabled: "bg-input text-muted-foreground cursor-not-allowed",
         link: "text-primary underline-offset-4 hover:underline",
           green: "bg-green-500 text-white hover:bg-green-600 focus-visible:ring-green-300",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3 text-xl",
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
