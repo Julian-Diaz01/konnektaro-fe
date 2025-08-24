@@ -1,14 +1,18 @@
 import {useRouter} from "next/navigation";
+import { Button } from "./ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export const BackLink = ({href = "/"}: { href?: string }) => {
     const router = useRouter()
 
     return <div className="mb-4 flex mr-[auto]">
-        <a
+        <Button
+            variant="secondary"
             onClick={() => router.push(href)}
-            className="border-b border-primary text-primary cursor-pointer"
+            className="border-b border-primary cursor-pointer text-md"
         >
-            {"< Back"}
-        </a>
+            <ArrowLeft className="w-4 h-4" />
+            Back
+        </Button>
     </div>
 }

@@ -28,7 +28,7 @@ export function ConfirmDeleteButton({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant={buttonVariant}>{buttonText}</Button>
+        <Button className="text-md" variant={buttonVariant}>{buttonText}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -39,10 +39,11 @@ export function ConfirmDeleteButton({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outlinePrimary" onClick={() => setDialogOpen(false)}>
+          <Button className="text-md" variant="outlinePrimary" onClick={() => setDialogOpen(false)}>
             Cancel
           </Button>
           <Button
+            className="text-md"
             variant="destructive"
             onClick={() => {
               onConfirm();
