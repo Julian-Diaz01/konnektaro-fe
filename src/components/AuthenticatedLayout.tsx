@@ -154,7 +154,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                     <AppContext eventId={undefined} userId={firebaseUser?.uid || null}>
                         <AdminPage />
                     </AppContext>
@@ -167,7 +167,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                     <AppContext eventId={undefined} userId={firebaseUser?.uid || null}>
                         <CreateEventPage />
                     </AppContext>
@@ -180,7 +180,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                     <AppContext eventId={undefined} userId={firebaseUser?.uid || null}>
                         <EditEventPage />
                     </AppContext>
@@ -193,7 +193,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                     <AppContext  userId={firebaseUser?.uid || null}>
                         <CreateUserPage />
                     </AppContext>
@@ -206,7 +206,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-4 max-w-screen-md mx-auto w-full">
+                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                     <AppContext userId={firebaseUser?.uid || null}>
                         <ReviewPage />
                     </AppContext>
@@ -241,7 +241,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="flex-1 pt-4 max-w-screen-md mx-auto w-full">
+            <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
                 <AppContext  userId={firebaseUser?.uid || null}>
                     {children}
                 </AppContext>
