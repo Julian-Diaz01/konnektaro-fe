@@ -19,7 +19,7 @@ export default function useHomePage() {
     const {event, refreshEvent} = useEventContext()
     const name = user?.name || '👋'
     const { firebaseUser } = useAuthUser()
-console.log(event, "event")
+    
     useEffect(() => {
         if(!event && user?.eventId) {
             refreshEvent(user?.eventId)
