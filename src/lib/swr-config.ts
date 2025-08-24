@@ -49,4 +49,7 @@ export const swrConfigEvents: SWRConfiguration = {
   revalidateIfStale: true, // Always revalidate stale data
   revalidateOnFocus: true, // Revalidate when window regains focus
   errorRetryCount: 2, // Only retry 2 times
+  // Prevent any caching issues in production
+  keepPreviousData: false, // Don't keep previous data
+  revalidateOnReconnect: true, // Revalidate on reconnect
 }
