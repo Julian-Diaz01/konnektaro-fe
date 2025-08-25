@@ -13,6 +13,7 @@ interface EventContextType {
   deleteCurrentEvent: (eventId: string) => Promise<void>
   createNewEvent: (newEventData: Omit<Event, "eventId">) => Promise<void>
   refreshEvent: (eventId: string) => Promise<void>
+  updateReviewAccess: (enabled: boolean) => void
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined)
@@ -43,6 +44,14 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     }
   }
 
+  const updateReviewAccess = (enabled: boolean) => {
+    if (event) {
+      setEvent({
+        ...event,
+        showReview: enabled
+      })
+    }
+  }
 
   const refreshEvent = async (id: string) => {
     await fetchEvent(id)
@@ -88,7 +97,8 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     setEvent,
     deleteCurrentEvent,
     createNewEvent,
-    refreshEvent
+    refreshEvent,
+    updateReviewAccess
   }
 
   return (

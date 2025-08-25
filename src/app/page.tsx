@@ -7,7 +7,8 @@ import PartnerActivity from "@/components/PartnerActivity";
 import CurrentActivityUser from "@/components/CurrentActivityUser";
 import Spinner from "@/components/ui/spinner";
 import UserDetails from "@/components/UserDetails";
-import ReviewButton from "@/components/ReviewButton"
+import ReviewButton from "@/components/ReviewButton";
+import useReviewSocket from "@/hooks/useReviewSocket";
 
 export default function HomePage() {
     const {
@@ -21,6 +22,11 @@ export default function HomePage() {
         shouldRenderPartnerActivity,
         handleJoinEvent
     } = useHomePage();
+
+    // Use the review socket hook to listen for review access changes
+    useReviewSocket({
+        eventId: event?.eventId || ''
+    });
 
     if (loading) {
         return (
@@ -52,12 +58,16 @@ export default function HomePage() {
                 {user && event && (
                     <>
                         <ShowEventDetails event={event}/>
+                        {
+                            event?.showReview && (
+                                <ReviewButton userId={user.userId} currentUser={user} eventId={event.eventId}/>
+                            )
+                        }
                         <CurrentActivityUser
                             userId={user.userId}
                             activityId={activityId}
                             getCountdownAction={() => 0}
                         />
-
                         {/* Partner Activity - Only show if conditions are met */}
                         {shouldRenderPartnerActivity && currentUserGroup && (
                             <PartnerActivity
@@ -71,7 +81,7 @@ export default function HomePage() {
                             />
                         )}
 
-                        <ReviewButton userId={user.userId} currentUser={user} eventId={event.eventId}/>
+
                     </>
                 )}
             </div>

@@ -14,7 +14,6 @@ export default function HomePageWrapper() {
     return (
         <AppContext 
             userId={userId}
-            eventId={undefined}
         >
             <HomePage />
         </AppContext>
