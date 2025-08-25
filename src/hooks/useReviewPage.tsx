@@ -13,6 +13,7 @@ export default function useReviewPage() {
     const router = useRouter()
     const [currentUser, setCurrentUser] = useState<CurrentUser>(null)
     const [pdfMakeLoaded, setPdfMakeLoaded] = useState(false)
+    const [downloading, setDownloading] = useState(false)
 
     const userId = useMemo(() => searchParams.get('userId') || '', [searchParams])
     const eventId = useMemo(() => searchParams.get('eventId') || '', [searchParams])
@@ -65,6 +66,7 @@ export default function useReviewPage() {
             return
         }
 
+        setDownloading(true)
         try {
             let currentUserSvg: string | null
             const partnerSvgs: { [key: string]: string } = {}
@@ -132,6 +134,8 @@ export default function useReviewPage() {
             }
         } catch {
             alert('Error generating PDF. Please try again.')
+        } finally {
+            setDownloading(false)
         }
     }, [currentUser, pdfMakeLoaded, review])
 
@@ -140,6 +144,7 @@ export default function useReviewPage() {
         loading,
         currentUser,
         pdfMakeLoaded,
+        downloading,
         generatePDF,
         goBack,
     }
