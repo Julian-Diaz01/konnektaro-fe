@@ -32,6 +32,7 @@ export default function UsersList({
     const [open, setOpen] = useState(false)
     const {users, loading, error, fetchUsersByEvent, deleteUser} = useAdminUser()
 
+    const userss = [...users, ...users]
     useEffect(() => {
         if (open && eventId && mode === 'all-users') {
             fetchUsersByEvent(eventId)
@@ -48,7 +49,7 @@ export default function UsersList({
     const renderAllUsersTable = () => (
         <div className="overflow-x-auto">
             <table className="min-w-full table-auto border divide-y divide-gray-200 text-sm max-h-80 overflow-y-auto">
-                <thead className="bg-gray-100 sticky top-0">
+                <thead className="bg-gray-100 top-0 overflow-auto">
                 <tr>
                     <th className="px-4 py-2 text-left font-medium text-gray-700">Name</th>
                     <th className="px-4 py-2 text-left font-medium text-gray-700">Email</th>
@@ -57,8 +58,8 @@ export default function UsersList({
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
-                {users.map((user) => (
-                    <tr key={user.userId} className="hover:bg-gray-50 text-black">
+                {userss.map((user, i) => (
+                    <tr key={user.userId + i} className="hover:bg-gray-50 text-black">
                         <td className="px-4 py-2 font-semibold">{user.name}</td>
                         <td className="px-4 py-2">{user.email || 'none'}</td>
                         <td className="px-4 py-2 text-xs">{user.description}</td>
@@ -166,9 +167,13 @@ export default function UsersList({
                         {getButtonText()}
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                    <DialogTitle>{getTitle()}</DialogTitle>
-                    {renderContent()}
+                <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+                    <div className="flex-shrink-0 border-b pb-4 mb-4">
+                        <DialogTitle>{getTitle()}</DialogTitle>
+                    </div>
+                    <div className="flex-1 overflow-auto">
+                        {renderContent()}
+                    </div>
                 </DialogContent>
             </Dialog>
         )
@@ -181,9 +186,13 @@ export default function UsersList({
                 <DialogTrigger asChild>
                     <Button onClick={onShowUsers}>{getButtonText()}</Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                    <DialogTitle>{getTitle()}</DialogTitle>
-                    {renderContent()}
+                <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+                    <div className="flex-shrink-0 border-b pb-4 mb-4">
+                        <DialogTitle>{getTitle()}</DialogTitle>
+                    </div>
+                    <div className="flex-1 overflow-auto">
+                        {renderContent()}
+                    </div>
                 </DialogContent>
             </Dialog>
         )
@@ -198,9 +207,13 @@ export default function UsersList({
                     <DialogTrigger asChild>
                         <Button>{getButtonText()}</Button>
                     </DialogTrigger>
-                    <DialogContent>
-                        <DialogTitle>{getTitle()}</DialogTitle>
-                        {renderContent()}
+                    <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+                        <div className="flex-shrink-0 border-b pb-4 mb-4">
+                            <DialogTitle>{getTitle()}</DialogTitle>
+                        </div>
+                        <div className="flex-1 overflow-auto">
+                            {renderContent()}
+                        </div>
                     </DialogContent>
                 </Dialog>
             </div>
