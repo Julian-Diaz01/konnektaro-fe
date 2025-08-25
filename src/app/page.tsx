@@ -4,7 +4,7 @@ import useHomePage from "@/hooks/useHomePage";
 import JoinEvent from "@/components/JoinEvent";
 import {ShowEventDetails} from "@/components/EventDetails";
 import PartnerActivity from "@/components/PartnerActivity";
-import CurrentActivityUser from "@/components/CurrentActivityUser";
+import CurrentActivity from "@/components/CurrentActivityUser";
 import Spinner from "@/components/ui/spinner";
 import UserDetails from "@/components/UserDetails";
 import ReviewButton from "@/components/ReviewButton";
@@ -57,18 +57,12 @@ export default function HomePage() {
                 {/* Event Details - Only show if user has joined an event */}
                 {user && event && (
                     <>
-                        <ShowEventDetails event={event}/>
                         {
-                            event?.showReview && (
+                            event.showReview && (
                                 <ReviewButton userId={user.userId} currentUser={user} eventId={event.eventId}/>
                             )
                         }
-                        <CurrentActivityUser
-                            userId={user.userId}
-                            activityId={activityId}
-                            getCountdownAction={() => 0}
-                        />
-                        {/* Partner Activity - Only show if conditions are met */}
+                        <ShowEventDetails event={event}/>
                         {shouldRenderPartnerActivity && currentUserGroup && (
                             <PartnerActivity
                                 shouldRender={shouldRenderPartnerActivity}
@@ -80,8 +74,11 @@ export default function HomePage() {
                                 partner={currentUserPartner}
                             />
                         )}
-
-
+                        <CurrentActivity
+                            userId={user.userId}
+                            activityId={activityId}
+                            getCountdownAction={() => 0}
+                        />
                     </>
                 )}
             </div>
