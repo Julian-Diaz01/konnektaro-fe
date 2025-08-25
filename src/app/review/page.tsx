@@ -117,7 +117,7 @@ const ReviewPage: FC = () => {
                                         <div className="flex items-center gap-2 mb-2">
                                             <div className={`bg-${a.groupColor ?? 'primary'} rounded-full m-1 p-2`}>
                                                 <Image
-                                                    src={`/avatars/bear.svg`}
+                                                    src={`/avatars/${a?.partnerAnswer?.icon ?? 'bear.svg'}`}
                                                     height={42}
                                                     width={42}
                                                     alt='img'
