@@ -8,38 +8,39 @@ import {
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog'
-import {FaTrash} from 'react-icons/fa'
-import {GroupActivity} from '@/types/models'
-import Image from 'next/image'
+import {GroupActivity, Event} from '@/types/models'
+import GroupedUsersList from './GroupedUsersList'
+import UserActions from './UserActions'
 
 interface UsersListProps {
-    eventId?: string
+    event: Event | null
     groupActivity?: GroupActivity | null
     mode?: 'all-users' | 'grouped-users'
     onShowUsers?: () => void
     activityId?: string // Add activityId to filter groups
     inline?: boolean // Add inline prop to control layout
+    onReviewAccessChange?: (enabled: boolean) => void // Callback for review access changes
 }
 
 export default function UsersList({
-                                      eventId,
+                                      event,
                                       groupActivity,
                                       mode = 'all-users',
                                       onShowUsers,
                                       activityId,
-                                      inline = false
+                                      inline = false,
+                                      onReviewAccessChange
                                   }: UsersListProps) {
     const [open, setOpen] = useState(false)
     const {users, loading, error, fetchUsersByEvent, deleteUser} = useAdminUser()
 
-    const userss = [...users, ...users]
     useEffect(() => {
-        if (open && eventId && mode === 'all-users') {
-            fetchUsersByEvent(eventId)
+        if (open && event?.eventId && mode === 'all-users') {
+            fetchUsersByEvent(event?.eventId)
         }
-    }, [open, eventId, fetchUsersByEvent, mode])
+    }, [open, event?.eventId, fetchUsersByEvent, mode])
 
-    if (!eventId) return null
+    if (!event?.eventId && !event) return null
 
     // Filter groups to only show those belonging to the specific activity
     const filteredGroups = groupActivity?.groups?.filter(() =>
@@ -58,19 +59,17 @@ export default function UsersList({
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
-                {userss.map((user, i) => (
+                {users.map((user, i) => (
                     <tr key={user.userId + i} className="hover:bg-gray-50 text-black">
                         <td className="px-4 py-2 font-semibold">{user.name}</td>
                         <td className="px-4 py-2">{user.email || 'none'}</td>
                         <td className="px-4 py-2 text-xs">{user.description}</td>
                         <td className="px-4 py-2">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => deleteUser(user.userId)}
-                            >
-                                <FaTrash className="text-red-600" size={18}/>
-                            </Button>
+                            <UserActions
+                                eventId={event?.eventId}
+                                userId={user.userId}
+                                onDeleteUser={deleteUser}
+                            />
                         </td>
                     </tr>
                 ))}
@@ -80,47 +79,7 @@ export default function UsersList({
     )
 
     const renderGroupedUsers = () => {
-        if (filteredGroups.length === 0) {
-            return (
-                <div className="text-center py-8 text-gray-500">
-                    No groups have been created yet for this activity.
-                </div>
-            )
-        }
-
-        return (
-            <div className="space-y-4">
-                {filteredGroups.map((group) => (
-                    <div key={group.groupId} className="border rounded-lg p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                            <div
-                                className="w-4 h-4 rounded-full"
-                                style={{backgroundColor: group.groupColor}}
-                            />
-                            <h4 className="font-semibold text-lg">Group {group.groupNumber}</h4>
-                        </div>
-                        <div className="space-y-2">
-                            {group.participants.map((participant) => (
-                                <div key={participant.userId}
-                                     className="flex items-center gap-3 p-2 bg-gray-50 rounded">
-                                    <Image
-                                        src={`/avatars/${participant.icon}`}
-                                        alt={participant.name}
-                                        className="w-8 h-8"
-                                        width={32}
-                                        height={32}
-                                    />
-                                    <div>
-                                        <p className="font-medium">{participant.name}</p>
-                                        <p className="text-sm text-gray-600">{participant.email}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        )
+        return <GroupedUsersList groupActivity={groupActivity} activityId={activityId}/>
     }
 
     const renderContent = () => {
@@ -203,19 +162,27 @@ export default function UsersList({
         <div className="mb-6 border rounded bg-white p-3">
             <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold">Users</h3>
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button>{getButtonText()}</Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
-                        <div className="flex-shrink-0 border-b pb-4 mb-4">
-                            <DialogTitle>{getTitle()}</DialogTitle>
-                        </div>
-                        <div className="flex-1 overflow-auto">
-                            {renderContent()}
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                <div className="flex items-center gap-2">
+                    <UserActions
+                        eventId={event?.eventId}
+                        showReviewControls={true}
+                        currentReviewAccess={event?.showReview || false}
+                        onReviewAccessChange={onReviewAccessChange}
+                    />
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                            <Button>{getButtonText()}</Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+                            <div className="flex-shrink-0 border-b pb-4 mb-4">
+                                <DialogTitle>{getTitle()}</DialogTitle>
+                            </div>
+                            <div className="flex-1 overflow-auto">
+                                {renderContent()}
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
         </div>
     )
