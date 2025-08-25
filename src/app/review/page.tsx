@@ -12,6 +12,7 @@ const ReviewPage: FC = () => {
         loading,
         currentUser,
         pdfMakeLoaded,
+        downloading,
         generatePDF,
         goBack,
     } = useReviewPage()
@@ -54,10 +55,10 @@ const ReviewPage: FC = () => {
                     <Button
                         onClick={generatePDF}
                         className="bg-secondary text-primary hover:bg-secondary/90"
-                        disabled={!pdfMakeLoaded}
+                        disabled={!pdfMakeLoaded || downloading}
                     >
                         <Download className="w-4 h-4 mr-2"/>
-                        Download PDF
+                        {downloading ? 'Downloading...' : 'Download PDF'}
                     </Button>
                 </div>
             </div>
