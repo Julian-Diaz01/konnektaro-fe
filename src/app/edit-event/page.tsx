@@ -132,7 +132,7 @@ function EventPageContent() {
                                     )}
                                     {activity.type === 'partner' && hasGroupActivity && isActive && (
                                         <UsersList
-                                            eventId={event?.eventId}
+                                            event={event}
                                             groupActivity={groupActivity}
                                             mode="grouped-users"
                                             activityId={activity.activityId}
@@ -190,7 +190,7 @@ function EventPageContent() {
             <Header/>
             <CurrentActivityIndicator/>
             <ShowEventDetails event={event}/>
-            <UsersList eventId={event?.eventId} mode="all-users"/>
+            <UsersList event={event} mode="all-users"/>
             <ShowActivities/>
             <AddNewActivity/>
         </div>
