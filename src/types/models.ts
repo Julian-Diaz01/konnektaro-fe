@@ -9,6 +9,7 @@ export interface Event {
     open: boolean
     userIds: string[]
     currentActivityId?: string
+    showReview?: boolean
 }
 
 export interface User {
