@@ -9,11 +9,13 @@ interface EventContextType {
   event: Event | null
   loading: boolean
   error: string | null
+  activityIds: string[]
   setEvent: (event: Event | null) => void
   deleteCurrentEvent: (eventId: string) => Promise<void>
   createNewEvent: (newEventData: Omit<Event, "eventId">) => Promise<void>
   refreshEvent: (eventId: string) => Promise<void>
   updateReviewAccess: (enabled: boolean) => void
+
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined)
@@ -28,6 +30,7 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+
   const fetchEvent = async (id: string) => {
     if (!id) return
     
@@ -36,6 +39,7 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
       setError(null)
       const response = await getEventById(id)
       setEvent(response.data)
+
     } catch (err) {
       console.error("Failed to fetch event:", err)
       setError("Failed to fetch event.")
@@ -52,6 +56,8 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
       })
     }
   }
+
+
 
   const refreshEvent = async (id: string) => {
     await fetchEvent(id)
@@ -85,6 +91,7 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
       fetchEvent(eventId)
     } else {
       setEvent(null)
+
       setLoading(false)
       setError(null)
     }
@@ -94,11 +101,13 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     event,
     loading,
     error,
+  
     setEvent,
     deleteCurrentEvent,
     createNewEvent,
     refreshEvent,
-    updateReviewAccess
+    updateReviewAccess,
+
   }
 
   return (
