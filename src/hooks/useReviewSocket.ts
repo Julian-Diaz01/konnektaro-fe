@@ -2,6 +2,7 @@ import {useEffect, useCallback, useState} from 'react'
 import {getSocket} from '@/lib/socket'
 import {toast} from 'sonner'
 import {useEventContext} from '@/contexts/EventContext'
+import {Socket} from 'socket.io-client'
 
 interface UseReviewSocketProps {
     eventId: string
@@ -14,28 +15,29 @@ export default function useReviewSocket({eventId}: UseReviewSocketProps) {
     useEffect(() => {
         if (!eventId) return
         
-        let socket: any = null
+        let socket: Socket | null = null
         let mounted = true
 
         const setupSocket = async () => {
             try {
-                socket = await getSocket()
+                const socketInstance = await getSocket()
+                socket = socketInstance
                 
-                if (!mounted) return
+                if (!mounted || !socketInstance) return
 
                 // Check if already connected
-                if (socket.connected) {
+                if (socketInstance.connected) {
                     setIsConnected(true)
                 }
 
-                socket.on('connect', () => {
+                socketInstance.on('connect', () => {
                     if (mounted) {
                         setIsConnected(true)
                     }
                 })
 
                 // Listen for review access changes
-                socket.on('reviewOn', (data: { eventId: string }) => {
+                socketInstance.on('reviewOn', (data: { eventId: string }) => {
                     if (!mounted) return
                     
                     console.log('🔌 Socket: Received reviewOn event for event:', data.eventId)
@@ -45,7 +47,7 @@ export default function useReviewSocket({eventId}: UseReviewSocketProps) {
                     }
                 })
 
-                socket.on('reviewOff', (data: { eventId: string }) => {
+                socketInstance.on('reviewOff', (data: { eventId: string }) => {
                     if (!mounted) return
                     
                     console.log('🔌 Socket: Received reviewOff event for event:', data.eventId)
@@ -55,7 +57,7 @@ export default function useReviewSocket({eventId}: UseReviewSocketProps) {
                     }
                 })
 
-                socket.on('disconnect', () => {
+                socketInstance.on('disconnect', () => {
                     if (mounted) {
                         setIsConnected(false)
                     }
