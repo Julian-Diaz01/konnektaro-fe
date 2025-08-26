@@ -9,13 +9,13 @@ interface EventContextType {
   event: Event | null
   loading: boolean
   error: string | null
-  activityIds: string[]
+  currentActivityId: string | undefined
   setEvent: (event: Event | null) => void
   deleteCurrentEvent: (eventId: string) => Promise<void>
   createNewEvent: (newEventData: Omit<Event, "eventId">) => Promise<void>
   refreshEvent: (eventId: string) => Promise<void>
   updateReviewAccess: (enabled: boolean) => void
-
+  updateCurrentActivityId: (activityId: string) => void
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined)
@@ -29,7 +29,7 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
+  const [currentActivityId, setCurrentActivityId] = useState<string | undefined>(undefined)
 
   const fetchEvent = async (id: string) => {
     if (!id) return
@@ -39,7 +39,7 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
       setError(null)
       const response = await getEventById(id)
       setEvent(response.data)
-
+      setCurrentActivityId(response.data.currentActivityId)
     } catch (err) {
       console.error("Failed to fetch event:", err)
       setError("Failed to fetch event.")
@@ -57,6 +57,9 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     }
   }
 
+  const updateCurrentActivityId = (activityId: string) => {
+    setCurrentActivityId(activityId)
+  }
 
 
   const refreshEvent = async (id: string) => {
@@ -101,13 +104,13 @@ export function EventProvider({ children, eventId }: EventProviderProps) {
     event,
     loading,
     error,
-  
+    currentActivityId,
     setEvent,
     deleteCurrentEvent,
     createNewEvent,
     refreshEvent,
     updateReviewAccess,
-
+    updateCurrentActivityId,
   }
 
   return (

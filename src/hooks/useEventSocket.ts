@@ -1,6 +1,7 @@
 import {useEffect, useState, useRef, useCallback} from "react";
 import {toast} from "sonner";
-import {getSocket, isSocketConnected} from "@/lib/socket";
+import {getSocket} from "@/lib/socket";
+import {Socket} from "socket.io-client";
 
 export default function useEventSocket(eventId: string) {
     const [activeActivityId, setActiveActivityId] = useState<string | null>(null)
@@ -13,30 +14,31 @@ export default function useEventSocket(eventId: string) {
     useEffect(() => {
         if (!eventId) return
 
-        let socket: any = null
+        let socket: Socket | null = null
         let mounted = true
 
         const setupSocket = async () => {
             try {
-                socket = await getSocket()
+                const socketInstance = await getSocket()
+                socket = socketInstance
                 
-                if (!mounted) return
+                if (!mounted || !socketInstance) return
 
                 // Check if already connected
-                if (socket.connected) {
+                if (socketInstance.connected) {
                     setIsConnected(true)
-                    socket.emit('joinEvent', eventId)
+                    socketInstance.emit('joinEvent', eventId)
                 }
 
-                socket.on('connect', () => {
-                    console.log('🔌 Connected to WebSocket:', socket.id)
+                socketInstance.on('connect', () => {
+                    console.log('🔌 Connected to WebSocket:', socketInstance.id)
                     if (mounted) {
                         setIsConnected(true)
-                        socket.emit('joinEvent', eventId)
+                        socketInstance.emit('joinEvent', eventId)
                     }
                 })
 
-                socket.on('activityUpdate', ({eventId: socketEventId, activityId}: { eventId: string, activityId: string }) => {
+                socketInstance.on('activityUpdate', ({eventId: socketEventId, activityId}: { eventId: string, activityId: string }) => {
                     if (!mounted) return
                     
                     console.log('🔥 Received new activity ID:', activityId, 'for the event:', socketEventId)
@@ -67,7 +69,7 @@ export default function useEventSocket(eventId: string) {
                 })
 
                 // Listen for when groups are created
-                socket.on('groupsCreated', (data: { eventId: string, activityId: string }) => {
+                socketInstance.on('groupsCreated', (data: { eventId: string, activityId: string }) => {
                     if (!mounted) return
                     
                     console.log('👥 Socket: Received groupsCreated event:', data)
@@ -78,7 +80,7 @@ export default function useEventSocket(eventId: string) {
                     }
                 })
 
-                socket.on('disconnect', () => {
+                socketInstance.on('disconnect', () => {
                     if (mounted) {
                         setIsConnected(false)
                     }
