@@ -8,6 +8,12 @@ export const swrConfig: SWRConfiguration = {
   refreshInterval: 300000, // Refresh every 5 minutes (default)
   errorRetryCount: 2, // Retry failed requests only 2 times
   errorRetryInterval: 5000, // Wait 5 seconds between retries
+    fetcher: (url: string) =>
+        fetch(url, { cache: 'no-store' }).then((res) => {
+            if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+            return res.json()
+        }),
+
 }
 
 // Configuration for frequently changing data (activities, user activities)
@@ -18,6 +24,12 @@ export const swrConfigFrequent: SWRConfiguration = {
   dedupingInterval: 5000, // At most one request per 5 seconds per key after initial fetch
   revalidateIfStale: true, // Always revalidate stale data on mount
   revalidateOnMount: true, // Always fetch on mount
+    fetcher: (url: string) =>
+        fetch(url, { cache: 'no-store' }).then((res) => {
+            if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+            return res.json()
+        }),
+
 }
 
 // Configuration for static data (events, users)
