@@ -38,7 +38,7 @@ export default function HomePage() {
     
     return (
         <div className="page-background">
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-0 py-8">
 
                 {user && activityId !== "" ?
                     <UserDetails user={user} activityId={activityId}/>

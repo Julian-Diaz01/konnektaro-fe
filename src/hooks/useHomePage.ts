@@ -16,7 +16,7 @@ export default function useHomePage() {
 
     // Use contexts instead of hooks for static data
     const {user, loading: loadingUser} = useUserContext()
-    const {event, refreshEvent} = useEventContext()
+    const {event, refreshEvent, currentActivityId: contextCurrentActivityId} = useEventContext()
     const name = user?.name || '👋'
     const { firebaseUser } = useAuthUser()
     
@@ -49,7 +49,7 @@ export default function useHomePage() {
     } = useEventSocket(eventId)
 
     // Activity ID management
-    const activityId = activeActivityId || event?.currentActivityId || undefined
+    const activityId = activeActivityId || contextCurrentActivityId || undefined
 
     // Group activity management - only fetch if we have both eventId and activityId
     const {
