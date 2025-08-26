@@ -64,6 +64,8 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
     // Combined loading state
     const loading = Boolean(loadingSingle || loadingMultiple)
 
+
+
     const createNewActivity = async (activityData: {
         title: string
         question: string
@@ -72,22 +74,26 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
     }) => {
         try {
             const createdActivity = await createActivity(activityData)
-            // Update the cache with new activity
-            mutateActivities((prev) => [...(prev || []), createdActivity], false)
+            // Update the cache with new activity and revalidate
+            mutateActivities((prev) => [...(prev || []), createdActivity], true)
+            return createdActivity
         } catch (error) {
             console.error("Failed to create activity:", error)
             setError("Failed to create activity.")
+            throw error
         }
     }
 
     const deleteActivity = async (activityId: string) => {
         try {
             await deleteActivityApi(activityId)
-            // Update the cache by removing the deleted activity
+            
+            // Update the cache by removing the deleted activity and revalidate
             mutateActivities((prev) => 
                 (prev || []).filter((activity) => activity.activityId !== activityId), 
-                false
+                true
             )
+            
         } catch (error) {
             console.error("Failed to delete activity:", error)
             setError("Failed to delete activity.")

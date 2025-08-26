@@ -20,7 +20,7 @@ function EventPageContent() {
         activities,
         loading,
         showForm,
-        setShowForm,
+        setShowForm: handleShowForm,
         handleAddActivity,
         handleCurrentActivityUpdate,
         handleDeleteEvent,
@@ -178,7 +178,7 @@ function EventPageContent() {
             {showForm ? (
                 <AddActivityForm activityData={handleAddActivity}/>
             ) : (
-                <Button className="w-full" onClick={() => setShowForm(true)}>
+                <Button className="w-full" onClick={() => handleShowForm()}>
                     Add Activity
                 </Button>
             )}
