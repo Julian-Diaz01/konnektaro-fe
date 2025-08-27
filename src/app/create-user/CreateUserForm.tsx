@@ -117,9 +117,7 @@ export default function CreateUserForm() {
                 <EventClosedMessage eventName={eventName}/>
             ) : (
                 <form className="w-full gap-3 flex flex-col items-center">
-                    <p className="w-full mb-4 text-l font-medium text-gray-700 text-left">Select Avatar:*</p>
-                    <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)}/>
-
+                    <p className="w-full mb-1 text-l font-medium text-gray-700 text-left">Name:*</p>
                     <Input
                         type="text"
                         placeholder="Name*"
@@ -128,6 +126,7 @@ export default function CreateUserForm() {
                         value={form.name}
                         onChange={(e) => handleChange('name', e.target.value)}
                     />
+                    <p className="w-full mb-1 text-l font-medium text-gray-700 text-left">Email:</p>
                     <Input
                         type="email"
                         placeholder="Email"
@@ -135,14 +134,17 @@ export default function CreateUserForm() {
                         value={form.email}
                         onChange={(e) => handleChange('email', e.target.value)}
                     />
+                    <p className="w-full mb-1 text-l font-medium text-gray-700 text-left">Job/ Something about you:*</p>
                     <Input
                         type="text"
-                        placeholder="Job/ Something about you*"
+                        placeholder="I like cats"
                         required
                         maxLength={100}
                         value={form.description}
                         onChange={(e) => handleChange('description', e.target.value)}
                     />
+                    <p className="w-full mb-4 text-l font-medium text-gray-700 text-left">Select Avatar:*</p>
+                    <AvatarSelector selected={form.avatar} onSelectAvatar={(avatar) => handleChange('avatar', avatar)}/>
 
                     <label className="flex items-start gap-3 mt-4 mb-6 text-base text-gray-700 mr-[auto]">
                         <Input
