@@ -7,9 +7,9 @@ export interface Event {
     picture?: string
     activityIds?: string[]
     open: boolean
-    userIds: string[]
     currentActivityId?: string
     showReview?: boolean
+    participantIds?: string[]
 }
 
 export interface User {
