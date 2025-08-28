@@ -65,6 +65,9 @@ export default function useCurrentActivity({
 		const stored = readStoredNotes()
 		if (stored !== null) {
 			setNotesState(stored)
+		} else {
+			// Clear notes when switching to a new activity with no stored notes
+			setNotesState('')
 		}
 	}, [readStoredNotes])
 
@@ -81,6 +84,9 @@ export default function useCurrentActivity({
 					writeStoredNotes(serverNotes)
 				}
 			}
+		} else if (!userActivity || userActivity.activityId !== activityId) {
+			// Reset initial notes when switching to a new activity
+			setInitialNotes('')
 		}
 	}, [userActivity, userActivity?.notes, userActivity?.activityId, activityId, countdown, notes, readStoredNotes, writeStoredNotes])
 
