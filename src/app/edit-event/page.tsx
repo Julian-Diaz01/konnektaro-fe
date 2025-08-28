@@ -101,10 +101,21 @@ function EventPageContent() {
 
     const ShowActivities = () => {
         // Memoize the activities list to avoid unnecessary re-renders
-        const activitiesList = useMemo(() => (
-            activities.length > 0 ? (
+        const activitiesList = useMemo(() => {
+            if (activities.length === 0) {
+                return <p className="mt-2 text-sm text-gray-500">No activities yet</p>
+            }
+
+            // Sort activities by date (earlier first)
+            const sortedActivities = [...activities].sort((a, b) => {
+                const dateA = new Date(a.date)
+                const dateB = new Date(b.date)
+                return dateA.getTime() - dateB.getTime()
+            })
+
+            return (
                 <ul className="mt-2 space-y-2">
-                    {activities.map((activity) => {
+                    {sortedActivities.map((activity) => {
                         const isActive = isActivityActive(activity.activityId)
                         const hasGroupActivity = groupActivity && groupActivity.activityId === activity.activityId
                         
@@ -160,10 +171,8 @@ function EventPageContent() {
                         )
                     })}
                 </ul>
-            ) : (
-                <p className="mt-2 text-sm text-gray-500">No activities yet</p>
             )
-        ), [])
+        }, [activities, isActivityActive, groupActivity, event, memoizedHandlePairUsers, memoizedHandleCurrentActivityUpdate, memoizedDeleteActivity, handleShowGroupedUsers])
 
         return (
             <div className="p-4 bg-white border rounded">
