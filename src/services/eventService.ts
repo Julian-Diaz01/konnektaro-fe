@@ -7,7 +7,7 @@ import {
 } from '@/types/models'
 
 // 📚 EVENT
-export const createEvent = (data: Omit<Event, 'eventId' | 'userIds' | 'activityIds' | 'open'>) =>
+export const createEvent = (data: Omit<Event, 'eventId' | 'participantIds' | 'activityIds' | 'open'>) =>
     axios.post<Event>('/event', data)
 
 export const getEventById = (eventId: string) =>

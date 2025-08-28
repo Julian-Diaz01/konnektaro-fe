@@ -2,13 +2,13 @@
 
 import useHomePage from "@/hooks/useHomePage";
 import JoinEvent from "@/components/JoinEvent";
-import {ShowEventDetails} from "@/components/EventDetails";
 import PartnerActivity from "@/components/PartnerActivity";
 import CurrentActivity from "@/components/CurrentActivityUser";
 import Spinner from "@/components/ui/spinner";
 import UserDetails from "@/components/UserDetails";
 import ReviewBanner from "@/components/ReviewBanner";
 import useReviewSocket from "@/hooks/useReviewSocket";
+import EventBanner from "@/components/EventBanner";
 
 export default function HomePage() {
     const {
@@ -59,10 +59,14 @@ export default function HomePage() {
                     <ReviewBanner userId={user.userId} currentUser={user} eventId={event.eventId}/>
                 )}
 
+                 {/* Event Banner - Fixed at top after joining an event */}
+                 {user && event && !event.showReview && (
+                            <EventBanner event={event}/>
+                        )}
+
                 {/* Event Details - Only show if user has joined an event */}
                 {user && event && (
                     <>
-                        <ShowEventDetails event={event}/>
                         {shouldRenderPartnerActivity && currentUserGroup && (
                             <PartnerActivity
                                 shouldRender={shouldRenderPartnerActivity}
