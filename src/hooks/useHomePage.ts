@@ -6,7 +6,6 @@ import useGroupActivity from "@/hooks/useGroupActivity";
 import { useEventContext } from "@/contexts/EventContext";
 import { useUserContext } from "@/contexts/UserContext";
 import {ParticipantUser} from "@/types/models";
-import useAuthUser from "@/hooks/useAuthUser";
 
 // This hook handles the logic for the home page, including user checks, event loading, socket management, and group activity
 
@@ -15,11 +14,10 @@ export default function useHomePage() {
     const {events, loading: eventsLoading} = useOpenEvents()
 
     // Use contexts instead of hooks for static data
-    const {user, loading: loadingUser} = useUserContext()
+    const {user, loading: loadingUser, firebaseUser} = useUserContext()
     const {event, refreshEvent, currentActivityId: contextCurrentActivityId} = useEventContext()
     const name = user?.name || '👋'
-    const { firebaseUser } = useAuthUser()
-    
+
     useEffect(() => {
         if(!event && user?.eventId) {
             refreshEvent(user?.eventId)
