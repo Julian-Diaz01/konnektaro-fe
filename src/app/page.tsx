@@ -5,7 +5,6 @@ import JoinEvent from "@/components/JoinEvent";
 import PartnerActivity from "@/components/PartnerActivity";
 import CurrentActivity from "@/components/CurrentActivityUser";
 import Spinner from "@/components/ui/spinner";
-import UserDetails from "@/components/UserDetails";
 import ReviewBanner from "@/components/ReviewBanner";
 import useReviewSocket from "@/hooks/useReviewSocket";
 import EventBanner from "@/components/EventBanner";
