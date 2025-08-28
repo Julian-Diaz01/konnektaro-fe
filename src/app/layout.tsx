@@ -5,6 +5,7 @@ import {Toaster} from "@/components/ui/sonner";
 import AuthenticatedLayout from "@/components/AuthenticatedLayout";
 import EventsInitializer from "@/components/EventsInitializer";
 import SocketStatus from "@/components/SocketStatus";
+import { UserProvider } from "@/contexts/UserContext";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',
@@ -17,9 +18,11 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <body>
             <EventsInitializer />
             <SessionManager />
-            <AuthenticatedLayout>
-                {children}
-            </AuthenticatedLayout>
+            <UserProvider>
+                <AuthenticatedLayout>
+                    {children}
+                </AuthenticatedLayout>
+            </UserProvider>
             <Toaster />
             <SocketStatus />
         </body>

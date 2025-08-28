@@ -3,10 +3,14 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
 import { User } from '@/types/models'
 import { createUser, deleteUser as deleteUserApi, getUser } from '@/services/userService'
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth'
+import { auth } from '@/utils/firebase'
 
 interface UserContextType {
     user: User | null
+    firebaseUser: FirebaseUser | null
     loading: boolean
+    authLoading: boolean
     error: string | null
     setUser: (user: User | null) => void
     createNewUser: (newUserData: User) => Promise<void>
@@ -18,15 +22,27 @@ const UserContext = createContext<UserContextType | undefined>(undefined)
 
 interface UserProviderProps {
     children: ReactNode
-    userId?: string | null
+ //   userId?: string | null
 }
 
-export function UserProvider({ children, userId }: UserProviderProps) {
+export function UserProvider({ children }: UserProviderProps) {
     const [user, setUser] = useState<User | null>(null)
+    const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null)
     const [loading, setLoading] = useState(false)
+    const [authLoading, setAuthLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const lastFetchedUserId = useRef<string | null>(null)
     const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+    // Firebase auth state management
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            setFirebaseUser(firebaseUser)
+            setAuthLoading(false)
+        })
+
+        return () => unsubscribe()
+    }, [])
 
     const fetchUser = async (id: string) => {
         if (!id) return
@@ -69,11 +85,11 @@ export function UserProvider({ children, userId }: UserProviderProps) {
             // Force a fresh fetch of user data to ensure we have the complete user object
             // This is important because the user was just created and we need to fetch
             // any additional data that might not be in the creation response
-            if (userId && userId === newUserData.userId) {
+            if (firebaseUser?.uid && firebaseUser?.uid === newUserData.userId) {
                 // Reset the last fetched ID so the useEffect will trigger a refetch
                 lastFetchedUserId.current = null
                 // Trigger immediate refetch
-                fetchUser(userId)
+                fetchUser(firebaseUser?.uid)
             }
         } catch (error) {
             console.error("Failed to create user:", error)
@@ -99,11 +115,11 @@ export function UserProvider({ children, userId }: UserProviderProps) {
             fetchTimeoutRef.current = null
         }
 
-        if (userId) {
+        if (firebaseUser?.uid) {
             // Only fetch if this is a different user than we last fetched
-            if (lastFetchedUserId.current !== userId) {
-                lastFetchedUserId.current = userId
-                fetchUser(userId)
+            if (lastFetchedUserId.current !== firebaseUser?.uid) {
+                lastFetchedUserId.current = firebaseUser?.uid
+                fetchUser(firebaseUser?.uid)
             }
         } else {
             setUser(null)
@@ -111,7 +127,7 @@ export function UserProvider({ children, userId }: UserProviderProps) {
             setError(null)
             lastFetchedUserId.current = null
         }
-    }, [userId])
+    }, [firebaseUser?.uid])
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -124,7 +140,9 @@ export function UserProvider({ children, userId }: UserProviderProps) {
 
     const value: UserContextType = {
         user,
+        firebaseUser,
         loading,
+        authLoading,
         error,
         setUser,
         createNewUser,

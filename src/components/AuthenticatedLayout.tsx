@@ -2,7 +2,6 @@
 
 import {useEffect, useState, useMemo} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
-import useAuthUser from "@/hooks/useAuthUser"
 
 import Spinner from "@/components/ui/spinner"
 import { AppContext } from "@/contexts/AppContext"
@@ -12,10 +11,11 @@ import Header from "@/components/Header"
 import CreateEventPage from '@/app/create-event/page'
 import EditEventPage from '@/app/edit-event/page'
 import CreateUserPage from '@/app/create-user/page'
-import HomePageWrapper from '@/components/HomePageWrapper'
 import AdminPage from '@/app/admin/page'
 import LoginPage from '@/app/login/page'
 import ReviewPage from "@/app/review/page";
+import {useUserContext} from "@/contexts/UserContext";
+import HomePage from "@/app/page";
 
 // Define constants locally
 const ADMIN_URLS = {
@@ -28,11 +28,82 @@ interface AuthenticatedLayoutProps {
     children: React.ReactNode
 }
 
+// Reusable loading component
+const LoadingSpinner = ({ message }: { message: string }) => (
+    <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+            <Spinner color="white"/>
+            <div className="mt-4 text-white">{message}</div>
+        </div>
+    </div>
+);
+
+// Reusable page layout component
+const PageLayout = ({ 
+    children, 
+    withAppContext = false, 
+    eventId = undefined 
+}: { 
+    children: React.ReactNode
+    withAppContext?: boolean
+    eventId?: string | undefined
+}) => {
+
+    const content = withAppContext ? (
+        <AppContext eventId={eventId}>
+            {children}
+        </AppContext>
+    ) : children;
+    
+    return (
+        <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
+                {content}
+            </main>
+        </div>
+    );
+};
+
+// Route configuration for cleaner routing
+const ROUTE_CONFIG = {
+    '/admin': {
+        component: AdminPage,
+        withAppContext: true,
+        eventId: undefined
+    },
+    '/create-event': {
+        component: CreateEventPage,
+        withAppContext: true,
+        eventId: undefined
+    },
+    '/edit-event': {
+        component: EditEventPage,
+        withAppContext: true,
+        eventId: undefined
+    },
+    '/create-user': {
+        component: CreateUserPage,
+        withAppContext: true,
+        eventId: undefined
+    },
+    '/review': {
+        component: ReviewPage,
+        withAppContext: true,
+        eventId: undefined
+    },
+    '/': {
+        component: HomePage,
+        withAppContext: true,
+        eventId: undefined
+    }
+} as const;
+
 export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
     const router = useRouter()
     const pathname = usePathname()
-    const {firebaseUser, loading: authLoading} = useAuthUser()
-    
+    const { firebaseUser, authLoading } = useUserContext()
+
     const isAdminPage = useMemo(() => Object.values(ADMIN_URLS).includes(pathname), [pathname])
     
     // UserContext will handle user data fetching, no need for additional useUser hook
@@ -46,8 +117,6 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
             setCurrentRoute(pathname)
         }
     }, [pathname, currentRoute])
-    
-
     
     // Check if user is admin
     const isAdmin = useMemo(() => {
@@ -103,150 +172,51 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     
     // Show loading spinner while Firebase auth is loading
     if (authLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <Spinner color="white"/>
-                    <div className="mt-4 text-white">Restoring authentication...</div>
-                </div>
-            </div>
-        )
+        return <LoadingSpinner message="Restoring authentication..." />
     }
     
     // Show loading spinner while checking access permissions
     if (!isAllowed) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <Spinner color="white"/>
-                    <div className="mt-4 text-white">Checking access permissions...</div>
-                </div>
-            </div>
-        )
+        return <LoadingSpinner message="Checking access permissions..." />
     }
     
     // For admin pages, don't wait for user data
     if (!isAdminPage && userLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <Spinner color="white"/>
-                    <div className="mt-4 text-white">Loading user data...</div>
-                </div>
-            </div>
-        )
+        return <LoadingSpinner message="Loading user data..." />
     }
     
     // Route guard: Only render if we're on the correct route
     if (currentRoute && currentRoute !== pathname) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <Spinner color="white"/>
-                    <div className="mt-4 text-white">Route change in progress...</div>
-                </div>
-            </div>
-        )
+        return <LoadingSpinner message="Route change in progress..." />
     }
     
-    // Force route-based component rendering
-    if (pathname === '/admin') {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                    <AppContext eventId={undefined} userId={firebaseUser?.uid || null}>
-                        <AdminPage />
-                    </AppContext>
-                </main>
-            </div>
-        )
-    }
-    
-    if (pathname === '/create-event') {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                    <AppContext eventId={undefined} userId={firebaseUser?.uid || null}>
-                        <CreateEventPage />
-                    </AppContext>
-                </main>
-            </div>
-        )
-    }
-    
-    if (pathname === '/edit-event') {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                    <AppContext eventId={undefined} userId={firebaseUser?.uid || null}>
-                        <EditEventPage />
-                    </AppContext>
-                </main>
-            </div>
-        )
-    }
-    
-    if (pathname === '/create-user') {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                    <AppContext  userId={firebaseUser?.uid || null}>
-                        <CreateUserPage />
-                    </AppContext>
-                </main>
-            </div>
-        )
-    }
-    
-    if (pathname === '/review') {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                    <AppContext userId={firebaseUser?.uid || null}>
-                        <ReviewPage />
-                    </AppContext>
-                </main>
-            </div>
-        )
-    }
-    
+    // Handle login page separately (no header/layout needed)
     if (pathname === '/login') {
         return <LoginPage />
     }
     
-    if (pathname === '/') {
-        // Only render home page if user is authenticated
-        if (!firebaseUser?.uid) {
-            return null // This will trigger the redirect to login
+    // Handle configured routes
+    const routeConfig = ROUTE_CONFIG[pathname as keyof typeof ROUTE_CONFIG];
+    if (routeConfig) {
+        const { component: Component, withAppContext, eventId } = routeConfig;
+        
+        // Special case for home page - check authentication
+        if (pathname === '/' && !firebaseUser?.uid) {
+            return null; // This will trigger the redirect to login
         }
         
-        // The useEffect will handle redirecting admin users to /admin
-        // Only anonymous/disposable users will reach this point
         return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                        <HomePageWrapper />
-                </main>
-            </div>
-        )
+            <PageLayout withAppContext={withAppContext} eventId={eventId}>
+                <Component />
+            </PageLayout>
+        );
     }
     
     // For other routes, render the children normally
     return (
-        <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1 p-1 max-w-screen-md mx-auto w-full">
-                <AppContext  userId={firebaseUser?.uid || null}>
-                    {children}
-                </AppContext>
-            </main>
-        </div>
+        <PageLayout withAppContext={true}>
+            {children}
+        </PageLayout>
     )
 }
 
