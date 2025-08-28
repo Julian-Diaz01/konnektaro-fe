@@ -7,7 +7,7 @@ import PartnerActivity from "@/components/PartnerActivity";
 import CurrentActivity from "@/components/CurrentActivityUser";
 import Spinner from "@/components/ui/spinner";
 import UserDetails from "@/components/UserDetails";
-import ReviewButton from "@/components/ReviewButton";
+import ReviewBanner from "@/components/ReviewBanner";
 import useReviewSocket from "@/hooks/useReviewSocket";
 
 export default function HomePage() {
@@ -38,7 +38,7 @@ export default function HomePage() {
     
     return (
         <div className="page-background">
-            <div className="container mx-auto px-0 py-8">
+            <div className="container mx-auto px-0 py-8 pt-20">
 
                 {user && activityId !== "" ?
                     <UserDetails user={user} activityId={activityId}/>
@@ -54,14 +54,14 @@ export default function HomePage() {
                     onEventClick={handleJoinEvent}
                 />
 
+                {/* Review Banner - Fixed at top when review is available */}
+                {user && event && event.showReview && (
+                    <ReviewBanner userId={user.userId} currentUser={user} eventId={event.eventId}/>
+                )}
+
                 {/* Event Details - Only show if user has joined an event */}
                 {user && event && (
                     <>
-                        {
-                            event.showReview && (
-                                <ReviewButton userId={user.userId} currentUser={user} eventId={event.eventId}/>
-                            )
-                        }
                         <ShowEventDetails event={event}/>
                         {shouldRenderPartnerActivity && currentUserGroup && (
                             <PartnerActivity

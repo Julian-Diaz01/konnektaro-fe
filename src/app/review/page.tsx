@@ -44,7 +44,7 @@ const ReviewPage: FC = () => {
         <div className="page-background">
             {/* Header */}
             <div className="bg-white p-4">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <div>
                             <p className="text-sm text-muted-foreground">
@@ -64,7 +64,7 @@ const ReviewPage: FC = () => {
             </div>
 
             {/* PDF Preview */}
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl">
                 <div className="bg-white">
 
                     {/* User Info */}
