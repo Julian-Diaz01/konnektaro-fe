@@ -33,30 +33,6 @@ export default function AdminPage() {
                     <h2 className="w-full text-xl font-semibold text-white mb-4">Events</h2>
                     <EventListAdmin events={events} />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                    <Button 
-                        onClick={() => router.push('/create-user')}
-                        variant="outline"
-                        className="h-20 text-white border-white hover:bg-white hover:text-primary-main"
-                    >
-                        Create User
-                    </Button>
-                    <Button 
-                        onClick={() => router.push('/review')}
-                        variant="outline"
-                        className="h-20 text-white border-white hover:bg-white hover:text-primary-main"
-                    >
-                        Review
-                    </Button>
-                    <Button 
-                        onClick={() => router.push('/edit-event')}
-                        variant="outline" 
-                        className="h-20 text-white border-white hover:bg-white hover:text-primary-main"
-                    >
-                        Manage Events
-                    </Button>
-                </div>
             </div>
         </div>
     )
