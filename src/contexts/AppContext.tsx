@@ -1,21 +1,17 @@
 'use client'
 
-import React, { ReactNode } from 'react'
-import { EventProvider } from './EventContext'
-import { UserProvider } from './UserContext'
+import React, {ReactNode} from 'react'
+import {EventProvider} from './EventContext'
 
 interface AppContextProps {
-  children: ReactNode
-  eventId?: string
-  userId?: string | null
+    children: ReactNode
+    eventId?: string
 }
 
-export function AppContext({ children, eventId, userId }: AppContextProps) {
-  return (
-    <UserProvider userId={userId}>
-      <EventProvider eventId={eventId}>
-        {children}
-      </EventProvider>
-    </UserProvider>
-  )
+export function AppContext({children, eventId}: AppContextProps) {
+    return (
+        <EventProvider eventId={eventId}>
+            {children}
+        </EventProvider>
+    )
 }
