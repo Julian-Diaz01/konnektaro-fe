@@ -67,8 +67,12 @@ export function DropdownMenuCheckboxes() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
 
-                <DropdownMenuSubLabel>Name </DropdownMenuSubLabel>
-                <DropdownMenuLabel>{user?.name || ''}</DropdownMenuLabel>
+               {user?.name &&
+               <>
+                    <DropdownMenuSubLabel>Name </DropdownMenuSubLabel>
+                    <DropdownMenuLabel>{user?.name || ''}</DropdownMenuLabel>
+                </>
+                }
                 { user?.email || firebaseUser?.email &&
 
                 <>
