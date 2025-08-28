@@ -7,7 +7,6 @@ import {getEventStatus} from '@/services/eventService'
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import useAuthUser from '@/hooks/useAuthUser'
 import {BackLink} from "@/components/BackLink";
 import {useUserContext} from "@/contexts/UserContext";
 import { mutate } from 'swr'
@@ -15,7 +14,7 @@ import { mutate } from 'swr'
 export default function CreateUserForm() {
     const router = useRouter()
     const eventId = useSearchParams().get('eventId') || ''
-    const {firebaseUser} = useAuthUser() // Remove authLoading since AuthenticatedLayout handles it
+    const { firebaseUser } = useUserContext()
     const [eventLoading, setEventLoading] = useState(true)
     const [eventOpen, setEventOpen] = useState(false)
     const [eventName, setEventName] = useState('')

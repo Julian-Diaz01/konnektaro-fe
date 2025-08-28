@@ -40,13 +40,6 @@ export default function HomePage() {
         <div className="page-background">
             <div className="container mx-auto px-0 py-8 pt-20">
 
-                {user && activityId !== "" ?
-                    <UserDetails user={user} activityId={activityId}/>
-                    : <h1 className="text-3xl font-bold mb-8">
-                        Welcome to Konnektaro!
-                    </h1>
-                }
-
                 {/* Join Event Section - Only show if user hasn't joined an event */}
                 <JoinEvent
                     user={user}
