@@ -26,7 +26,7 @@ export const getSocket = () => {
         isConnecting = true
         console.log('🔌 Creating new socket connection...')
         
-        socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:8080', {
+        socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
             transports: ['websocket', 'polling'],
             withCredentials: true,
             timeout: 20000,
