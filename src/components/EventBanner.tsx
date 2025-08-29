@@ -2,6 +2,7 @@ import { FC, useState } from "react"
 import { Info, Calendar, Users, FileText } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { Event } from "@/types/models"
+import { Button } from "./ui/button"
 
 interface EventBannerProps {
     event: Event
@@ -26,12 +27,13 @@ const EventBanner: FC<EventBannerProps> = ({ event }) => {
                 
                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
                     <DialogTrigger asChild>
-                        <button 
-                            className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-xs rounded-md transition-colors duration-200"
+                        <Button  
+                        size="sm"
+                            className="px-3 py-1 hover:bg-purple-700 text-white text-xs rounded-md transition-colors duration-200"
                             onClick={() => setIsOpen(true)}
                         >
                             View Details
-                        </button>
+                        </Button>
                     </DialogTrigger>
                     
                     <DialogContent className="max-w-md">
