@@ -37,7 +37,7 @@ export default function HomePage() {
     
     return (
         <div className="page-background">
-            <div className="container mx-auto px-0 py-8 pt-20">
+            <div className="container mx-auto px-0 py-8 pt-10">
 
                 {/* Join Event Section - Only show if user hasn't joined an event */}
                 <JoinEvent
