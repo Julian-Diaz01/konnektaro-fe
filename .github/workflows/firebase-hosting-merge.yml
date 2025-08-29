@@ -32,7 +32,7 @@ jobs:
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
 
       - name: Build
-        run: npm run build
+        run: npm run export
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
