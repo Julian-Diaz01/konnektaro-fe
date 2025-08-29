@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postbuild": "find out -name \"*.txt\" -delete",
+    "postbuild": "cleanup.bat",
     "deploy": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
