@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "export": "next build && next export",
     "start": "next start",
     "lint": "next lint",
+    "postbuild": "find out -name \"*.txt\" -delete",
     "deploy": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
