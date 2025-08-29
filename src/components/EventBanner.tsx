@@ -12,7 +12,7 @@ const EventBanner: FC<EventBannerProps> = ({ event }) => {
 
     return (
         <div className="fixed top-17 left-0 right-0 z-10 bg-[var(--terciary)] text-white shadow-lg border-b border-purple-400">
-            <div className="container mx-auto px-4 py-1 flex items-center justify-between">
+            <div className="container mx-auto px-4 py-1 flex items-center justify-between max-w-screen-md">
                 <div className="flex items-center space-x-3">
                     <div>
                         <p className="text-sm font-medium text-purple-900">
