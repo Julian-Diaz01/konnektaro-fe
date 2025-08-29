@@ -2,7 +2,6 @@
 
 import useHomePage from "@/hooks/useHomePage";
 import JoinEvent from "@/components/JoinEvent";
-import PartnerActivity from "@/components/PartnerActivity";
 import CurrentActivity from "@/components/CurrentActivityUser";
 import Spinner from "@/components/ui/spinner";
 import ReviewBanner from "@/components/ReviewBanner";
@@ -26,6 +25,7 @@ export default function HomePage() {
     useReviewSocket({
         eventId: event?.eventId || ''
     });
+    console.log(currentUserGroup)
 
     if (loading) {
         return (
@@ -59,21 +59,13 @@ export default function HomePage() {
                 {/* Event Details - Only show if user has joined an event */}
                 {user && event && (
                     <>
-                        {shouldRenderPartnerActivity && currentUserGroup && (
-                            <PartnerActivity
-                                shouldRender={shouldRenderPartnerActivity}
-                                currentUser={{
-                                    name: user.name,
-                                    icon: user.icon,
-                                    description: user.description
-                                }}
-                                partner={currentUserPartner}
-                            />
-                        )}
                         <CurrentActivity
                             userId={user.userId}
                             activityId={activityId}
                             getCountdownAction={() => 0}
+                            shouldRenderPartnerActivity={shouldRenderPartnerActivity}
+                            currentUserPartner={currentUserPartner}
+                            currentUserGroup={currentUserGroup}
                         />
                     </>
                 )}
