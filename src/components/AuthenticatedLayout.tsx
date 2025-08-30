@@ -16,6 +16,7 @@ import LoginPage from '@/app/login/page'
 import ReviewPage from "@/app/review/page";
 import {useUserContext} from "@/contexts/UserContext";
 import HomePage from "@/app/page";
+import AdminLoginPage from '@/app/admin-login/page'
 
 // Define constants locally
 const ADMIN_URLS = {
@@ -131,7 +132,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         if (authLoading) return false
         
         // Always allow access to login page
-        if (pathname === '/login') {
+        if (pathname === '/login' || pathname === '/admin-login') {
             return true
         }
         
@@ -147,7 +148,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         
         if (!firebaseUser?.uid) {
             // Don't redirect to login if we're already on the login page
-            if (pathname !== '/login') {
+            if (pathname !== '/login' && pathname !== '/admin-login') {
                 router.push('/login')
                 return
             } else {
@@ -193,6 +194,11 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     // Handle login page separately (no header/layout needed)
     if (pathname === '/login') {
         return <LoginPage />
+    }
+    
+    // Handle admin-login page separately (no header/layout needed)
+    if (pathname === '/admin-login') {
+        return <AdminLoginPage />
     }
     
     // Handle configured routes

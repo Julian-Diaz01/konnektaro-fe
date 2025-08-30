@@ -4,11 +4,11 @@ import {useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
 import {auth} from '@/utils/firebase'
-import {loginAnonymously} from '@/utils/authenticationService'
+import {loginAnonymously, loginWithGoogle} from '@/utils/authenticationService'
 import Head from 'next/head'
 import {Button} from "@/components/ui/button"
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const textRef = useRef<HTMLHeadingElement>(null)
@@ -50,15 +50,25 @@ export default function LoginPage() {
                 <title>Konnektaro Login</title>
             </Head>
             <div className="h-[80vh] w-full flex flex-col justify-center items-center bg-primary-main text-center px-4">
-                <div className="flex-grow flex items-center justify-center w-full">
-                    <h1  ref={textRef} onClick={restartAnimation} className="text-4xl font-bold shadow-dance-text text-center">Konnektaro</h1>
+                <div className="flex-grow flex justify-center w-full flex-col gap-4">
+                    <h1  ref={textRef} onClick={restartAnimation} className="text-xl text-start font-bold shadow-dance-text">Admins</h1>
+                    <h1  ref={textRef} onClick={restartAnimation} className="text-xl text-start font-bold shadow-dance-text">Konnektaro</h1>
+
                 </div>
                 <div className="w-full max-w-sm flex flex-col gap-4 mb-5">
                     <Button variant="secondary"
                         onClick={loginAnonymously}
                         className=" w-full h-[7vh] rounded-full font-semibold text-lg sm:text-xl"
                     >
-                        Sign in
+                        Sign in as Guest
+                    </Button>
+
+                    <Button
+                        variant="outline"
+                        onClick={loginWithGoogle}
+                        className=" w-full h-[7vh] rounded-full font-semibold text-lg sm:text-xl"
+                    >
+                        Sign in as Moderator
                     </Button>
                 </div>
             </div>
