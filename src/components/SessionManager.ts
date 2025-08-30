@@ -11,7 +11,7 @@ export const useAutoLogout = () => {
         const loginTimestamp = localStorage.getItem('loginTimestamp')
 
         // Skip session check on login page entirely
-        if (currentPath === '/login') {
+        if (currentPath === '/login' || currentPath === '/admin-login') {
             return
         }
 

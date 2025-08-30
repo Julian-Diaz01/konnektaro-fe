@@ -167,7 +167,6 @@ p, h1, h2, h3, h4, h5, h6 {
     transition: all 0.5s;
     font-variation-settings: "wght" 300, "ital" 1;
     font-size: 3rem;
-    text-align: center;
     color: var(--light-text);
     font-family: "Meta", sans-serif;
     animation: shadow-dance 3s forwards;
