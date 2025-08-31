@@ -69,7 +69,7 @@ export default function useCurrentActivity({
 			// Clear notes when switching to a new activity with no stored notes
 			setNotesState('')
 		}
-	}, [readStoredNotes])
+	}, [activityId, readStoredNotes])
 
 	// Server sync: update baseline; only override UI if safe and different
 	useEffect(() => {
@@ -77,8 +77,8 @@ export default function useCurrentActivity({
 			const serverNotes = userActivity.notes
 			setInitialNotes(serverNotes)
 			const stored = readStoredNotes()
-			// If nothing stored and safe to show, set from server when different
-			if (!stored && (!userHasTypedRef.current || countdown <= 1)) {
+			// Only set from server if we have no stored notes and user hasn't typed recently
+			if (!stored && !userHasTypedRef.current) {
 				if (serverNotes !== notes) {
 					setNotesState(serverNotes)
 					writeStoredNotes(serverNotes)
@@ -88,7 +88,7 @@ export default function useCurrentActivity({
 			// Reset initial notes when switching to a new activity
 			setInitialNotes('')
 		}
-	}, [userActivity, userActivity?.notes, userActivity?.activityId, activityId, countdown, notes, readStoredNotes, writeStoredNotes])
+	}, [userActivity, userActivity?.notes, userActivity?.activityId, activityId, notes, readStoredNotes, writeStoredNotes])
 
 	// Save or update current activity
 	const saveOrUpdate = useCallback(async (targetActivityId: string, _targetUserActivity?: UserActivity | null, targetNotes?: string) => {
