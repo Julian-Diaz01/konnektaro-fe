@@ -73,16 +73,17 @@ export function DropdownMenuCheckboxes() {
                     <DropdownMenuLabel>{user?.name || ''}</DropdownMenuLabel>
                 </>
                 }
-                { user?.email || firebaseUser?.email &&
+                { (user?.email || firebaseUser?.email ) &&
 
                 <>
                     <DropdownMenuSubLabel>Email </DropdownMenuSubLabel>
                     <DropdownMenuLabel>{user?.email || firebaseUser?.email || ''}</DropdownMenuLabel>
-                    </>}
+                    </>
+                }
 
                 {user?.description &&
                 <>
-                    <DropdownMenuSubLabel>Description </DropdownMenuSubLabel>
+                    <DropdownMenuSubLabel>Description / Job </DropdownMenuSubLabel>
                     <DropdownMenuLabel>{user?.description || ''}</DropdownMenuLabel>
                 </>}
 

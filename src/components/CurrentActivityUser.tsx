@@ -3,7 +3,7 @@
 import {AutoGrowTextarea} from "@/components/ui/textarea"
 import {Button} from "@/components/ui/button"
 import Spinner from "@/components/ui/spinner"
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
 import useCurrentActivity from "@/hooks/useCurrentActivity"
 import useCountdown from "@/hooks/useCountdown"
 import {ChevronRight, Upload} from "lucide-react"
@@ -58,10 +58,35 @@ export default function CurrentActivity({
 
     // Local state for displayed notes (combines API data with local updates)
     const [displayedNotes, setDisplayedNotes] = useState<string | null>(null)
+    
+    // Ref to maintain textarea value without causing re-renders
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+    
+    // Flag to prevent hook interference while typing
+    const [isUserTyping, setIsUserTyping] = useState(false)
+
+    // Memoized displayed notes to prevent unnecessary re-renders
+    const notesToDisplay = useMemo(() => {
+        return displayedNotes || userActivity?.notes || null
+    }, [displayedNotes, userActivity?.notes])
 
     useEffect(() => {
         setDisplayedNotes(userActivity?.notes || null)
     }, [userActivity?.notes, activityId])
+
+    // Initialize textarea value when activity changes (but not when user is typing)
+    useEffect(() => {
+        if (activityId && !isEditing && !isUserTyping && textareaRef.current) {
+            const stored = localStorage.getItem(`notes:${userId}:${activityId}`)
+            if (stored) {
+                textareaRef.current.value = stored
+            } else if (userActivity?.notes) {
+                textareaRef.current.value = userActivity.notes
+            } else {
+                textareaRef.current.value = ''
+            }
+        }
+    }, [activityId, userId, userActivity?.notes, isEditing, isUserTyping])
 
 
     const ActivityDescription = ({activity}: { activity: Activity }) => {
@@ -93,19 +118,18 @@ export default function CurrentActivity({
         }
     }
 
-    const ActivityNotes = () => {
-        if (!displayedNotes || !userActivity?.notes) return null
-        else if (displayedNotes || userActivity?.notes) {
-            return (
-                <div className="bg-green-100 border text-black rounded ml-12 p-2 mt-3">
-                    <div className="text-green-800 font-bold text-sm">{user?.name}</div>
-                    <div className="break-words whitespace-pre-wrap max-w-full">
-                        {displayedNotes || userActivity?.notes}
-                    </div>
+    const ActivityNotes = useCallback(() => {
+        if (!notesToDisplay) return null
+        
+        return (
+            <div className="bg-green-100 border text-black rounded ml-12 p-2 mt-3">
+                <div className="text-green-800 font-bold text-sm">{user?.name}</div>
+                <div className="break-words whitespace-pre-wrap max-w-full">
+                    {notesToDisplay}
                 </div>
-            )
-        }
-    }
+            </div>
+        )
+    }, [notesToDisplay, user?.name])
 
     const ActivityPartnerNote = () => {
         if (!shouldRenderPartnerActivity) return null
@@ -153,43 +177,57 @@ export default function CurrentActivity({
         }
     }
 
-    const BottomTextArea = () => {
-
-        {/* WhatsApp-style Input Area - Fixed at Bottom */
+    const handleEditClick = useCallback(() => {
+        setIsEditing(true)
+        setIsUserTyping(false)
+        const notesToEdit = notesToDisplay || ''
+        if (textareaRef.current) {
+            textareaRef.current.value = notesToEdit
         }
-        return <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 z-50 ">
-            {(displayedNotes || userActivity?.notes) && !isEditing ? (
+        setNotes(notesToEdit)
+    }, [notesToDisplay, setNotes])
+
+    const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
+        e.preventDefault()
+        const currentValue = textareaRef.current?.value || ''
+        if (currentValue.trim()) {
+            skipCountdown()
+            setIsUserTyping(false)
+            setNotes(currentValue)
+            await handleSubmit(e)
+            setDisplayedNotes(currentValue)
+            setIsEditing(false)
+        }
+    }, [skipCountdown, setNotes, handleSubmit])
+
+    const handleTextareaChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setIsUserTyping(true)
+        // Don't call setNotes here to prevent hook from resetting the value
+        // We'll call it only when submitting
+    }, [])
+
+    const BottomTextArea = useCallback(() => {
+        return <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 z-50 h-[68px] flex items-center">
+            {notesToDisplay && !isEditing ? (
                 /* Show Edit Button when notes exist and not editing */
-                <div className="flex justify-center max-w-screen-md mx-auto px-6">
+                <div className="flex justify-center max-w-screen-md mx-auto px-0 w-full">
                     <Button
-                        onClick={() => {
-                            setIsEditing(true)
-                            setNotes(displayedNotes || userActivity?.notes || '')
-                        }}
-                        className="bg-[var(--primary)] hover:bg-[var(--terciary)] w-full text-white px-6 py-2 rounded-lg"
+                        onClick={handleEditClick}
+                        className="bg-[var(--primary)] hover:bg-[var(--terciary)] w-full text-white px-0 py-2 rounded-lg h-[44px]"
                     >
                         Edit Answer
                     </Button>
                 </div>
             ) : (
                 /* Show Input Form when no notes exist or when editing */
-                <form className="flex gap-3 items-end max-w-screen-md mx-auto px-6" onSubmit={async (e) => {
-                    e.preventDefault()
-                    if (notes.trim()) {
-                        skipCountdown()
-                        await handleSubmit(e)
-                        // Update local state with the submitted notes
-                        setDisplayedNotes(notes)
-                        setIsEditing(false)
-                    }
-                }}>
+                <form className="flex gap-3 max-w-screen-md mx-auto px-0 items-center w-full" onSubmit={handleFormSubmit}>
                     <div className="flex-1 relative">
-                        <AutoGrowTextarea
+                        <textarea
+                            ref={textareaRef}
                             placeholder="Write your thoughts..."
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
+                            onChange={handleTextareaChange}
                             required
-                            className="min-h-[44px] max-h-[120px] resize-none border border-gray-300 rounded-2xl px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+                            className="h-[44px] resize-none border border-gray-300 rounded-2xl w-full py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-black"
                             style={{
                                 lineHeight: '1.5',
                                 paddingRight: '48px'
@@ -200,7 +238,7 @@ export default function CurrentActivity({
                     {/* Submit Button - Always visible */}
                     <Button
                         type="submit"
-                        disabled={displayCountdown > 0 || loadingUserActivity || !notes.trim()}
+                        disabled={displayCountdown > 0 || loadingUserActivity || !(textareaRef.current?.value || '').trim()}
                         className="h-[44px] w-[44px] rounded-full p-0 flex-shrink-0 bg-[var(--primary)] hover:bg-[var(--terciary)] disabled:bg-gray-400 transition-colors"
                     >
                         {displayCountdown > 0
@@ -216,8 +254,7 @@ export default function CurrentActivity({
                 </form>
             )}
         </div>
-
-    }
+    }, [notesToDisplay, isEditing, handleEditClick, handleFormSubmit, handleTextareaChange, displayCountdown, loadingUserActivity, userActivity?.notes])
 
     // Early returns for loading states
     if (!userId || !activity) return null
