@@ -187,7 +187,7 @@ function EventPageContent() {
             {showForm ? (
                 <AddActivityForm activityData={handleAddActivity}/>
             ) : (
-                <Button className="w-full" onClick={() => handleShowForm()}>
+                <Button className="mt-3 w-full" onClick={() => handleShowForm()}>
                     Add Activity
                 </Button>
             )}
