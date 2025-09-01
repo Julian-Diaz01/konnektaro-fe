@@ -17,19 +17,9 @@ export const ShowEventDetails = ({ event }: { event: Event | null }) => {
         <div className="w-full mb-8 bg-white border rounded">
             {/* Collapsed View - Always Visible */}
             <div 
-                className="flex flex-row gap-4 items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                className="flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={toggleExpanded}
             >
-                {event?.picture && (
-                    <Image
-                        src={`/avatars/${event.picture}`}
-                        alt="Event"
-                        width={60}
-                        height={60}
-                        className="w-auto h-16 object-cover rounded"
-                    />
-                )}
-                
                 <div className="flex-grow">
                     <h2 className="font-bold text-xl text-gray-800">{event?.name}</h2>
                 </div>
@@ -57,8 +47,16 @@ export const ShowEventDetails = ({ event }: { event: Event | null }) => {
             {/* Expanded Content */}
             {isExpanded && (
                 <div className="border-t bg-gray-50 p-4">
-                    <div className="flex flex-row gap-6 items-start">
-                        
+                    <div className="flex flex-row gap-8 items-start">
+                        {event?.picture && (
+                            <Image
+                                src={`/eventAssets/${event.picture}`}
+                                alt="Event"
+                                width={120}
+                                height={120}
+                                className="w-auto h-60 p-6 m-[-40px] object-cover rounded"
+                            />
+                        )}
                         <div className="m-3 ml-0 flex flex-col flex-grow gap-3">
                             <p className="text-gray-700">{event?.description}</p>
                         </div>
