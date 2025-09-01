@@ -47,14 +47,14 @@ export const ShowEventDetails = ({ event }: { event: Event | null }) => {
             {/* Expanded Content */}
             {isExpanded && (
                 <div className="border-t bg-gray-50 p-4">
-                    <div className="flex flex-row gap-8 items-start">
+                    <div className="flex flex-col gap-3 items-center">
                         {event?.picture && (
                             <Image
                                 src={`/eventAssets/${event.picture}`}
                                 alt="Event"
                                 width={120}
                                 height={120}
-                                className="w-auto h-60 p-6 m-[-40px] object-cover rounded"
+                                className="w-full max-h-60 object-cover rounded"
                             />
                         )}
                         <div className="m-3 ml-0 flex flex-col flex-grow gap-3">
