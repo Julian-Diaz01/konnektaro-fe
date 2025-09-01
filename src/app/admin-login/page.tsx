@@ -50,10 +50,11 @@ export default function AdminLoginPage() {
                 <title>Konnektaro Login</title>
             </Head>
             <div className="h-[80vh] w-full flex flex-col justify-center items-center bg-primary-main text-center px-4">
-                <div className="flex-grow flex justify-center w-full flex-col gap-4">
-                    <h1  ref={textRef} onClick={restartAnimation} className="text-xl text-start font-bold shadow-dance-text">Admins</h1>
-                    <h1  ref={textRef} onClick={restartAnimation} className="text-xl text-start font-bold shadow-dance-text">Konnektaro</h1>
-
+                <div className="max-w-screen-md flex flex-col justify-center items-center flex-grow gap-4">
+                    <div className="w-full flex flex-col gap-4">
+                        <h1  ref={textRef} onClick={restartAnimation} className="text-xl text-start font-bold shadow-dance-text">Admins</h1>
+                        <h1  ref={textRef} onClick={restartAnimation} className="text-xl text-start font-bold shadow-dance-text">Konnektaro</h1>
+                    </div>
                 </div>
                 <div className="w-full max-w-sm flex flex-col gap-4 mb-5">
                     <Button variant="secondary"
