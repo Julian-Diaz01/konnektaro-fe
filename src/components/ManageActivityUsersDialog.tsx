@@ -1,15 +1,13 @@
 'use client';
 
 import {useState, useEffect, useCallback} from 'react';
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from '@/components/ui/dialog';
+import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
 import {Button} from '@/components/ui/button';
-import UsersList from '@/components/UsersList';
 import {getSocket} from '@/lib/socket';
 import {toast} from 'sonner';
 import Spinner from '@/components/ui/spinner';
 import {Event} from '@/types/models';
 import useGroupActivity from '@/hooks/useGroupActivity';
-import {Switch} from "@/components/ui/switch";
 import GroupedUsersList from "@/components/GroupedUsersList";
 
 interface ManageActivityUsersDialogProps {
@@ -152,7 +150,7 @@ export default function ManageActivityUsersDialog({
                         ) : (
                             <div className="text-center py-8 text-gray-500">
                                 <p>No users paired yet.</p>
-                                <p className="text-sm mt-1">Click "Pair Users" to start pairing participants.</p>
+                                <p className="text-sm mt-1">Click &#34;Pair Users&#34; to start pairing participants.</p>
                             </div>
                         )}
                     </div>

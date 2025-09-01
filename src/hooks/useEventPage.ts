@@ -17,7 +17,6 @@ export default function useEventPage() {
     const {
         activities,
         loading: activitiesLoading,
-        createNewActivity,
         deleteActivity,
     } = useActivity({activityIds: event?.activityIds || []})
 
@@ -56,7 +55,7 @@ export default function useEventPage() {
             toast.error("❌ Failed to create activity. Please try again.")
             // Don't close the form if creation failed
         }
-    }, [event, createNewActivity])
+    }, [event])
 
     const handleCurrentActivityUpdate = useCallback(async (activityId: string) => {
         if (!event || !activityId) return

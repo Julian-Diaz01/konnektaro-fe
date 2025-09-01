@@ -161,7 +161,7 @@ function EventPageContent() {
                     })}
                 </ul>
             )
-        }, [activities, isActivityActive, memoizedHandleCurrentActivityUpdate, memoizedDeleteActivity])
+        }, [])
 
         return (
             <div className="p-4 bg-white border rounded">
