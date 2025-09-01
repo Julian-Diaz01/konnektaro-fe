@@ -14,37 +14,40 @@ export default function GroupedUsersList({groupActivity, activityId}: GroupedUse
 
     if (filteredGroups.length === 0) {
         return (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-4 text-gray-500 text-sm">
                 No groups have been created yet for this activity.
             </div>
         )
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             {filteredGroups.map((group) => (
-                <div key={group.groupId} className="border rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
+                <div key={group.groupId} className="border rounded-lg p-3 bg-white shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
                         <div
-                            className="w-4 h-4 rounded-full"
+                            className="w-3 h-3 rounded-full flex-shrink-0"
                             style={{backgroundColor: group.groupColor}}
                         />
-                        <h4 className="font-semibold text-lg">Group {group.groupNumber}</h4>
+                        <h4 className="font-semibold text-base">Group {group.groupNumber}</h4>
+                        <span className="text-xs text-gray-500 ml-auto">
+                            {group.participants.length} {group.participants.length === 1 ? 'member' : 'members'}
+                        </span>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                         {group.participants.map((participant) => (
                             <div key={participant.userId}
-                                 className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                                 className="flex items-center gap-2 p-1.5 bg-gray-50 rounded text-sm">
                                 <Image
                                     src={`/avatars/${participant.icon}`}
                                     alt={participant.name}
-                                    className="w-8 h-8"
-                                    width={32}
-                                    height={32}
+                                    className="w-6 h-6 flex-shrink-0"
+                                    width={24}
+                                    height={24}
                                 />
-                                <div>
-                                    <p className="font-medium">{participant.name}</p>
-                                    <p className="text-sm text-gray-600">{participant.email}</p>
+                                <div className="min-w-0 flex-1">
+                                    <p className="font-medium truncate">{participant.name}</p>
+                                    <p className="text-xs text-gray-600 truncate">{participant.email}</p>
                                 </div>
                             </div>
                         ))}

@@ -74,8 +74,9 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
     }) => {
         try {
             const createdActivity = await createActivity(activityData)
-            // Update the cache with new activity and revalidate
-            mutateActivities((prev) => [...(prev || []), createdActivity], true)
+            // Update the cache with new activity WITHOUT revalidation (false parameter)
+            // This prevents unnecessary API calls while keeping the UI in sync
+            mutateActivities((prev) => [...(prev || []), createdActivity], false)
             return createdActivity
         } catch (error) {
             console.error("Failed to create activity:", error)
@@ -88,10 +89,11 @@ export default function useActivity({activityId = null, activityIds = []}: Activ
         try {
             await deleteActivityApi(activityId)
             
-            // Update the cache by removing the deleted activity and revalidate
+            // Update the cache by removing the deleted activity WITHOUT revalidation
+            // This prevents unnecessary API calls while keeping the UI in sync
             mutateActivities((prev) => 
                 (prev || []).filter((activity) => activity.activityId !== activityId), 
-                true
+                false
             )
             
         } catch (error) {

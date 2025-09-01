@@ -2,7 +2,6 @@ import {useRouter, useSearchParams} from "next/navigation"
 import {useState, useMemo, useCallback} from "react"
 import {ActivityType} from "@/types/models"
 import {updateCurrentActivity} from "@/services/eventService"
-import useGroupActivity from "@/hooks/useGroupActivity";
 import { useEventContext } from "@/contexts/EventContext"
 import useActivity from "@/hooks/useActivity";
 import { getSocket } from "@/lib/socket";
@@ -20,27 +19,16 @@ export default function useEventPage() {
         loading: activitiesLoading,
         createNewActivity,
         deleteActivity,
-        refresh: refreshActivities
     } = useActivity({activityIds: event?.activityIds || []})
 
-    // Get the current activity to determine if we need to fetch group activity
+    // Get the current activity
     const currentActivity = activities.find(a => a.activityId === currentActivityId)
-    
-    // Use the hook to fetch group activity when current activity is of type 'partner'
-    const { 
-        groupActivity, 
-        loading: groupActivityLoading,
-        pairUsersInGroupActivity 
-    } = useGroupActivity(
-        eventId, 
-        currentActivityId && currentActivity?.type === 'partner' ? currentActivity.activityId : undefined
-    )
 
     const [showForm, setShowForm] = useState(false)
 
     const loading = useMemo(() => 
-        eventLoading || activitiesLoading || groupActivityLoading, 
-        [eventLoading, activitiesLoading, groupActivityLoading]
+        eventLoading || activitiesLoading, 
+        [eventLoading, activitiesLoading]
     )
 
     const handleAddActivity = useCallback(async (activityData: {
@@ -53,14 +41,14 @@ export default function useEventPage() {
             console.log('➕ Admin creating new activity:', { activityData, eventId: event.eventId })
             toast.info(`➕ Creating new activity: ${activityData.title}`)
             
-            await createNewActivity({...activityData, eventId: event.eventId})
+          //  const newActivity = await createNewActivity({...activityData, eventId: event.eventId})
             console.log('✅ Activity created successfully on server')
-            
+
             toast.success(`✅ Activity "${activityData.title}" created successfully!`)
             
-            // Refresh the activities to get the updated list from the server
-            refreshActivities()
-            console.log('✅ Activities refreshed after creation')
+            // The createNewActivity function already updates the activities cache locally
+            // No need to call refreshActivities() or update event context
+            console.log('✅ Activities cache updated automatically')
             
             setShowForm(false)
         } catch (error) {
@@ -68,7 +56,7 @@ export default function useEventPage() {
             toast.error("❌ Failed to create activity. Please try again.")
             // Don't close the form if creation failed
         }
-    }, [event, createNewActivity, refreshActivities])
+    }, [event, createNewActivity])
 
     const handleCurrentActivityUpdate = useCallback(async (activityId: string) => {
         if (!event || !activityId) return
@@ -128,42 +116,6 @@ export default function useEventPage() {
         router.push("/admin")
     }, [eventId, deleteCurrentEvent, router])
 
-    const handlePairUsers = useCallback(async (activityId: string) => {
-        if (!event || !activityId) return
-        try {
-            const activity = activities.find(a => a.activityId === activityId)
-            if (!activity) {
-                toast.error("❌ Activity not found. Please refresh the page and try again.")
-                return
-            }
-            
-            console.log('👥 Admin pairing users for activity:', { activityId, activityTitle: activity.title, eventId: event.eventId })
-            toast.info(`👥 Pairing users for "${activity.title}"...`)
-            
-            await pairUsersInGroupActivity(activityId)
-            console.log('✅ Users paired successfully on server')
-            
-            toast.success(`✅ Users paired successfully for "${activity.title}"!`)
-            
-            // Emit socket event to notify all connected users about the new groups
-            try {
-                const socket = await getSocket()
-                if (socket && socket.connected) {
-                    socket.emit('adminGroupsCreated', { eventId: event.eventId, activityId })
-                    console.log('🔌 Emitted adminGroupsCreated event:', { eventId: event.eventId, activityId })
-                } else {
-                    console.warn('⚠️ Socket not connected, cannot emit adminGroupsCreated event')
-                }
-            } catch (socketError) {
-                console.warn('⚠️ Failed to emit socket event:', socketError)
-                // Don't fail the user pairing if socket emission fails
-            }
-        } catch (error) {
-            console.error("Failed to pair users:", error)
-            toast.error("❌ Failed to pair users. Please try again.")
-        }
-    }, [event, pairUsersInGroupActivity, activities])
-
     const handleDeleteActivity = useCallback(async (activityId: string) => {
         if (!event) return
         try {
@@ -181,14 +133,14 @@ export default function useEventPage() {
             
             toast.success(`✅ Activity "${activity.title}" deleted successfully!`)
             
-            // Refresh the activities to get the updated list from the server
-            refreshActivities()
-            console.log('✅ Activities refreshed after deletion')
+            // The deleteActivity function already updates the activities cache locally
+            // No need to call refreshActivities() - prevents unnecessary API calls
+            console.log('✅ Activities cache updated automatically')
         } catch (error) {
             console.error("Failed to delete activity:", error)
             toast.error("❌ Failed to delete activity. Please try again.")
         }
-    }, [event, deleteActivity, refreshActivities, activities])
+    }, [event, deleteActivity, activities])
 
     const handleShowForm = useCallback(() => setShowForm(true), [])
     const handleHideForm = useCallback(() => setShowForm(false), [])
@@ -204,9 +156,7 @@ export default function useEventPage() {
         handleAddActivity,
         handleCurrentActivityUpdate,
         handleDeleteEvent,
-        handlePairUsers,
         deleteActivity: handleDeleteActivity,
-        groupActivity,
         currentActivity,
     }
 }
