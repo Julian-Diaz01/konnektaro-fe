@@ -63,7 +63,7 @@ export default function useHomePage() {
         if (shouldFetchGroups && activityId) {
             
             // Fetch immediately when socket triggers - no delay needed
-            fetchGroupActivity()
+            fetchGroupActivity(activityId)
             
             // Reset the flag after triggering
             resetShouldFetchGroups()
