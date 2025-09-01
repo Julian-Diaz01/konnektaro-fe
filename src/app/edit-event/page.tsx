@@ -3,30 +3,28 @@
 import {Suspense, useMemo, useCallback} from "react";
 import {BackLink} from "@/components/BackLink";
 import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
-import AddActivityForm from "@/components/AddActivity";
 import {Button} from "@/components/ui/button";
 import useEventPage from "@/hooks/useEventPage";
-import useGroupedUsersDisplay from "@/hooks/useGroupedUsersDisplay";
+
 import Spinner from "@/components/ui/spinner";
 import UsersList from "@/components/UsersList";
 import useEventSocket from "@/hooks/useEventSocket";
 import {ShowEventDetails} from "@/components/EventDetails";
 import { EventProvider } from "@/contexts/EventContext";
 import { useSearchParams } from "next/navigation";
+import { ActivityType } from "@/types/models";
+import AddActivityDialog from "@/components/AddActivityDialog";
+import ManageActivityUsersDialog from "@/components/ManageActivityUsersDialog";
 
 function EventPageContent() {
     const {
         event,
         activities,
         loading,
-        showForm,
-        setShowForm: handleShowForm,
         handleAddActivity,
         handleCurrentActivityUpdate,
         handleDeleteEvent,
         deleteActivity,
-        handlePairUsers,
-        groupActivity,
         currentActivity: eventPageCurrentActivity
     } = useEventPage();
 
@@ -39,17 +37,10 @@ function EventPageContent() {
     // Find the current activity object (prioritize live socket data)
     const currentActivity = activities.find(a => a.activityId === currentActivityId) || eventPageCurrentActivity
 
-    const {handleShowGroupedUsers} = useGroupedUsersDisplay(groupActivity)
-
     // Memoize the isActivityActive function to avoid redundant calculations
     const isActivityActive = useMemo(() => (activityId: string) => {
         return currentActivityId === activityId
     }, [currentActivityId])
-
-    // Memoize handler functions to prevent unnecessary re-renders
-    const memoizedHandlePairUsers = useCallback((activityId: string) => {
-        handlePairUsers(activityId)
-    }, [handlePairUsers])
 
     const memoizedHandleCurrentActivityUpdate = useCallback((activityId: string) => {
         handleCurrentActivityUpdate(activityId)
@@ -58,6 +49,10 @@ function EventPageContent() {
     const memoizedDeleteActivity = useCallback((activityId: string) => {
         deleteActivity(activityId)
     }, [deleteActivity])
+
+    const memoizedHandleAddActivity = useCallback((activityData: { title: string; question: string; type: ActivityType }) => {
+        handleAddActivity(activityData)
+    }, [handleAddActivity])
 
     if (loading) {
         return <Spinner/>;
@@ -117,7 +112,6 @@ function EventPageContent() {
                 <ul className="mt-2 space-y-2">
                     {sortedActivities.map((activity) => {
                         const isActive = isActivityActive(activity.activityId)
-                        const hasGroupActivity = groupActivity && groupActivity.activityId === activity.activityId
                         
                         return (
                             <li
@@ -135,20 +129,15 @@ function EventPageContent() {
                                 </div>
                                 <div className="ml-[auto] flex flex-col gap-2">
                                     {activity.type === 'partner' && isActive && (
-                                        <Button
-                                            onClick={() => memoizedHandlePairUsers(activity.activityId)}
-                                        >
-                                            Pair Users
-                                        </Button>
-                                    )}
-                                    {activity.type === 'partner' && hasGroupActivity && isActive && (
-                                        <UsersList
+                                        <ManageActivityUsersDialog
                                             event={event}
-                                            groupActivity={groupActivity}
-                                            mode="grouped-users"
                                             activityId={activity.activityId}
-                                            inline={true}
-                                            onShowUsers={handleShowGroupedUsers}
+                                            activityTitle={activity.title}
+                                            trigger={
+                                                <Button variant="outlinePrimary">
+                                                    Manage Users
+                                                </Button>
+                                            }
                                         />
                                     )}
                                     {!isActive ? (
@@ -172,7 +161,7 @@ function EventPageContent() {
                     })}
                 </ul>
             )
-        }, [activities, isActivityActive, groupActivity, event, memoizedHandlePairUsers, memoizedHandleCurrentActivityUpdate, memoizedDeleteActivity, handleShowGroupedUsers])
+        }, [activities, isActivityActive, memoizedHandleCurrentActivityUpdate, memoizedDeleteActivity])
 
         return (
             <div className="p-4 bg-white border rounded">
@@ -182,18 +171,6 @@ function EventPageContent() {
         )
     }
 
-    const AddNewActivity = () => (
-        <div>
-            {showForm ? (
-                <AddActivityForm activityData={handleAddActivity}/>
-            ) : (
-                <Button className="mt-3 w-full" onClick={() => handleShowForm()}>
-                    Add Activity
-                </Button>
-            )}
-        </div>
-    )
-
     return (
         <div className="page-background">
             <Header/>
@@ -201,7 +178,9 @@ function EventPageContent() {
             <ShowEventDetails event={event}/>
             <UsersList event={event} mode="all-users"/>
             <ShowActivities/>
-            <AddNewActivity/>
+            <div className="mt-4">
+                <AddActivityDialog onAddActivity={memoizedHandleAddActivity} />
+            </div>
         </div>
     );
 }
