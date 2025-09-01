@@ -1,6 +1,5 @@
 'use client'
 
-import {AutoGrowTextarea} from "@/components/ui/textarea"
 import {Button} from "@/components/ui/button"
 import Spinner from "@/components/ui/spinner"
 import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
@@ -40,7 +39,6 @@ export default function CurrentActivity({
     const {
         activity,
         userActivity,
-        notes,
         activitiesLoading,
         loadingUserActivity,
         setNotes,
@@ -200,7 +198,7 @@ export default function CurrentActivity({
         }
     }, [skipCountdown, setNotes, handleSubmit])
 
-    const handleTextareaChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleTextareaChange = useCallback(() => {
         setIsUserTyping(true)
         // Don't call setNotes here to prevent hook from resetting the value
         // We'll call it only when submitting
