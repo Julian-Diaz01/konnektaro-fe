@@ -24,7 +24,7 @@ export function AutoGrowTextarea({ label, className, ...props }: AutoGrowTextare
     return (
         <div className="flex w-full flex-col">
             {label && (
-                <label htmlFor={props.id} className="mb-2 font-semibold text-gray-700">
+                <label htmlFor={props.id} className="block text-sm font-medium text-gray-700 mb-1">
                     {label}
                 </label>
             )}
@@ -34,7 +34,7 @@ export function AutoGrowTextarea({ label, className, ...props }: AutoGrowTextare
                 ref={textareaRef}
                 onInput={handleInput}
                 className={cn(
-                    'w-full resize-none rounded-md border border-gray-300 p-3 text-base focus:outline-none focus:ring-2 focus: ring-[var(--primary)]',
+                    "text-black file:text-foreground placeholder:text-muted-foreground dark:bg-white border-input flex h-12 w-full min-w-0 rounded-md border bg-white px-3 py-1 shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-white file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
                     className
                 )}
                 rows={1}
