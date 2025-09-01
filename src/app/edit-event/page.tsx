@@ -80,17 +80,17 @@ function EventPageContent() {
         const isUsingLiveData = activeActivityId !== null
 
         return useMemo(() => (
-            <div className={`p-4 bg-white border rounded ${
+            <div className={`p-4 bg-white border rounded mb-3 ${
                 !event?.open ? 'border-r-4 border-r-red-700' :
                     isUsingLiveData
                         ? 'border-r-4 border-r-green-500'
                         : 'border-r-4 border-r-yellow-500'
             }`}>
                 <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="font-bold">Current Activity:</h1>
-                        <p className="text-lg">{currentActivityName}</p>
-                    </div>
+                    <p>
+                        <span className="font-bold">Current Activity: </span>
+                        <span className="text-lg">{currentActivityName}</span>
+                    </p>
                     <div className="text-sm text-gray-600">
                         {!event?.open ? 'Event Closed' : isUsingLiveData ? 'Live' : ''}
                     </div>
