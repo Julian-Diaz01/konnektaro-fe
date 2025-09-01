@@ -13,7 +13,7 @@ export default function EventListAdmin({events}: Props) {
     }
 
     return (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-4">
             {events.map(event => (
                 <EventCard
                     key={event.eventId}

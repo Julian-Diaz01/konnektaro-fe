@@ -6,6 +6,7 @@ import {createEvent} from '@/services/eventService'
 import {BackLink} from "@/components/BackLink";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {EventImageSelector} from "@/components/EventImageSelector";
 import { mutate } from 'swr'
 
 export default function CreateEventPage() {
@@ -21,6 +22,10 @@ export default function CreateEventPage() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
         setEventData(prev => ({...prev, [name]: value}))
+    }
+
+    const handleImageSelect = (imageName: string) => {
+        setEventData(prev => ({...prev, picture: imageName}))
     }
 
     const handleSubmit = async () => {
@@ -49,7 +54,7 @@ export default function CreateEventPage() {
         }
     }
 
-    const isFormValid = eventData.name.trim() !== '' && eventData.description.trim() !== ''
+    const isFormValid = eventData.name.trim() !== '' && eventData.description.trim() !== '' && eventData.picture !== ''
 
     return (
             <div className="page-background">
@@ -71,12 +76,9 @@ export default function CreateEventPage() {
                         onChange={handleChange}
                     />
 
-                    <Input
-                        name="picture"
-                        type="text"
-                        placeholder="Picture URL (optional)"
-                        value={eventData.picture}
-                        onChange={handleChange}
+                    <EventImageSelector
+                        selectedImage={eventData.picture}
+                        onImageSelect={handleImageSelect}
                     />
 
                     <Button
