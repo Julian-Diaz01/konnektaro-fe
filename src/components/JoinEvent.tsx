@@ -18,7 +18,7 @@ export default function JoinEvent({ user, events, onEventClick }: JoinEventProps
             {events.length === 0 ? (
                 <p className="text-gray-500">No open events available</p>
             ) : (
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-4">
                     {events.map(event => (
                         <EventCard
                             handleClick={() => onEventClick(event.eventId)}

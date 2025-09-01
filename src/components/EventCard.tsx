@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 
 interface EventCardProps {
@@ -9,31 +9,45 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ name, description, picture, handleClick }) => {
+    const [showFullDescription, setShowFullDescription] = useState(false)
+    const maxDescriptionLength = 100
+
+    const shouldTruncate = description.length > maxDescriptionLength
+    const displayDescription = showFullDescription 
+        ? description 
+        : description.slice(0, maxDescriptionLength) + (shouldTruncate ? '...' : '')
+
     return (
         <div
             onClick={handleClick}
-            className="cursor-pointer border p-4 rounded shadow hover:shadow-lg transition bg-white object-contain"
+            className="cursor-pointer border rounded-lg shadow hover:shadow-lg transition bg-white overflow-hidden flex"
         >
             {picture && (
-                <Image
-                    src={`/avatars/${picture}`}
-                    alt="Event picture"
-                    width={400}
-                    height={200}
-                    className="rounded-md w-full h-32 object-contain"
-                    priority={false}
-                />            ) ||
-                <Image
-                    src={`/avatars/${picture}`}
-                    alt="Event picture"
-                    width={400}
-                    height={200}
-                    className="rounded-md w-full h-32 object-cover"
-                    priority={false}
-                />
-            }
-            <h3 className="text-xl text-black font-semibold">{name}</h3>
-            <p className="text-gray-800 text-sm">{description}</p>
+                <div className="w-40 h-28 flex-shrink-0 overflow-hidden">
+                    <Image
+                        src={`/eventAssets/${picture}`}
+                        alt="Event picture"
+                        width={160}
+                        height={112}
+                        className="w-full h-full object-cover"
+                        priority={false}
+                    />
+                </div>
+            )}
+            <div className="flex-1 p-4 flex flex-col justify-center">
+                <h3 className="text-lg font-semibold text-black mb-2">{name}</h3>
+                <p className="text-gray-800 text-sm">{displayDescription}  {shouldTruncate && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setShowFullDescription(!showFullDescription)
+                        }}
+                        className="text-primary hover:text-primary/80 text-sm font-medium "
+                    >
+                        {showFullDescription ? 'See less' : 'See more'}
+                    </button>
+                )}</p>
+            </div>
         </div>
     )
 }
