@@ -101,6 +101,15 @@ export default function useEventPage() {
         router.push("/admin")
     }, [eventId, deleteCurrentEvent, router])
 
+    const handleCloseEvent = useCallback(async () => {
+        if (eventId) {
+            await closeEventById(eventId).then(()=> {
+                toast.success("✅ Event closed successfully.")
+                router.push("/admin")
+            })
+        }
+    }, [eventId, closeEventById, router])
+
     const handleDeleteActivity = useCallback(async (activityId: string) => {
         if (!event) return
         try {
@@ -134,5 +143,6 @@ export default function useEventPage() {
         handleDeleteEvent,
         deleteActivity: handleDeleteActivity,
         currentActivity,
+        handleCloseEvent,
     }
 }
