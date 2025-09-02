@@ -127,45 +127,68 @@ function EventPageContent() {
                         return (
                             <li
                                 key={activity.activityId}
-                                className={`pb-6 space-y-1 flex flex-col justify-between items-start border-b sm:flex-row sm:items-center ${
-                                    isActive ? 'm-[-15px] p-3 bg-[var(--terciary)]' : 'mt-6'
+                                className={`pb-6 space-y-1 flex flex-col items-start border-b relative ${
+                                    isActive ? 'mt-6 m-[-15px] p-3' : 'mt-6'
                                 }`}
                             >
-                                <div>
+                                {isActive && (
+                                    <div className="absolute inset-0 border-2 border-primary rounded-lg pointer-events-none"></div>
+                                )}
+                                <div className="w-full">
+                                    <div className="flex items-start gap-2 justify-between w-full">
                                     <p className="font-bold text-lg">{activity.title}</p>
-                                    <p className="text-gray-600">{activity.question}</p>
-                                    <div className="text-m text-white bg-primary max-w-fit rounded pl-2 pr-2 ">
-                                        Type: {activity.type.toUpperCase()}
-                                    </div>
-                                </div>
-                                <div className="ml-[auto] flex flex-col gap-2">
-                                    {activity.type === 'partner' && isActive && (
-                                        <ManageActivityUsersDialog
-                                            event={event}
-                                            activityId={activity.activityId}
-                                            activityTitle={activity.title}
-                                            trigger={
-                                                <Button variant="outlinePrimary">
-                                                    Manage Users
-                                                </Button>
-                                            }
-                                        />
-                                    )}
-                                    {!isActive ? (
-                                        <Button
-                                            variant="outlinePrimary"
-                                            onClick={() => memoizedHandleCurrentActivityUpdate(activity.activityId)}
-                                            disabled={isActive}
-                                        >
-                                            Initiate Activity
-                                        </Button>
-                                    ) : null}
                                     <ConfirmDeleteButton
                                         name="Activity"
                                         onConfirm={() => memoizedDeleteActivity(activity.activityId)}
                                         buttonText="Delete Activity"
-                                        buttonVariant="destructiveOutline"
+                                        mode="icon"
                                     />
+                                    </div>
+                                    <p className="text-gray-600">{activity.question}</p>
+                                    <div className={`inline-flex items-center mt-3 px-3 py-1 rounded-full text-sm font-medium ${
+                                        activity.type === 'partner' 
+                                            ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                                            : 'bg-green-100 text-green-800 border border-green-200'
+                                    }`}>
+                                        {activity.type === 'partner' ? '👥 Partner' : '👤 Self'}
+                                    </div>
+                                </div>
+                                <div className="w-full mt-4 pt-4 border-t">
+                                    <div className="flex gap-2 w-full">
+                                        {activity.type === 'partner' && isActive && (
+                                            <ManageActivityUsersDialog
+                                                event={event}
+                                                activityId={activity.activityId}
+                                                activityTitle={activity.title}
+                                                trigger={
+                                                    <Button 
+                                                        variant="outlinePrimary"
+                                                        className="flex-1 rounded-none hover:bg-gray-50"
+                                                    >
+                                                        Manage Users
+                                                    </Button>
+                                                }
+                                            />
+                                        )}
+                                        {!isActive ? (
+                                            <Button
+                                                variant="outlinePrimary"
+                                                onClick={() => memoizedHandleCurrentActivityUpdate(activity.activityId)}
+                                                disabled={isActive}
+                                                className="flex-1 rounded-none hover:bg-gray-50"
+                                            >
+                                                Initiate Activity
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="outlinePrimary"
+                                                className="flex-1 rounded-none hover:bg-gray-50"
+                                                disabled
+                                            >
+                                                Active
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             </li>
                         )
