@@ -13,11 +13,13 @@ export default function useEventPage() {
     const eventId = searchParams.get("id")
 
     // Use context instead of hook for event data
-    const {event, loading: eventLoading, deleteCurrentEvent, updateCurrentActivityId, currentActivityId} = useEventContext()
+    const {event, loading: eventLoading, deleteCurrentEvent,
+        updateCurrentActivityId, currentActivityId, closeEventById} = useEventContext()
     const {
         activities,
         loading: activitiesLoading,
         deleteActivity,
+        createNewActivity,
     } = useActivity({activityIds: event?.activityIds || []})
 
     // Get the current activity
@@ -39,23 +41,21 @@ export default function useEventPage() {
         try {
             console.log('➕ Admin creating new activity:', { activityData, eventId: event.eventId })
             toast.info(`➕ Creating new activity: ${activityData.title}`)
-            
-          //  const newActivity = await createNewActivity({...activityData, eventId: event.eventId})
+            await createNewActivity({ ...activityData, eventId: event.eventId })
             console.log('✅ Activity created successfully on server')
-
             toast.success(`✅ Activity "${activityData.title}" created successfully!`)
-            
+
             // The createNewActivity function already updates the activities cache locally
             // No need to call refreshActivities() or update event context
             console.log('✅ Activities cache updated automatically')
-            
+
             setShowForm(false)
         } catch (error) {
             console.error("Failed to create activity:", error)
             toast.error("❌ Failed to create activity. Please try again.")
             // Don't close the form if creation failed
         }
-    }, [event])
+    }, [createNewActivity, event])
 
     const handleCurrentActivityUpdate = useCallback(async (activityId: string) => {
         if (!event || !activityId) return
@@ -72,23 +72,9 @@ export default function useEventPage() {
             toast.info(`🔄 Initiating activity: ${newActivity.title}`)
             
             await updateCurrentActivity(eventId, activityId)
-            console.log('✅ Current activity updated successfully on server')
-            
-            // Update the event context with the new current activity ID
-            // This ensures the UI shows the new current activity immediately without full refresh
+            console.log('✅ Current activity updated successfully')
             updateCurrentActivityId(activityId)
             console.log('✅ Event context updated with new current activity')
-            
-            // Check if the new activity is a partner activity and automatically create groups
-            if (newActivity.type === 'partner') {
-                console.log('🔄 New partner activity initiated, creating groups...')
-                toast.success(`✅ Partner activity "${newActivity.title}" initiated! Users will be paired automatically.`)
-                // The socket will handle group creation and notify users
-                // Users will automatically see the partner activity when groups are ready
-            } else {
-                toast.success(`✅ Self-reflection activity "${newActivity.title}" initiated!`)
-            }
-            
             // Emit socket event to notify all connected users about the activity change
             try {
                 const socket = await getSocket()
@@ -123,18 +109,9 @@ export default function useEventPage() {
                 toast.error("❌ Activity not found. Please refresh the page and try again.")
                 return
             }
-            
-            console.log('🗑️ Admin deleting activity:', { activityId, activityTitle: activity.title, eventId: event.eventId })
-            toast.info(`🗑️ Deleting activity: ${activity.title}`)
-            
             await deleteActivity(activityId)
             console.log('✅ Activity deleted successfully on server')
-            
             toast.success(`✅ Activity "${activity.title}" deleted successfully!`)
-            
-            // The deleteActivity function already updates the activities cache locally
-            // No need to call refreshActivities() - prevents unnecessary API calls
-            console.log('✅ Activities cache updated automatically')
         } catch (error) {
             console.error("Failed to delete activity:", error)
             toast.error("❌ Failed to delete activity. Please try again.")
