@@ -17,3 +17,7 @@ export const deleteUser = (userId: string) =>
 // Get user reviews by user ID
 export const getUserReviews = (userId: string, eventId: string) =>
     axios.get(`/user/${userId}/review/${eventId}`)
+
+// Regenerate user review for a specific event
+export const regenerateUserReview = (userId: string, eventId: string) =>
+    axios.post(`/user/${userId}/review/${eventId}/regenerate`)
