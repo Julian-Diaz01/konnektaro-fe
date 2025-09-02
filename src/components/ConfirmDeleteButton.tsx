@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,8 @@ type ConfirmDeleteButtonProps = {
   onConfirm: () => void;
   buttonText?: string;
   buttonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "destructiveOutline";
+  mode?: "button" | "icon";
+  iconSize?: number;
 };
 
 export function ConfirmDeleteButton({
@@ -22,13 +25,23 @@ export function ConfirmDeleteButton({
   onConfirm,
   buttonText = "Delete",
   buttonVariant = "destructive",
+  mode = "button",
+  iconSize = 20,
 }: ConfirmDeleteButtonProps) {
   const [dialogOpen, setDialogOpen] = React.useState(false); // State to track the dialog open status
+
+  const triggerElement = mode === "icon" ? (
+    <div className="cursor-pointer hover:opacity-80 transition-opacity p-2">
+      <Trash2 size={iconSize} className="text-red-500" />
+    </div>
+  ) : (
+    <Button variant={buttonVariant}>{buttonText}</Button>
+  );
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant={buttonVariant}>{buttonText}</Button>
+        {triggerElement}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
