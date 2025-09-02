@@ -88,8 +88,23 @@ const ReviewPage: FC = () => {
 
                     {/* Event Info */}
                     <div className="p-4 mb-6">
-                        <h2 className="text-xl font-bold text-card-foreground">{review.event.name}</h2>
-                        <p className="text-sm text-muted-foreground">{review.event.description}</p>
+                        <div className="flex flex-col items-center gap-4 mb-3">
+                        {review.event.picture && (
+                                <div className="w-full h-30 overflow-hidden rounded-lg">
+                                    <Image
+                                        src={`/eventAssets/${review.event.picture}`}
+                                        alt={`${review.event.picture}`}
+                                        width={80}
+                                        height={80}
+                                        className="w-full h-full object-cover text-black"
+                                        priority={false}
+                                    />
+                                </div>
+                            )}  <div>
+                                <h2 className="text-xl font-bold text-card-foreground">{review.event.name}</h2>
+                                <p className="text-sm text-muted-foreground">{review.event.description}</p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Activities */}

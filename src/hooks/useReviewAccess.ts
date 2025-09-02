@@ -2,46 +2,51 @@ import {useState, useCallback} from 'react'
 import {enableReviewAccess, disableReviewAccess} from '@/services/eventService'
 import {toast} from 'sonner'
 
-interface UseReviewAccessProps {
-    eventId: string
-}
-
-export default function useReviewAccess({eventId}: UseReviewAccessProps) {
+export default function useReviewAccess() {
     const [loading, setLoading] = useState(false)
+    const [isEnabled, setIsEnabled] = useState(false)
 
-    const handleEnableReviews = useCallback(async () => {
+    const handleEnableReviews = useCallback(async (eventId: string) => {
         if (!eventId) return
-        
+
         setLoading(true)
         try {
             await enableReviewAccess(eventId)
-            // The socket event will handle the state update and toast
+            setIsEnabled(true)
+            toast.success('Review access enabled')
         } catch (error) {
             console.error('Failed to enable review access:', error)
             toast.error('Failed to enable review access')
         } finally {
             setLoading(false)
         }
-    }, [eventId])
+    }, [])
 
-    const handleDisableReviews = useCallback(async () => {
+    const handleDisableReviews = useCallback(async (eventId: string) => {
         if (!eventId) return
-        
+
         setLoading(true)
         try {
             await disableReviewAccess(eventId)
-            // The socket event will handle the state update and toast
+            setIsEnabled(false)
+            toast.success('Review access disabled')
         } catch (error) {
             console.error('Failed to disable review access:', error)
             toast.error('Failed to disable review access')
         } finally {
             setLoading(false)
         }
-    }, [eventId])
+    }, [])
+
+    const setInitialState = useCallback((enabled: boolean) => {
+        setIsEnabled(enabled)
+    }, [])
 
     return {
         loading,
+        isEnabled,
         enableReviews: handleEnableReviews,
-        disableReviews: handleDisableReviews
+        disableReviews: handleDisableReviews,
+        setInitialState
     }
 }

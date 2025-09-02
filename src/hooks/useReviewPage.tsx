@@ -70,6 +70,7 @@ export default function useReviewPage() {
         try {
             let currentUserSvg: string | null
             const partnerSvgs: { [key: string]: string } = {}
+            let eventImageBase64: string | null = null
 
             const cleanSvg = (svgText: string): string | null => {
                 try {
@@ -79,6 +80,21 @@ export default function useReviewPage() {
                     return cleaned
                 } catch {
                     return null
+                }
+            }
+
+            // Fetch event image as base64
+            if (review.event.picture) {
+                try {
+                    const response = await fetch(`/eventAssets/${review.event.picture}`)
+                    const blob = await response.blob()
+                    const reader = new FileReader()
+                    eventImageBase64 = await new Promise((resolve) => {
+                        reader.onloadend = () => resolve(reader.result as string)
+                        reader.readAsDataURL(blob)
+                    })
+                } catch {
+                    eventImageBase64 = null
                 }
             }
 
@@ -106,7 +122,7 @@ export default function useReviewPage() {
                 }
             }
 
-            const docDefinition = pdfFileFormat(review, currentUser, currentUserSvg, partnerSvgs)
+            const docDefinition = pdfFileFormat(review, currentUser, currentUserSvg, partnerSvgs, eventImageBase64)
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const pdfDoc = (pdfMake as any).createPdf(docDefinition as any)
