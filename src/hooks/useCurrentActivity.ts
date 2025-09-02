@@ -8,13 +8,11 @@ import { updateUserActivity as updateUserActivityApi, createUserActivity as crea
 interface UseCurrentActivityProps {
 	userId: string
 	activityId: string | null | undefined
-	countdown: number
 }
 
 export default function useCurrentActivity({
 	userId,
 	activityId,
-	countdown,
 }: UseCurrentActivityProps) {
 	const {
 		activity,
@@ -32,8 +30,6 @@ export default function useCurrentActivity({
 	const [groupId] = useState(undefined)
 	const [initialNotes, setInitialNotes] = useState('')
 
-	// Autosave guard
-	const lastAutoSavedActivityIdRef = useRef<string | null>(null)
 	// Prevent server override while user is typing
 	const userHasTypedRef = useRef(false)
 
@@ -98,33 +94,37 @@ export default function useCurrentActivity({
 			return
 		}
 		try {
-			await updateUserActivityApi(userId, targetActivityId, notesToSave, groupId)
-			setInitialNotes(notesToSave)
-			writeStoredNotes(notesToSave)
-			toast.success('✅ Saved')
-		} catch (err: unknown) {
-			const status = (err as { response?: { status?: number }, status?: number })?.response?.status ?? (err as { status?: number })?.status
-			if (status === 404) {
-				await createUserActivityApi({ activityId: targetActivityId, userId, groupId, notes: notesToSave })
+			const response = await updateUserActivityApi(userId, targetActivityId, notesToSave, groupId)
+			// Check if the response status is successful (2xx range)
+			if (response.status >= 200 && response.status < 300) {
 				setInitialNotes(notesToSave)
 				writeStoredNotes(notesToSave)
 				toast.success('✅ Saved')
 			} else {
+                console.log(`HTTP ${response.status}: ${response.statusText}`)
+			}
+		} catch (err: unknown) {
+			const status = (err as { response?: { status?: number }, status?: number })?.response?.status ?? (err as { status?: number })?.status
+			if (status === 404) {
+				try {
+					const response = await createUserActivityApi({ activityId: targetActivityId, userId, groupId, notes: notesToSave })
+					if (response.status >= 200 && response.status < 300) {
+						setInitialNotes(notesToSave)
+						writeStoredNotes(notesToSave)
+						toast.success('✅ Saved')
+					} else {
+						console.log(`HTTP ${response.status}: ${response.statusText}`)
+					}
+				} catch (createErr) {
+					toast.error('❌ Save failed')
+					throw createErr
+				}
+			} else {
 				toast.error('❌ Save failed')
+				throw err
 			}
 		}
 	}, [userId, groupId, notes, writeStoredNotes])
-
-	// Autosave once per activity at countdown 2 if notes changed
-	useEffect(() => {
-		if (!activityId) return
-		if (countdown === 2 && (notes ?? '') !== (initialNotes ?? '')) {
-			if (lastAutoSavedActivityIdRef.current !== activityId) {
-				void saveOrUpdate(activityId, userActivity, notes)
-				lastAutoSavedActivityIdRef.current = activityId
-			}
-		}
-	}, [countdown, activityId, notes, initialNotes, saveOrUpdate, userActivity])
 
 	const handleSubmit = useCallback(async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -143,6 +143,7 @@ export default function useCurrentActivity({
 		setNotes,
 		saveOrUpdate,
 		handleSubmit,
-		hasNotesChanged: () => (notes ?? '') !== (initialNotes ?? '')
+		hasNotesChanged: () => (notes ?? '') !== (initialNotes ?? ''),
+		initialNotes
 	}
 }

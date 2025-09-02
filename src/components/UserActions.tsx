@@ -1,5 +1,6 @@
 import {Button} from '@/components/ui/button'
 import {FaTrash} from 'react-icons/fa'
+import RegenerateReviewButton from './RegenerateReviewButton'
 
 interface UserActionsProps {
     eventId: string
@@ -12,11 +13,18 @@ interface UserActionsProps {
 
 export default function UserActions({
                                         userId,
+                                        eventId,
                                         onDeleteUser,
                                     }: UserActionsProps) {
 
     return (
         <div className="flex items-center gap-2">
+            {userId && eventId && (
+                <RegenerateReviewButton 
+                    userId={userId} 
+                    eventId={eventId} 
+                />
+            )}
             {userId && onDeleteUser && (
                 <Button
                     variant="ghost"

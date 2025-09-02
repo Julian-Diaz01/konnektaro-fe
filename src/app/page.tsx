@@ -18,7 +18,9 @@ export default function HomePage() {
         currentUserGroup,
         currentUserPartner,
         shouldRenderPartnerActivity,
-        handleJoinEvent
+        handleJoinEvent,
+        getCountdown,
+        skipCountdown
     } = useHomePage();
 
     // Use the review socket hook to listen for review access changes
@@ -62,7 +64,8 @@ export default function HomePage() {
                         <CurrentActivity
                             userId={user.userId}
                             activityId={activityId}
-                            getCountdownAction={() => 0}
+                            getCountdownAction={getCountdown}
+                            onSkipCountdown={skipCountdown}
                             shouldRenderPartnerActivity={shouldRenderPartnerActivity}
                             currentUserPartner={currentUserPartner}
                             currentUserGroup={currentUserGroup}

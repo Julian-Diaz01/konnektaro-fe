@@ -31,7 +31,7 @@ export default function CurrentActivity({
                                             currentUserGroup
                                         }: CurrentActivityProps) {
     // Countdown logic hook
-    const {displayCountdown, skipCountdown, countdown} = useCountdown({
+    const {displayCountdown, skipCountdown} = useCountdown({
         getCountdown: getCountdownAction,
         onSkipCountdown
     })
@@ -45,8 +45,7 @@ export default function CurrentActivity({
         handleSubmit,
     } = useCurrentActivity({
         userId,
-        activityId,
-        countdown
+        activityId
     })
 
     const {user} = useUserContext()
@@ -62,6 +61,9 @@ export default function CurrentActivity({
     
     // Flag to prevent hook interference while typing
     const [isUserTyping, setIsUserTyping] = useState(false)
+
+    // State to track submission status
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     // Memoized displayed notes to prevent unnecessary re-renders
     const notesToDisplay = useMemo(() => {
@@ -178,25 +180,47 @@ export default function CurrentActivity({
     const handleEditClick = useCallback(() => {
         setIsEditing(true)
         setIsUserTyping(false)
-        const notesToEdit = notesToDisplay || ''
+        
+        // Get the text to edit - prioritize stored notes, then displayed notes, then empty
+        let notesToEdit = ''
+        if (activityId) {
+            const stored = localStorage.getItem(`notes:${userId}:${activityId}`)
+            if (stored) {
+                notesToEdit = stored
+            } else if (notesToDisplay) {
+                notesToEdit = notesToDisplay
+            }
+        }
+        
         if (textareaRef.current) {
             textareaRef.current.value = notesToEdit
         }
         setNotes(notesToEdit)
-    }, [notesToDisplay, setNotes])
+    }, [notesToDisplay, setNotes, activityId, userId])
 
     const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault()
         const currentValue = textareaRef.current?.value || ''
-        if (currentValue.trim()) {
+        if (currentValue.trim() && !isSubmitting) {
+            setIsSubmitting(true)
             skipCountdown()
             setIsUserTyping(false)
             setNotes(currentValue)
-            await handleSubmit(e)
-            setDisplayedNotes(currentValue)
-            setIsEditing(false)
+            
+            try {
+                await handleSubmit(e)
+                // Only update displayed notes if the submission was successful (no error thrown)
+                setDisplayedNotes(currentValue)
+                setIsEditing(false)
+            } catch (error) {
+                // If submission failed, don't update displayed notes
+                console.error('Failed to submit notes:', error)
+                // The error will be handled by the toast in the service
+            } finally {
+                setIsSubmitting(false)
+            }
         }
-    }, [skipCountdown, setNotes, handleSubmit])
+    }, [skipCountdown, setNotes, handleSubmit, isSubmitting])
 
     const handleTextareaChange = useCallback(() => {
         setIsUserTyping(true)
@@ -236,12 +260,12 @@ export default function CurrentActivity({
                     {/* Submit Button - Always visible */}
                     <Button
                         type="submit"
-                        disabled={displayCountdown > 0 || loadingUserActivity || !(textareaRef.current?.value || '').trim()}
+                        disabled={displayCountdown > 0 || loadingUserActivity || isSubmitting || !(textareaRef.current?.value || '').trim()}
                         className="h-[44px] w-[44px] rounded-full p-0 flex-shrink-0 bg-[var(--primary)] hover:bg-[var(--terciary)] disabled:bg-gray-400 transition-colors"
                     >
                         {displayCountdown > 0
                             ? '⏱️'
-                            : loadingUserActivity
+                            : isSubmitting || loadingUserActivity
                                 ? <Upload className="w-5 h-5 text-white animate-spin"/>
                                 : (userActivity?.notes ?
                                         <Upload className="w-5 h-5 text-white"/> :
@@ -252,7 +276,7 @@ export default function CurrentActivity({
                 </form>
             )}
         </div>
-    }, [notesToDisplay, isEditing, handleEditClick, handleFormSubmit, handleTextareaChange, displayCountdown, loadingUserActivity, userActivity?.notes])
+    }, [notesToDisplay, isEditing, handleEditClick, handleFormSubmit, handleTextareaChange, displayCountdown, loadingUserActivity, userActivity?.notes, isSubmitting])
 
     // Early returns for loading states
     if (!userId || !activity) return null
