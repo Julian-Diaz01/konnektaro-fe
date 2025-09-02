@@ -22,6 +22,8 @@ export const deleteEvent = (eventId: string) =>
     axios.delete(`/event/${eventId}`)
 export const getAllUserByEvent = (eventId: string) =>
     axios.get<PartialUser[]>(`/event/${eventId}/users`)
+export const closeEvent = (eventId: string) =>
+    axios.patch<Event>(`/event/${eventId}/close`)
 
 // 📚 REVIEW ACCESS
 export const enableReviewAccess = (eventId: string) =>
