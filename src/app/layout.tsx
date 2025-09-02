@@ -2,7 +2,7 @@ import './../styles/globals.css'
 import type {Metadata} from 'next'
 import {SessionManager} from "@/components/SessionManager";
 import {Toaster} from "@/components/ui/sonner";
-import AuthenticatedLayout from "@/components/AuthenticatedLayout";
+import MainAuthenticatedLayout from "@/components/MainAuthenticatedLayout";
 import EventsInitializer from "@/components/EventsInitializer";
 import SocketStatus from "@/components/SocketStatus";
 import { UserProvider } from "@/contexts/UserContext";
@@ -19,9 +19,9 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
             <EventsInitializer />
             <SessionManager />
             <UserProvider>
-                <AuthenticatedLayout>
+                <MainAuthenticatedLayout>
                     {children}
-                </AuthenticatedLayout>
+                </MainAuthenticatedLayout>
             </UserProvider>
             <Toaster />
             <SocketStatus />

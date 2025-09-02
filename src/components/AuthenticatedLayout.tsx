@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState, useMemo} from 'react'
+import {useEffect, useMemo} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
 
 import Spinner from "@/components/ui/spinner"
@@ -105,24 +105,12 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     const pathname = usePathname()
     const { firebaseUser, authLoading } = useUserContext()
 
-    // Add mobile detection for debugging
-    const isMobile = typeof window !== 'undefined' && /iPad|iPhone|iPod|Android/.test(window.navigator.userAgent)
-    console.log('AuthenticatedLayout: isMobile:', isMobile, 'pathname:', pathname, 'authLoading:', authLoading, 'firebaseUser?.uid:', firebaseUser?.uid)
+    console.log('AuthenticatedLayout: pathname:', pathname, 'authLoading:', authLoading, 'firebaseUser?.uid:', firebaseUser?.uid, 'firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous)
 
     const isAdminPage = useMemo(() => Object.values(ADMIN_URLS).includes(pathname), [pathname])
     
     // UserContext will handle user data fetching, no need for additional useUser hook
     const userLoading = false // UserContext handles its own loading state
-    
-    // Route guard to ensure correct page rendering
-    const [currentRoute, setCurrentRoute] = useState<string | null>(null)
-    
-    useEffect(() => {
-        // Only update current route if we're not in the middle of a redirect
-        if (pathname !== currentRoute && !authLoading) {
-            setCurrentRoute(pathname)
-        }
-    }, [pathname, currentRoute, authLoading])
     
     // Check if user is admin
     const isAdmin = useMemo(() => {
@@ -133,9 +121,10 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         // Admin users are non-anonymous users (Google sign-in)
         // Anonymous users are regular users
         const admin = !firebaseUser?.isAnonymous
-        console.log('isAdmin: firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous, 'admin:', admin)
+        console.log('isAdmin: firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous, 'firebaseUser?.uid:', firebaseUser?.uid, 'admin:', admin)
+        console.log('isAdmin: full firebaseUser object:', firebaseUser)
         return admin
-    }, [firebaseUser?.uid, firebaseUser?.isAnonymous, authLoading])
+    }, [firebaseUser, authLoading])
     
     // Check if user has access to current page
     const isAllowed = useMemo(() => {
@@ -150,26 +139,31 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
             return true
         }
         
+        // For admin pages, allow access if user is authenticated and is admin
+        if (isAdminPage) {
+            const allowed = !!firebaseUser?.uid && isAdmin
+            console.log('isAllowed: admin page', pathname, 'firebaseUser?.uid:', firebaseUser?.uid, 'isAdmin:', isAdmin, 'allowed:', allowed)
+            return allowed
+        }
+        
         // For all other pages, allow access if user is authenticated
-        // The redirect logic in useEffect will handle routing admin users appropriately
         const allowed = !!firebaseUser?.uid
         console.log('isAllowed:', pathname, 'firebaseUser?.uid:', firebaseUser?.uid, 'allowed:', allowed)
         return allowed
-    }, [firebaseUser?.uid, authLoading, pathname])
+    }, [firebaseUser, authLoading, pathname, isAdminPage, isAdmin])
     
     useEffect(() => {
         if (authLoading) {
             return
         }
         
+        console.log('AuthenticatedLayout useEffect: firebaseUser?.uid:', firebaseUser?.uid, 'firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous, 'pathname:', pathname, 'isAdminPage:', isAdminPage, 'isAdmin:', isAdmin)
+        
         if (!firebaseUser?.uid) {
             // Don't redirect to login if we're already on the login page
             if (pathname !== '/login' && pathname !== '/admin-login') {
                 console.log('Redirecting to login - no firebase user')
-                // Use setTimeout for mobile Safari to prevent redirect issues
-                setTimeout(() => {
-                    router.push('/login')
-                }, 50)
+                router.push('/login')
                 return
             } else {
                 return
@@ -179,9 +173,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         // Check admin access
         if (isAdminPage && !isAdmin) {
             console.log('Redirecting to home - admin page but not admin user')
-            setTimeout(() => {
-                router.push('/')
-            }, 50)
+            router.push('/')
             return
         }
         
@@ -189,9 +181,7 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
         if (!isAdminPage && !firebaseUser?.isAnonymous) {
             // Admin users trying to access user pages (like home) - redirect to admin dashboard
             console.log('Redirecting admin user to admin dashboard')
-            setTimeout(() => {
-                router.push('/admin')
-            }, 50)
+            router.push('/admin')
             return
         }
         
@@ -210,13 +200,6 @@ export default function AuthenticatedLayout({children}: AuthenticatedLayoutProps
     // For admin pages, don't wait for user data
     if (!isAdminPage && userLoading) {
         return <LoadingSpinner message="Loading user data..." />
-    }
-    
-    // Route guard: Only render if we're on the correct route
-    // But be more lenient to prevent redirect loops
-    if (currentRoute && currentRoute !== pathname && !authLoading) {
-        console.log('Route guard: currentRoute', currentRoute, 'pathname', pathname)
-        return <LoadingSpinner message="Route change in progress..." />
     }
     
     // Handle login page separately (no header/layout needed)
