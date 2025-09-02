@@ -25,7 +25,8 @@ function EventPageContent() {
         handleCurrentActivityUpdate,
         handleDeleteEvent,
         deleteActivity,
-        currentActivity: eventPageCurrentActivity
+        currentActivity: eventPageCurrentActivity,
+        handleCloseEvent
     } = useEventPage();
 
     const {activeActivityId} = useEventSocket(event?.eventId || '')
@@ -61,12 +62,22 @@ function EventPageContent() {
     const Header = () => (
         <div className="mb-4 flex">
             <BackLink href="/admin"/>
-            <ConfirmDeleteButton
-                name="event"
-                onConfirm={handleDeleteEvent}
-                buttonText="Delete Event"
-                buttonVariant="destructiveOutline"
-            />
+
+            <div className="flex gap-2">
+                <Button
+                onClick={handleCloseEvent}
+                >
+                    Close Event
+                </Button>
+                <ConfirmDeleteButton
+                    name="event"
+                    onConfirm={handleDeleteEvent}
+                    buttonText="Delete Event"
+                    buttonVariant="destructiveOutline"
+                    mode="icon"
+                />
+            </div>
+
         </div>
     )
 
