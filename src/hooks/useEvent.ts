@@ -2,10 +2,10 @@ import {useState, useEffect} from "react"
 import {
     getEventById,
     deleteEvent,
-    createEvent,
+    createEvent, closeEvent,
 } from "@/services/eventService"
 import {Event} from "@/types/models"
-import { mutate } from 'swr'
+import {mutate} from 'swr'
 
 export default function useEvent(eventId: string) {
     const [event, setEvent] = useState<Event | null>(null)
@@ -53,11 +53,23 @@ export default function useEvent(eventId: string) {
         }
     }
 
+    const closeEventById = async (eventId: string) => {
+        try {
+            await closeEvent(eventId)
+            mutate('open-events')
+        } catch (error) {
+            console.error("Failed to close the event:", error)
+            setError("Failed to delete event.")
+        }
+    }
+
+
     return {
         event,
         loading,
         error,
         deleteCurrentEvent,
         createNewEvent,
+        closeEventById
     }
 }
