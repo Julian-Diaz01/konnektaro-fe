@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
 import {auth} from '@/utils/firebase'
-import {loginAnonymously} from '@/utils/authenticationService'
+import {loginAnonymously, handleRedirectResult} from '@/utils/authenticationService'
 import Head from 'next/head'
 import {Button} from "@/components/ui/button"
 
@@ -35,6 +35,21 @@ export default function LoginPage() {
             }
             setLoading(false)
         })
+
+        // Handle redirect result for mobile Safari
+        const checkRedirectResult = async () => {
+            try {
+                const result = await handleRedirectResult()
+                if (result) {
+                    console.log('Redirect result handled successfully')
+                    // The auth state change will handle the redirect
+                }
+            } catch (error) {
+                console.error('Error handling redirect result:', error)
+            }
+        }
+        
+        checkRedirectResult()
 
         return () => unsubscribe()
     }, [router])
