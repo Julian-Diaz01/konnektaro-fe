@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
 import {auth} from '@/utils/firebase'
-import {loginAnonymously, loginWithGoogle, handleRedirectResult} from '@/utils/authenticationService'
+import {loginWithGoogle} from '@/utils/authenticationService'
 import Head from 'next/head'
 import {Button} from "@/components/ui/button"
 
@@ -24,40 +24,25 @@ export default function AdminLoginPage() {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
-            console.log('Admin login auth state changed:', user?.uid, user?.isAnonymous)
             if (user) {
+                // Set login timestamp immediately when we get a user
+                localStorage.setItem('loginTimestamp', Date.now().toString())
+                
+                // Redirect admin users directly to admin dashboard
+                setTimeout(() => {
+                    router.replace('/admin')
+                }, 500)
+                
+                // Try to get token in background, but don't block the redirect
                 try {
-                    const token = await getIdToken(user, false)
-                    if (token) {
-                        // Redirect admin users directly to admin dashboard
-                        console.log('Admin login successful, redirecting to /admin')
-                        // Use setTimeout to ensure the redirect happens after the current execution cycle
-                        // This is especially important on mobile Safari
-                        setTimeout(() => {
-                            router.replace('/admin')
-                        }, 100)
-                    }
+                    await getIdToken(user, false)
                 } catch (err) {
-                    console.error('Token check failed:', err)
+                    // Token refresh failure is non-blocking
+                    console.error('Token refresh failed (non-blocking):', err)
                 }
             }
             setLoading(false)
         })
-
-        // Handle redirect result for mobile Safari
-        const checkRedirectResult = async () => {
-            try {
-                const result = await handleRedirectResult()
-                if (result) {
-                    console.log('Redirect result handled successfully')
-                    // The auth state change will handle the redirect
-                }
-            } catch (error) {
-                console.error('Error handling redirect result:', error)
-            }
-        }
-        
-        checkRedirectResult()
 
         return () => unsubscribe()
     }, [router])
@@ -66,40 +51,49 @@ export default function AdminLoginPage() {
         if (loginInProgress) return
         
         setLoginInProgress(true)
-        try {
-            console.log('Starting Google login on mobile...')
-            const result = await loginWithGoogle()
-            if (result) {
-                console.log('Google login successful, waiting for auth state change...')
-                // The auth state change will handle the redirect
-            } else {
-                console.log('Google login failed')
-                setLoginInProgress(false)
-            }
-        } catch (error) {
-            console.error('Google login error:', error)
-            setLoginInProgress(false)
-        }
-    }
-
-    const handleAnonymousLogin = async () => {
-        if (loginInProgress) return
         
-        setLoginInProgress(true)
-        try {
-            console.log('Starting anonymous login on mobile...')
-            const result = await loginAnonymously()
-            if (result) {
-                console.log('Anonymous login successful, waiting for auth state change...')
-                // The auth state change will handle the redirect
-            } else {
-                console.log('Anonymous login failed')
-                setLoginInProgress(false)
+        const attemptLogin = async (retryCount = 0): Promise<void> => {
+            try {
+                const result = await loginWithGoogle()
+                if (result) {
+                    // The auth state change will handle the redirect
+                } else {
+                    setLoginInProgress(false)
+                }
+            } catch (error) {
+                console.error(`Google login error (attempt ${retryCount + 1}):`, error)
+                
+                // Handle specific error cases
+                if (error && typeof error === 'object' && 'code' in error) {
+                    const errorCode = (error as { code: string }).code
+                    
+                    if (errorCode === 'auth/popup-blocked') {
+                        alert('Please allow popups for this site to sign in with Google')
+                        setLoginInProgress(false)
+                    } else if (errorCode === 'auth/network-request-failed') {
+                        if (retryCount < 2) {
+                            // Wait 2 seconds before retrying
+                            setTimeout(() => {
+                                attemptLogin(retryCount + 1)
+                            }, 2000)
+                        } else {
+                            alert('Network error after multiple attempts. Please check your connection and try again.')
+                            setLoginInProgress(false)
+                        }
+                    } else if (errorCode === 'auth/popup-closed-by-user') {
+                        setLoginInProgress(false)
+                    } else {
+                        alert('Sign in failed. Please try again.')
+                        setLoginInProgress(false)
+                    }
+                } else {
+                    alert('Sign in failed. Please try again.')
+                    setLoginInProgress(false)
+                }
             }
-        } catch (error) {
-            console.error('Anonymous login error:', error)
-            setLoginInProgress(false)
         }
+        
+        await attemptLogin()
     }
 
     if (loading) return <div
@@ -120,15 +114,6 @@ export default function AdminLoginPage() {
                     </div>
                 </div>
                 <div className="w-full max-w-sm flex flex-col gap-4 mb-5">
-                    <Button 
-                        variant="secondary"
-                        onClick={handleAnonymousLogin}
-                        disabled={loginInProgress}
-                        className=" w-full h-[7vh] rounded-full font-semibold text-lg sm:text-xl"
-                    >
-                        {loginInProgress ? 'Signing in...' : 'Sign in as Guest'}
-                    </Button>
-
                     <Button
                         variant="outline"
                         onClick={handleGoogleLogin}
