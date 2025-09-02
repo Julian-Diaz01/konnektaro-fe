@@ -107,6 +107,7 @@ export default function AddActivityDialog({ onAddActivity, trigger }: AddActivit
                     <Button
                         onClick={handleSubmit}
                         disabled={!isFormValid}
+                        variant={!isFormValid? "disabled" : 'default'}
                     >
                         Save Activity
                     </Button>

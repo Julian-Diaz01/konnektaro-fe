@@ -163,7 +163,7 @@ function EventPageContent() {
                                                 trigger={
                                                     <Button 
                                                         variant="outlinePrimary"
-                                                        className="flex-1 rounded-none hover:bg-gray-50"
+                                                        className="flex-1  hover:bg-gray-50"
                                                     >
                                                         Manage Users
                                                     </Button>
@@ -175,14 +175,14 @@ function EventPageContent() {
                                                 variant="outlinePrimary"
                                                 onClick={() => memoizedHandleCurrentActivityUpdate(activity.activityId)}
                                                 disabled={isActive}
-                                                className="flex-1 rounded-none hover:bg-gray-50"
+                                                className="flex-1 hover:bg-gray-50"
                                             >
                                                 Initiate Activity
                                             </Button>
                                         ) : (
                                             <Button
                                                 variant="outlinePrimary"
-                                                className="flex-1 rounded-none hover:bg-gray-50"
+                                                className="flex-1 hover:bg-gray-50"
                                                 disabled
                                             >
                                                 Active
