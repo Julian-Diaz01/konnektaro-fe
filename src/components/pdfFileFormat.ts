@@ -14,7 +14,7 @@ export interface pdfDocumentDefinition {
     styles: StyleDictionary
 }
 
-export const pdfFileFormat = (review: Review, currentUser: CurrentUser, currentUserSvg: string | null, partnerSvgs: { [key: string]: string }): pdfDocumentDefinition => {
+export const pdfFileFormat = (review: Review, currentUser: CurrentUser, currentUserSvg: string | null, partnerSvgs: { [key: string]: string }, eventImageBase64: string | null): pdfDocumentDefinition => {
 
     const content: Content[] = [];
 
@@ -60,10 +60,36 @@ export const pdfFileFormat = (review: Review, currentUser: CurrentUser, currentU
     }
 
     // Event Info
-    content.push(
+    const eventInfoContent: Content[] = [];
+    
+    // Create event section with image on left and text on right
+    const eventColumns: Content[] = [];
+    
+    // Left column - Event image
+    if (eventImageBase64) {
+        eventColumns.push({
+            image: eventImageBase64,
+            width: 120,
+            height: 120,
+            alignment: 'center'
+        });
+    } else {
+        eventColumns.push({ text: ' ' });
+    }
+    
+    // Right column - Event name and description
+    eventColumns.push([
         {text: review.event.name, style: "title", margin: [0, 0, 0, 5]},
-        {text: review.event.description, style: "description", margin: [0, 0, 0, 20]}
-    );
+        {text: review.event.description, style: "description", margin: [0, 0, 0, 0]}
+    ]);
+    
+    eventInfoContent.push({
+        columns: eventColumns,
+        columnGap: 20,
+        margin: [0, 0, 0, 20]
+    });
+    
+    content.push(...eventInfoContent);
 
     // Activities
     content.push({text: "Activities", style: "subheader", margin: [0, 0, 0, 10]});

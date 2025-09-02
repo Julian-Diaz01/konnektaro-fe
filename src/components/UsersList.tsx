@@ -11,6 +11,8 @@ import {
 import {GroupActivity, Event} from '@/types/models'
 import GroupedUsersList from './GroupedUsersList'
 import UserActions from './UserActions'
+import {EyeIcon} from "lucide-react";
+import useReviewAccess from "@/hooks/useReviewAccess";
 
 interface UsersListProps {
     event: Event | null
@@ -19,7 +21,6 @@ interface UsersListProps {
     onShowUsers?: () => void
     activityId?: string // Add activityId to filter groups
     inline?: boolean // Add inline prop to control layout
-    onReviewAccessChange?: (enabled: boolean) => void // Callback for review access changes
 }
 
 export default function UsersList({
@@ -29,10 +30,16 @@ export default function UsersList({
                                       onShowUsers,
                                       activityId,
                                       inline = false,
-                                      onReviewAccessChange
                                   }: UsersListProps) {
     const [open, setOpen] = useState(false)
     const {users, loading, error, fetchUsersByEvent, deleteUser} = useAdminUser()
+    const {loading: reviewLoading, isEnabled, enableReviews, disableReviews, setInitialState} = useReviewAccess()
+
+    useEffect(() => {
+        if (event?.showReview !== undefined) {
+            setInitialState(event.showReview)
+        }
+    }, [event?.showReview, setInitialState])
 
     useEffect(() => {
         if (open && event?.eventId && mode === 'all-users') {
@@ -163,12 +170,20 @@ export default function UsersList({
             <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold">Users</h3>
                 <div className="flex items-center gap-2">
-                    <UserActions
-                        eventId={event?.eventId}
-                        showReviewControls={true}
-                        currentReviewAccess={event?.showReview || false}
-                        onReviewAccessChange={onReviewAccessChange}
-                    />
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => isEnabled ? disableReviews(event?.eventId || '') : enableReviews(event?.eventId || '')}
+                        disabled={reviewLoading}
+                        className={`${
+                            isEnabled
+                                ? 'bg-green-600 text-white border-green-600 hover:bg-green-700'
+                                : 'bg-white text-green-600 border-green-600 hover:bg-green-50'
+                        }`}
+                    >
+                        <EyeIcon size={16} className="mr-1" />
+                        {isEnabled ? 'Hide Review' : 'Show Review'}
+                    </Button>
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
                             <Button>{getButtonText()}</Button>
