@@ -139,7 +139,7 @@ export default function CurrentActivity({
             return (
                 <div className="flex flex-col">
                     <div
-                        className={`flex flex-flow items-center justify-center gap-4 bg-gray-200 rounded mr-12 p-2 px-2 mt-3 border-l-5 ${colorClasses.border}`}>
+                        className={`flex flex-flow items-start  justify-center gap-4 bg-gray-200 rounded mr-12 p-2 px-2 mt-3 border-l-5 ${colorClasses.border}`}>
                         <div
                             className={`${colorClasses.bg} rounded-full p-2 flex items-center justify-center w-12 h-12 flex-shrink-0`}>
                             <Image
@@ -169,8 +169,9 @@ export default function CurrentActivity({
                         </div>
                     </div>
                     <div
-                        className={`flex flex-flow items-center justify-center gap-4 bg-gray-200 rounded mr-12 text-black p-2 mt-3 border-l-5 ${colorClasses.border}`}>
+                        className={`flex text-xsm flex-col items-start justify-center bg-gray-200 rounded mr-12 text-black p-2 mt-3 border-l-5 ${colorClasses.border}`}>
                         Find your partner and have a chat!
+                      <div className="text-sm">  Tip: Both of you will be assigned the same color and number, look for someone with the same color and number as you.</div>
                     </div>
                 </div>
             )
