@@ -3,6 +3,7 @@
 import useHomePage from "@/hooks/useHomePage";
 import JoinEvent from "@/components/JoinEvent";
 import CurrentActivity from "@/components/CurrentActivityUser";
+import InformationLobby from "@/components/InformationLobby";
 import Spinner from "@/components/ui/spinner";
 import ReviewBanner from "@/components/ReviewBanner";
 import useReviewSocket from "@/hooks/useReviewSocket";
@@ -61,15 +62,20 @@ export default function HomePage() {
                 {/* Event Details - Only show if user has joined an event */}
                 {user && event && (
                     <>
-                        <CurrentActivity
-                            userId={user.userId}
-                            activityId={activityId}
-                            getCountdownAction={getCountdown}
-                            onSkipCountdown={skipCountdown}
-                            shouldRenderPartnerActivity={shouldRenderPartnerActivity}
-                            currentUserPartner={currentUserPartner}
-                            currentUserGroup={currentUserGroup}
-                        />
+                        {/* Show CurrentActivity if there's an activity, otherwise show InformationLobby */}
+                        {activityId ? (
+                            <CurrentActivity
+                                userId={user.userId}
+                                activityId={activityId}
+                                getCountdownAction={getCountdown}
+                                onSkipCountdown={skipCountdown}
+                                shouldRenderPartnerActivity={shouldRenderPartnerActivity}
+                                currentUserPartner={currentUserPartner}
+                                currentUserGroup={currentUserGroup}
+                            />
+                        ) : (
+                            <InformationLobby user={user} />
+                        )}
                     </>
                 )}
             </div>
