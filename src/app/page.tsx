@@ -37,7 +37,7 @@ export default function HomePage() {
             </div>
         );
     }
-    
+
     return (
         <div className="page-background">
             <div className="container mx-auto px-0 py-8 pt-10">
@@ -54,10 +54,10 @@ export default function HomePage() {
                     <ReviewBanner userId={user.userId} currentUser={user} eventId={event.eventId}/>
                 )}
 
-                 {/* Event Banner - Fixed at top after joining an event */}
-                 {user && event && !event.showReview && (
-                            <EventBanner event={event}/>
-                        )}
+                {/* Event Banner - Fixed at top after joining an event */}
+                {user && event && !event.showReview && (
+                    <EventBanner event={event}/>
+                )}
 
                 {/* Event Details - Only show if user has joined an event */}
                 {user && event && (
@@ -74,7 +74,7 @@ export default function HomePage() {
                                 currentUserGroup={currentUserGroup}
                             />
                         ) : (
-                            <InformationLobby user={user} />
+                            <InformationLobby/>
                         )}
                     </>
                 )}

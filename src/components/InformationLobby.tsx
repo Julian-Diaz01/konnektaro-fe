@@ -1,13 +1,8 @@
 'use client'
 
 import React from 'react'
-import { User } from '@/types/models'
 
-interface InformationLobbyProps {
-    user: User
-}
-
-export default function InformationLobby({ user }: InformationLobbyProps) {
+export default function InformationLobby() {
     return (
         <div className="w-full flex flex-col p-0">
             <div className="flex-1 overflow-y-auto pb-3">
@@ -30,7 +25,7 @@ export default function InformationLobby({ user }: InformationLobbyProps) {
                             </h3>
                             <p className="text-blue-700">
                                 Please wait for the moderator to start the first activity. 
-                                You'll be notified when activities begin.
+                                You&#39;ll be notified when activities begin.
                             </p>
                         </div>
 
@@ -42,11 +37,11 @@ export default function InformationLobby({ user }: InformationLobbyProps) {
                             <div className="space-y-2 text-green-700">
                                 <div className="flex items-start gap-2">
                                     <span className="font-medium inline-block w-1/2">• Self:</span>
-                                    <span>A self-reflective activity where you'll think and write about yourself.</span>
+                                    <span>A self-reflective activity where you&#39;ll think and write about yourself.</span>
                                 </div>
                                 <div className="flex items-start gap-2">
                                     <span className="font-medium inline-block w-1/2">• Partner:</span>
-                                    <span>A discussion activity where you'll connect and talk with another participant.</span>
+                                    <span>A discussion activity where you&#39;ll connect and talk with another participant.</span>
                                 </div>
                             </div>
                         </div>
@@ -60,7 +55,7 @@ export default function InformationLobby({ user }: InformationLobbyProps) {
                                 <p className="font-medium">When you get matched for a partner activity:</p>
                                 <ul className="list-disc list-inside space-y-1 ml-2">
                                     <li>Both you and your partner will have the same color</li>
-                                    <li>You'll know your partner's name, color, and job/description</li>
+                                    <li>You&#39;ll know your partner&#39;s name, color, and job/description</li>
                                     <li>Look for someone with the same color as you</li>
                                     <li>Introduce yourself and start your conversation</li>
                                 </ul>
