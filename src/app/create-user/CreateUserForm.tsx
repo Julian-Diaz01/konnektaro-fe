@@ -10,6 +10,7 @@ import Spinner from "@/components/ui/spinner";
 import {BackLink} from "@/components/BackLink";
 import {useUserContext} from "@/contexts/UserContext";
 import { mutate } from 'swr'
+import { getSocket } from '@/lib/socket'
 
 export default function CreateUserForm() {
     const router = useRouter()
@@ -76,7 +77,22 @@ export default function CreateUserForm() {
                 description: form.description,
                 eventId,
                 role: 'user',
-            }).then(() => {
+            }).then(async () => {
+                // Emit socket event to notify other users that someone joined the event
+                try {
+                    const socket = await getSocket()
+                    if (socket && socket.connected) {
+                        socket.emit('userJoinedEvent', { 
+                            eventId, 
+                            userId: firebaseUser.uid,
+                            userName: form.name 
+                        })
+                        console.log('🔌 Emitted userJoinedEvent:', { eventId, userId: firebaseUser.uid })
+                    }
+                } catch (socketError) {
+                    console.warn('⚠️ Failed to emit userJoinedEvent socket event:', socketError)
+                }
+
                 // Trigger data refreshes before redirecting
                 // This ensures fresh user and event data when landing on home page
                 
@@ -104,6 +120,8 @@ export default function CreateUserForm() {
             setLoading(false)
         }
     }
+
+// ... existing code ...
 
     return (
         <div className="page-background">

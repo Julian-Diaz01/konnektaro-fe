@@ -5,6 +5,7 @@ import { User } from '@/types/models'
 import { createUser, deleteUser as deleteUserApi, getUser } from '@/services/userService'
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth'
 import { auth } from '@/utils/firebase'
+import { getSocket } from '@/lib/socket'
 
 interface UserContextType {
     user: User | null
@@ -100,13 +101,35 @@ export function UserProvider({ children }: UserProviderProps) {
     const deleteUser = async (id: string) => {
         if (!id) return
         try {
+            // Store eventId before deleting user for socket event
+            const eventId = user?.eventId
+            
             await deleteUserApi(id)
             setUser(null)
+            
+            // Emit socket event to notify other users that someone left the event
+            if (eventId) {
+                try {
+                    const socket = await getSocket()
+                    if (socket && socket.connected) {
+                        socket.emit('userLeftEvent', { 
+                            eventId, 
+                            userId: id,
+                            userName: user?.name 
+                        })
+                        console.log('🔌 Emitted userLeftEvent:', { eventId, userId: id })
+                    }
+                } catch (socketError) {
+                    console.warn('⚠️ Failed to emit userLeftEvent socket event:', socketError)
+                }
+            }
         } catch (error) {
             console.error("Failed to delete user:", error)
             setError("Failed to delete user.")
         }
     }
+
+// ... existing code ...
 
     useEffect(() => {
         // Clear any pending fetch timeout
