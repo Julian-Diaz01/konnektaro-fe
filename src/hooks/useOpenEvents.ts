@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { getAllEvents } from '@/services/eventService'
 import { Event } from '@/types/models'
+import { getSocket } from '@/lib/socket'
+import { Socket } from 'socket.io-client'
 
 /**
- * This hook fetches all open events from the server with simple 1-second deduplication
- * No caching - always fresh data for live events
+ * This hook fetches all open events from the server with real-time socket updates
+ * Listens for user join/leave events to update event data in real-time
  */
 export default function useOpenEvents() {
   const [events, setEvents] = useState<Event[]>([])
@@ -54,22 +56,81 @@ export default function useOpenEvents() {
     }
   }
 
+  // Socket setup for real-time updates
+  useEffect(() => {
+    let socket: Socket | null = null
+    let mounted = true
+
+    const setupSocket = async () => {
+      try {
+        const socketInstance = await getSocket()
+        socket = socketInstance
+        
+        if (!mounted || !socketInstance) return
+
+        // Listen for user join events
+        socketInstance.on('userJoinedEvent', async (data: { eventId: string, userId: string }) => {
+          if (!mounted) return
+          console.log('👤 User joined event:', data)
+          
+          // Refresh events data to get updated participant counts
+          try {
+            await fetchEvents(true)
+          } catch (error) {
+            console.error('Failed to refresh events after user join:', error)
+          }
+        })
+
+        // Listen for user leave events
+        socketInstance.on('userLeftEvent', async (data: { eventId: string, userId: string }) => {
+          if (!mounted) return
+          console.log('👤 User left event:', data)
+          
+          // Refresh events data to get updated participant counts
+          try {
+            await fetchEvents(true)
+          } catch (error) {
+            console.error('Failed to refresh events after user leave:', error)
+          }
+        })
+
+        // Listen for event updates (when events are created, closed, etc.)
+        socketInstance.on('eventUpdated', async (data: { eventId: string }) => {
+          if (!mounted) return
+          console.log('📅 Event updated:', data)
+          
+          // Refresh events data
+          try {
+            await fetchEvents(true)
+          } catch (error) {
+            console.error('Failed to refresh events after event update:', error)
+          }
+        })
+
+        // Join a general events room to receive updates
+        socketInstance.emit('joinEventsRoom')
+
+      } catch (error) {
+        console.error('🔌 Failed to setup events socket:', error)
+      }
+    }
+
+    setupSocket()
+
+    return () => {
+      mounted = false
+      if (socket) {
+        socket.off('userJoinedEvent')
+        socket.off('userLeftEvent')
+        socket.off('eventUpdated')
+      }
+    }
+  }, [])
+
   // Initial fetch
   useEffect(() => {
     fetchEvents()
   }, [])
-
-  // TODO: Auto-refresh functionality for future implementation
-  // Uncomment when you want live data updates
-  /*
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchEvents()
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
-  */
 
   return { 
     events, 
