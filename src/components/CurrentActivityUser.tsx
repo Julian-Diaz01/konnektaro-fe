@@ -9,6 +9,7 @@ import {ChevronRight, Upload} from "lucide-react"
 import {useUserContext} from "@/contexts/UserContext"
 import {Activity, ActivityGroupItem, ParticipantUser} from "@/types/models"
 import Image from 'next/image'
+import usePartnerNote from "@/hooks/usePartnerNote"
 import {getGroupColorClasses} from "./getGroupColorClasses"
 
 interface CurrentActivityProps {
@@ -49,6 +50,11 @@ export default function CurrentActivity({
     })
 
     const {user} = useUserContext()
+
+    const { partnerNote } = usePartnerNote({
+        activityId: activityId ?? null,
+        partnerId: currentUserPartner?.userId ?? null
+    })
 
     // State to control edit mode
     const [isEditing, setIsEditing] = useState(false)
@@ -178,6 +184,17 @@ export default function CurrentActivity({
         }
     }
 
+    const PartnerLiveNote = () => {
+        if (!shouldRenderPartnerActivity || !currentUserPartner || !partnerNote) return null
+        const colorClasses = getGroupColorClasses(currentUserGroup?.groupColor)
+        return (
+            <div className={`bg-gray-200 border text-black rounded mr-12 p-2 mt-3 border-l-5 ${colorClasses.border}`}>
+                <div className="text-gray-800 font-bold text-sm">{currentUserPartner.name}</div>
+                <div className="break-words whitespace-pre-wrap max-w-full">{partnerNote}</div>
+            </div>
+        )
+    }
+
     const handleEditClick = useCallback(() => {
         setIsEditing(true)
         setIsUserTyping(false)
@@ -293,6 +310,7 @@ export default function CurrentActivity({
                 <ActivityDescription activity={activity}/>
                 <ActivityWithPartner activity={activity}/>
                 <ActivityPartnerNote/>
+                <PartnerLiveNote/>
                 <ActivityNotes/>
             </div>
             <BottomTextArea/>
