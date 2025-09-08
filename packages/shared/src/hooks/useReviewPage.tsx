@@ -3,7 +3,7 @@
 import {useCallback, useEffect, useMemo, useState} from "react"
 import {useSearchParams, useRouter} from "next/navigation"
 import useReview from "./useReview"
-import {CurrentUser, pdfFileFormat} from "@/components/pdfFileFormat";
+import { CurrentUser, pdfFileFormat } from "../components/pdfFileFormat"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let pdfMake: any = null

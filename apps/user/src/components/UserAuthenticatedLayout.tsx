@@ -10,9 +10,9 @@ import Header from "@shared/components/Header"
 // Import user page components
 import HomePage from "@/app/page";
 import LoginPage from '@/app/login/page'
-import ReviewPage from "@/app/review/page";
+import ReviewPage from "../app/review/page";
 import {useUserContext} from "@shared/contexts/UserContext";
-import CreateUserPage from '@/app/create-user/page'
+import CreateUserPage from '../app/create-user/page'
 
 // Define user URLs
 
