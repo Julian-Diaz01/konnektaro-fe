@@ -1,10 +1,10 @@
-import './../styles/globals.css'
+import './../../globals.css'
 import type {Metadata} from 'next'
-import {SessionManager} from "@/components/SessionManager";
-import {Toaster} from "@/components/ui/sonner";
+import {SessionManager} from "@shared/components/SessionManager";
+import {Toaster} from "@shared/components/ui/sonner";
 import UserAuthenticatedLayout from "@/components/UserAuthenticatedLayout";
-import EventsInitializer from "@/components/EventsInitializer";
-import SocketStatus from "@/components/SocketStatus";
+import EventsInitializer from "@shared/components/EventsInitializer";
+import SocketStatus from "@shared/components/SocketStatus";
 import { UserProvider } from "@shared/contexts/UserContext";
 
 export const metadata: Metadata = {
