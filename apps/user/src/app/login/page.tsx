@@ -3,8 +3,8 @@
 import {useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
-import {auth} from '../../../packages/shared/src/utils/firebase'
-import {loginAnonymously} from '../../../packages/shared/src/utils/authenticationService'
+import {auth} from '@konnektaro/shared/src/utils/firebase'
+import {loginAnonymously} from '@konnektaro/shared/src/utils/authenticationService'
 import Head from 'next/head'
 import {Button} from "@/components/ui/button"
 

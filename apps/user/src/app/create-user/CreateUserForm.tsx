@@ -3,14 +3,14 @@
 import {useEffect, useState} from 'react'
 import {useRouter, useSearchParams} from 'next/navigation'
 import AvatarSelector from '@/components/AvatarSelector'
-import {getEventStatus} from '../../../packages/shared/src/services/eventService'
+import {getEventStatus} from '@konnektaro/shared/src/services/eventService'
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
 import {BackLink} from "@/components/BackLink";
-import {useUserContext} from "../../../packages/shared/src/contexts/UserContext";
+import {useUserContext} from "@konnektaro/shared/src/contexts/UserContext";
 import { mutate } from 'swr'
-import { getSocket } from '../../../packages/shared/src/lib/socket'
+import { getSocket } from '@konnektaro/shared/src/lib/socket'
 
 export default function CreateUserForm() {
     const router = useRouter()
