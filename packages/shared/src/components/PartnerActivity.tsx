@@ -1,6 +1,6 @@
 'use client';
 
-import Matchup from "@/components/Matchup";
+import Matchup from "./Matchup";
 import {ParticipantUser} from "../types/models";
 
 interface User {

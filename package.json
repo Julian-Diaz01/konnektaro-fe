@@ -7,10 +7,11 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:admin": "npm run dev --workspace=apps/admin",
-    "dev:user": "npm run dev --workspace=apps/user",
+    "dev:admin": "npm run build:shared:styles && npm run dev --workspace=apps/admin & npm run dev:shared:watch",
+    "dev:user": "npm run build:shared:styles && npm run dev --workspace=apps/user & npm run dev:shared:watch",
     "dev:shared": "npm run dev --workspace=packages/shared",
-    "dev:all": "npm run dev:admin & npm run dev:user & npm run dev:shared",
+    "dev:shared:watch": "npm run dev:styles --workspace=packages/shared",
+    "dev:all": "npm run build:shared:styles && npm run dev:admin & npm run dev:user",
     "dev": "npm run dev:all",
 
     "build:admin": "npm run build --workspace=apps/admin",
@@ -29,7 +30,10 @@
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
     "sync:assets": "node scripts/sync-public-assets.js",
     "postbuild": "node cleanup.js",
-    "deploy": "npm run build:all && firebase deploy --only hosting"
+    "deploy": "npm run build:all && firebase deploy --only hosting",
+    "deploy:user": "npm run build:shared:styles && npm run build:user && firebase deploy --only hosting:konnektaro",
+    "deploy:admin": "npm run build:shared:styles && npm run build:admin && firebase deploy --only hosting:konnektaro-admin",
+    "deploy:all": "npm run build:all && firebase deploy --only hosting"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.5",
