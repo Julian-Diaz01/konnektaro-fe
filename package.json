@@ -9,13 +9,23 @@
   "scripts": {
     "dev:admin": "npm run dev --workspace=apps/admin",
     "dev:user": "npm run dev --workspace=apps/user",
-    "dev:all": "npm run dev:admin & npm run dev:user",
+    "dev:shared": "npm run dev --workspace=packages/shared",
+    "dev:all": "npm run dev:admin & npm run dev:user & npm run dev:shared",
+    "dev": "npm run dev:all",
+
     "build:admin": "npm run build --workspace=apps/admin",
     "build:user": "npm run build --workspace=apps/user",
-    "build:all": "npm run build:admin && npm run build:user",
+    "build:shared": "npm run build --workspace=packages/shared",
+    "build:shared:styles": "npm run build:styles --workspace=packages/shared",
+    "build:all": "npm run build:shared && npm run build:admin && npm run build:user",
+    "build": "npm run build:all",
+    
+    "setup": "npm install && npm run build:shared:styles",
+
     "lint:admin": "npm run lint --workspace=apps/admin",
     "lint:user": "npm run lint --workspace=apps/user",
     "lint:all": "npm run lint:admin && npm run lint:user",
+
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
     "sync:assets": "node scripts/sync-public-assets.js",
     "postbuild": "node cleanup.js",

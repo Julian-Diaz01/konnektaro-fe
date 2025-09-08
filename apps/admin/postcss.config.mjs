@@ -1,5 +1,2 @@
-export default {
-  plugins: {
-    "@tailwindcss/postcss": {},
-  }
-}
+import rootConfig from "../../postcss.config.mjs";
+export default rootConfig;
