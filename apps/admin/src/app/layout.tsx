@@ -1,22 +1,31 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import './../styles/globals.css'
+import type {Metadata} from 'next'
+import {SessionManager} from "@shared/components/SessionManager";
+import {Toaster} from "@shared/components/ui/sonner";
+import MainAuthenticatedLayout from "@shared/components/MainAuthenticatedLayout";
+import EventsInitializer from "@shared/components/EventsInitializer";
+import SocketStatus from "@shared/components/SocketStatus";
+import { UserProvider } from "@shared/contexts/UserContext";
 
 export const metadata: Metadata = {
-  title: 'Konnektaro Admin',
-  description: 'Admin panel for Konnektaro',
+    title: 'Konnektaro',
+    description: 'Collaborative event app',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
+export default function RootLayout({children}: { children: React.ReactNode }) {
+    return (
+        <html lang="en">
+        <body>
+            <EventsInitializer />
+            <SessionManager />
+            <UserProvider>
+                <MainAuthenticatedLayout>
+                    {children}
+                </MainAuthenticatedLayout>
+            </UserProvider>
+            <Toaster />
+            <SocketStatus />
+        </body>
+        </html>
+    )
 }
