@@ -1,4 +1,4 @@
-import './../styles/globals.css'
+import './../../globals.css'
 import type {Metadata} from 'next'
 import {SessionManager} from "@shared/components/SessionManager";
 import {Toaster} from "@shared/components/ui/sonner";

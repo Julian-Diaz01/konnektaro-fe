@@ -1,10 +1,14 @@
 import type { Config } from 'tailwindcss'
-import {themeColors} from "@/styles/theme";
 
 import tailwindcss_animate from "tailwindcss-animate";
+import { themeColors } from './theme';
 
 const config: Config = {
-    content: ['./src/**/*.{js,ts,jsx,tsx}'],
+    content: [
+        "./apps/**/app/**/*.{js,ts,jsx,tsx,mdx}",
+        "./apps/**/components/**/*.{js,ts,jsx,tsx,mdx}",
+        "./packages/shared/**/*.{js,ts,jsx,tsx,mdx}"
+      ],
     theme: {
         extend: {
             colors: themeColors,

@@ -6,8 +6,8 @@ import {createEvent} from '@shared/services/eventService'
 import {BackLink} from "@shared/components/BackLink";
 import {Input} from "@shared/components/ui/input";
 import {Button} from "@shared/components/ui/button";
-import {EventImageSelector} from "@shared/components/EventImageSelector";
 import { mutate } from 'swr'
+import { EventImageSelector } from '@/components/EventImageSelector';
 
 export default function CreateEventPage() {
     const router = useRouter()

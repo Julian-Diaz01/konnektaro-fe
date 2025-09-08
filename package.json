@@ -17,6 +17,7 @@
     "lint:user": "npm run lint --workspace=apps/user",
     "lint:all": "npm run lint:admin && npm run lint:user",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "sync:assets": "node scripts/sync-public-assets.js",
     "postbuild": "node cleanup.js",
     "deploy": "npm run build:all && firebase deploy --only hosting"
   },
