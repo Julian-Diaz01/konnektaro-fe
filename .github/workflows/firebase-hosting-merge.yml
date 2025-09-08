@@ -31,12 +31,8 @@ jobs:
           echo "NEXT_PUBLIC_SOCKET_URL=${{ secrets.NEXT_PUBLIC_SOCKET_URL }}" >> .env
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
 
-      - name: Build Shared Package
-        run: npm run build:shared:styles
-      - name: Build User App
-        run: npm run build:user
-      - name: Build Admin App
-        run: npm run build:admin
+      - name: Build All Packages
+        run: npm run build:all
       - name: Post Build Cleanup
         run: npm run postbuild
 
