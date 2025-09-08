@@ -30,6 +30,10 @@ jobs:
           echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
           echo "NEXT_PUBLIC_SOCKET_URL=${{ secrets.NEXT_PUBLIC_SOCKET_URL }}" >> .env
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+      - name: Copy .env to apps
+        run: |
+          cp .env apps/user/.env
+          cp .env apps/admin/.env
 
       - name: Build All Packages
         run: npm run build:all
