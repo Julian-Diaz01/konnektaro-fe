@@ -2,10 +2,10 @@ import './../styles/globals.css'
 import type {Metadata} from 'next'
 import {SessionManager} from "@/components/SessionManager";
 import {Toaster} from "@/components/ui/sonner";
-import MainAuthenticatedLayout from "@/components/MainAuthenticatedLayout";
+import UserAuthenticatedLayout from "@/components/UserAuthenticatedLayout";
 import EventsInitializer from "@/components/EventsInitializer";
 import SocketStatus from "@/components/SocketStatus";
-import { UserProvider } from "@konnektaro/shared/src/contexts/UserContext";
+import { UserProvider } from "@shared/contexts/UserContext";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',
@@ -19,9 +19,9 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
             <EventsInitializer />
             <SessionManager />
             <UserProvider>
-                <MainAuthenticatedLayout>
+                <UserAuthenticatedLayout>
                     {children}
-                </MainAuthenticatedLayout>
+                </UserAuthenticatedLayout>
             </UserProvider>
             <Toaster />
             <SocketStatus />

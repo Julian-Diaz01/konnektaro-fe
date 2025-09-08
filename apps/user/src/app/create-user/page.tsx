@@ -2,7 +2,7 @@
 
 import {Suspense} from 'react'
 import CreateUserForm from './CreateUserForm'
-import Spinner from "@/components/ui/spinner";
+import Spinner from "@shared/components/ui/spinner";
 
 export default function CreateUserPage() {
     return (

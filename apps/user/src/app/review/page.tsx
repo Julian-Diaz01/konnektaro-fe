@@ -1,10 +1,10 @@
 'use client'
 
 import {FC} from "react"
-import {Button} from "@/components/ui/button"
+import {Button} from "@shared/components/ui/button"
 import {ArrowLeft, Download} from "lucide-react"
 import Image from "next/image"
-import useReviewPage from "@konnektaro/shared/src/hooks/useReviewPage";
+import useReviewPage from "@shared/hooks/useReviewPage";
 
 const ReviewPage: FC = () => {
     const {
