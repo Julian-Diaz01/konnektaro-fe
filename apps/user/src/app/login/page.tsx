@@ -3,10 +3,10 @@
 import {useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
-import {auth} from '@konnektaro/shared/src/utils/firebase'
-import {loginAnonymously} from '@konnektaro/shared/src/utils/authenticationService'
+import {auth} from '@shared/utils/firebase'
+import {loginAnonymously} from '@shared/utils/authenticationService'
 import Head from 'next/head'
-import {Button} from "@/components/ui/button"
+import {Button} from "@shared/components/ui/button"
 
 export default function LoginPage() {
     const router = useRouter()

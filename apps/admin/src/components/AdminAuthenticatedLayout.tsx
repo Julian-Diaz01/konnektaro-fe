@@ -4,15 +4,15 @@ import {useEffect, useMemo} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
 
 import Spinner from "@shared/components/ui/spinner"
-import { AppContext } from "@konnektaro/shared/src/contexts/AppContext"
+import { AppContext } from "@shared/contexts/AppContext"
 import Header from "@shared/components/Header"
-import { auth } from '@konnektaro/shared/src/utils/firebase'
+import { auth } from '@shared/utils/firebase'
 
 // Import admin page components
 import CreateEventPage from '@/app/create-event/page'
 import EditEventPage from '@/app/edit-event/page'
 import AdminPage from '@/app/page'
-import {useUserContext} from "@konnektaro/shared/src/contexts/UserContext";
+import {useUserContext} from "@shared/contexts/UserContext";
 import AdminLoginPage from '@/app/login/page'
 
 interface AdminAuthenticatedLayoutProps {
