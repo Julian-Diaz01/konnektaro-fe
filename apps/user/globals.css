@@ -1,5 +1,7 @@
-@import "tailwindcss";
-/* @import "tw-animate-css"; */
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@repo/tailwind-config';
+@import '@konnektaro/shared/styles.css';
 
 @custom-variant dark (&:is(.dark *));
 
