@@ -1,6 +1,6 @@
 'use client';
 
-import EventCard from '@/components/EventCard';
+import EventCard from './EventCard';
 import {User, Event} from "../types/models";
 
 interface JoinEventProps {

@@ -1,14 +1,14 @@
 'use client';
 
 import {useState, useEffect, useCallback} from 'react';
-import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
-import {Button} from '@/components/ui/button';
+import {Dialog, DialogContent, DialogTrigger} from './ui/dialog';
+import {Button} from './ui/button';
 import {getSocket} from '../lib/socket';
 import {toast} from 'sonner';
-import Spinner from '@/components/ui/spinner';
+import Spinner from './ui/spinner';
 import {Event} from '../types/models';
 import useGroupActivity from '../hooks/useGroupActivity';
-import GroupedUsersList from "@/components/GroupedUsersList";
+import GroupedUsersList from "./GroupedUsersList";
 
 interface ManageActivityUsersDialogProps {
     event: Event | null;

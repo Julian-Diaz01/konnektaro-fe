@@ -2,16 +2,16 @@
 
 import { useState, useCallback } from 'react'
 import { ActivityType } from '../types/models'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { AutoGrowTextarea } from '@/components/ui/textarea'
+import { Button } from './ui/button'
+import { AutoGrowTextarea } from './ui/textarea'
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog'
+} from './ui/dialog'
+import { Input } from './ui/input'
 
 interface AddActivityDialogProps {
     onAddActivity: (activityData: { title: string; question: string; type: ActivityType }) => void

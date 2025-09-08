@@ -1,7 +1,7 @@
 'use client'
 
-import {Button} from "@/components/ui/button"
-import Spinner from "@/components/ui/spinner"
+import {Button} from "./ui/button"
+import Spinner from "./ui/spinner"
 import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
 import useCurrentActivity from "../hooks/useCurrentActivity"
 import useCountdown from "../hooks/useCountdown"

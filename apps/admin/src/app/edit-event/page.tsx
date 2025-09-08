@@ -1,20 +1,20 @@
 'use client';
 
 import {Suspense, useMemo, useCallback} from "react";
-import {BackLink} from "@/components/BackLink";
-import {ConfirmDeleteButton} from "@/components/ConfirmDeleteButton";
-import {Button} from "@/components/ui/button";
-import useEventPage from "../../../../../packages/shared/src/hooks/useEventPage";
+import {BackLink} from "@shared/components/BackLink";
+import {ConfirmDeleteButton} from "@shared/components/ConfirmDeleteButton";
+import {Button} from "@shared/components/ui/button";
+import useEventPage from "@shared/hooks/useEventPage";
 
-import Spinner from "@/components/ui/spinner";
-import UsersList from "@/components/UsersList";
-import useEventSocket from "../../../../../packages/shared/src/hooks/useEventSocket";
-import {ShowEventDetails} from "@/components/EventDetails";
-import { EventProvider } from "../../../../../packages/shared/src/contexts/EventContext";
+import Spinner from "@shared/components/ui/spinner";
+import UsersList from "@shared/components/UsersList";
+import useEventSocket from "@shared/hooks/useEventSocket";
+import {ShowEventDetails} from "@shared/components/EventDetails";
+import { EventProvider } from "@shared/contexts/EventContext";
 import { useSearchParams } from "next/navigation";
-import { ActivityType } from "../../../../../packages/shared/src/types/models";
-import AddActivityDialog from "@/components/AddActivityDialog";
-import ManageActivityUsersDialog from "@/components/ManageActivityUsersDialog";
+import { ActivityType } from "@shared/types/models";
+import AddActivityDialog from "@shared/components/AddActivityDialog";
+import ManageActivityUsersDialog from "@shared/components/ManageActivityUsersDialog";
 
 function EventPageContent() {
     const {

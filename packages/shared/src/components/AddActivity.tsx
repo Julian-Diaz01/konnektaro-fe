@@ -2,8 +2,8 @@
 
 import {useState} from 'react'
 import {ActivityType} from '../types/models'
-import {Input} from '@/components/ui/input'
-import {Button} from '@/components/ui/button'
+import {Input} from './ui/input'
+import {Button} from './ui/button'
 
 type Props = {
     activityData: (activityData: { title: string; question: string; type: ActivityType }) => void

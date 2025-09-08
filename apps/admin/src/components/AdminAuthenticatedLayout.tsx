@@ -3,17 +3,17 @@
 import {useEffect, useMemo} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
 
-import Spinner from "@/components/ui/spinner"
-import { AppContext } from "../contexts/AppContext"
-import Header from "@/components/Header"
-import { auth } from '../utils/firebase'
+import Spinner from "@shared/components/ui/spinner"
+import { AppContext } from "@konnektaro/shared/src/contexts/AppContext"
+import Header from "@shared/components/Header"
+import { auth } from '@konnektaro/shared/src/utils/firebase'
 
 // Import admin page components
 import CreateEventPage from '@/app/create-event/page'
 import EditEventPage from '@/app/edit-event/page'
-import AdminPage from '@/app/admin/page'
-import {useUserContext} from "../contexts/UserContext";
-import AdminLoginPage from '@/app/admin-login/page'
+import AdminPage from '@/app/page'
+import {useUserContext} from "@konnektaro/shared/src/contexts/UserContext";
+import AdminLoginPage from '@/app/login/page'
 
 interface AdminAuthenticatedLayoutProps {
     children: React.ReactNode

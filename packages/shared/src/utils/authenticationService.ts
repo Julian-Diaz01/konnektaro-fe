@@ -1,8 +1,8 @@
 // utils/auth.ts
 import {signInWithPopup, signInAnonymously, GoogleAuthProvider, signOut} from 'firebase/auth'
-import { auth } from '../../../../src/utils/firebase'
 import {deleteCookie} from "cookies-next"
 import { mutate } from 'swr'
+import { auth } from './firebase'
 
 export const loginWithGoogle = async (): Promise<firebaseUser | null> => {
   const provider = new GoogleAuthProvider()

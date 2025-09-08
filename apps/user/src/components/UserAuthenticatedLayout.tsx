@@ -3,16 +3,16 @@
 import {useEffect, useMemo} from 'react'
 import {useRouter, usePathname} from 'next/navigation'
 
-import Spinner from "@/components/ui/spinner"
-import { AppContext } from "../contexts/AppContext"
-import Header from "@/components/Header"
+import Spinner from "@shared/components/ui/spinner"
+import { AppContext } from "@shared/contexts/AppContext"
+import Header from "@shared/components/Header"
 
 // Import user page components
 import HomePage from "@/app/page";
 import LoginPage from '@/app/login/page'
-import CreateUserPage from '@/app/create-user/page'
 import ReviewPage from "@/app/review/page";
-import {useUserContext} from "../contexts/UserContext";
+import {useUserContext} from "@shared/contexts/UserContext";
+import CreateUserPage from '@/app/create-user/page'
 
 // Define user URLs
 

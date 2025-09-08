@@ -20,6 +20,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "../../apps/user/src/components/UserAuthenticatedLayout.tsx"],
   "exclude": ["node_modules", "dist"]
 }
