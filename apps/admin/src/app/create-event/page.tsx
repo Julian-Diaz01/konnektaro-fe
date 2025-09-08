@@ -2,11 +2,11 @@
 
 import React, {useState} from 'react'
 import {useRouter} from 'next/navigation'
-import {createEvent} from '../../../../../packages/shared/src/services/eventService'
-import {BackLink} from "@/components/BackLink";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {EventImageSelector} from "@/components/EventImageSelector";
+import {createEvent} from '@shared/services/eventService'
+import {BackLink} from "@shared/components/BackLink";
+import {Input} from "@shared/components/ui/input";
+import {Button} from "@shared/components/ui/button";
+import {EventImageSelector} from "@shared/components/EventImageSelector";
 import { mutate } from 'swr'
 
 export default function CreateEventPage() {

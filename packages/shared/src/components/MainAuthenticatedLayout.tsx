@@ -3,8 +3,8 @@
 import {useMemo} from 'react'
 import {usePathname} from 'next/navigation'
 import {useUserContext} from "../contexts/UserContext";
-import AdminAuthenticatedLayout from './AdminAuthenticatedLayout'
-import UserAuthenticatedLayout from './UserAuthenticatedLayout'
+import AdminAuthenticatedLayout from '../../../../apps/admin/src/components/AdminAuthenticatedLayout'
+import UserAuthenticatedLayout from '../../../../apps/user/src/components/UserAuthenticatedLayout'
 import Spinner from "@/components/ui/spinner"
 
 // Define admin URLs

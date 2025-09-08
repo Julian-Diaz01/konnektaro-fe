@@ -3,10 +3,10 @@
 import {useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {onAuthStateChanged, getIdToken, User} from 'firebase/auth'
-import {auth} from '../../../../../packages/shared/src/utils/firebase'
-import {loginWithGoogle} from '../../../../../packages/shared/src/utils/authenticationService'
+import {auth} from '@shared/utils/firebase'
+import {loginWithGoogle} from '@shared/utils/authenticationService'
 import Head from 'next/head'
-import {Button} from "@/components/ui/button"
+import {Button} from "@shared/components/ui/button"
 
 export default function AdminLoginPage() {
     const router = useRouter()

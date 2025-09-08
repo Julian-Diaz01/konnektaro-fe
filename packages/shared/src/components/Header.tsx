@@ -1,7 +1,7 @@
 'use client'
 
 import {useRouter} from 'next/navigation'
-import {Button} from '@/components/ui/button'
+import {Button} from './ui/button'
 import {logout} from '../utils/authenticationService'
 import {useUserContext} from "../contexts/UserContext";
 import Image from 'next/image'
@@ -11,7 +11,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator, DropdownMenuSubLabel,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "./ui/dropdown-menu"
 import * as React from "react"
 import {  User } from 'lucide-react'
 

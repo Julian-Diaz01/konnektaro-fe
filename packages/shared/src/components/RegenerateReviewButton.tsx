@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from './ui/button'
 import { RefreshCw } from 'lucide-react'
 import { regenerateUserReview } from '../services/userService'
 import { toast } from 'sonner'
