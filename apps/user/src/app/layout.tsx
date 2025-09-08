@@ -5,7 +5,7 @@ import {Toaster} from "@/components/ui/sonner";
 import MainAuthenticatedLayout from "@/components/MainAuthenticatedLayout";
 import EventsInitializer from "@/components/EventsInitializer";
 import SocketStatus from "@/components/SocketStatus";
-import { UserProvider } from "../../packages/shared/src/contexts/UserContext";
+import { UserProvider } from "@konnektaro/shared/src/contexts/UserContext";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',

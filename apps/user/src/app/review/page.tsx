@@ -4,7 +4,7 @@ import {FC} from "react"
 import {Button} from "@/components/ui/button"
 import {ArrowLeft, Download} from "lucide-react"
 import Image from "next/image"
-import useReviewPage from "../../../packages/shared/src/hooks/useReviewPage";
+import useReviewPage from "@konnektaro/shared/src/hooks/useReviewPage";
 
 const ReviewPage: FC = () => {
     const {
