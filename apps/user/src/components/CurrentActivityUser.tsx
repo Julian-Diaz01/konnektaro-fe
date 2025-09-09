@@ -1,16 +1,16 @@
 'use client'
 
-import {Button} from "./ui/button"
-import Spinner from "./ui/spinner"
+import {Button} from "@shared/components/ui/button"
+import Spinner from "@shared/components/ui/spinner"
 import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
-import useCurrentActivity from "../hooks/useCurrentActivity"
-import useCountdown from "../hooks/useCountdown"
+import useCountdown from "@shared/hooks/useCountdown"
 import {ChevronRight, Upload} from "lucide-react"
-import {useUserContext} from "../contexts/UserContext"
-import {Activity, ActivityGroupItem, ParticipantUser} from "../types/models"
+import {useUserContext} from "@shared/contexts/UserContext"
+import {Activity, ActivityGroupItem, ParticipantUser} from "@shared/types/models"
 import Image from 'next/image'
-import usePartnerNote from "../hooks/usePartnerNote"
+import usePartnerNote from "@/hooks/usePartnerNote"
 import {getGroupColorClasses} from "./getGroupColorClasses"
+import useCurrentActivity from "@/hooks/useCurrentActivity"
 
 interface CurrentActivityProps {
     userId: string

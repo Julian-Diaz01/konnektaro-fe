@@ -1,11 +1,11 @@
 import {useRouter} from "next/navigation";
 import {useEffect, useMemo, useRef} from "react";
-import useOpenEvents from "./useOpenEvents";
-import useEventSocket from "./useEventSocket";
-import useGroupActivity from "./useGroupActivity";
-import { useEventContext } from "../contexts/EventContext";
-import { useUserContext } from "../contexts/UserContext";
-import {ParticipantUser} from "../types/models";
+import useOpenEvents from "@/hooks/useOpenEvents";
+import useEventSocket from "@shared/hooks/useEventSocket";
+import useGroupActivity from "@shared/hooks/useGroupActivity";
+import { useEventContext } from "@shared/contexts/EventContext";
+import { useUserContext } from "@shared/contexts/UserContext";
+import {ParticipantUser} from "@shared/types/models";
 
 // This hook handles the logic for the home page, including user checks, event loading, socket management, and group activity
 

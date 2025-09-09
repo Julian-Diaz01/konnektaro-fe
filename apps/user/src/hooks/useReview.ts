@@ -1,7 +1,7 @@
 import {useState} from "react"
-import {Review} from "../types/models";
+import {Review} from "@shared/types/models";
 import {toast} from "sonner";
-import {getUserReviews} from "../services/userService";
+import {getUserReviews} from "@shared/services/userService";
 
 export default function useReview() {
     const [review, setReview] = useState<Review | null>(null)

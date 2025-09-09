@@ -1,17 +1,17 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { ActivityType } from '../types/models'
-import { Button } from './ui/button'
-import { AutoGrowTextarea } from './ui/textarea'
+import { ActivityType } from '@shared/types/models'
+import { Button } from '@shared/components/ui/button'
+import { AutoGrowTextarea } from '@shared/components/ui/textarea'
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from './ui/dialog'
-import { Input } from './ui/input'
+} from '@shared/components/ui/dialog'
+import { Input } from '@shared/components/ui/input'
 
 interface AddActivityDialogProps {
     onAddActivity: (activityData: { title: string; question: string; type: ActivityType }) => void

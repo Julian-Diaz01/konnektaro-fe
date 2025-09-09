@@ -1,9 +1,9 @@
 import {useState, useEffect, useCallback, useRef, useMemo} from 'react'
 import {toast} from 'sonner'
+import useActivity from '@shared/hooks/useActivity'
+import {UserActivity} from '@shared/types/models'
+import { updateUserActivity as updateUserActivityApi, createUserActivity as createUserActivityApi } from '@shared/services/userActivityService'
 import useUserActivity from './useUserActivity'
-import useActivity from './useActivity'
-import {UserActivity} from '../types/models'
-import { updateUserActivity as updateUserActivityApi, createUserActivity as createUserActivityApi } from '../services/userActivityService'
 
 interface UseCurrentActivityProps {
 	userId: string

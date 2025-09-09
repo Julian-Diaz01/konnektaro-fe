@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { getSocket } from '../lib/socket'
+import { getSocket } from '@shared/lib/socket'
 import { Socket } from 'socket.io-client'
-import { getUserActivity } from '../services/userActivityService'
+import { getUserActivity } from '@shared/services/userActivityService'
 
 interface UsePartnerNoteParams {
     activityId?: string | null

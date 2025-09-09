@@ -1,4 +1,4 @@
-import {GroupActivity} from '../types/models'
+import {GroupActivity} from '@shared/types/models'
 import Image from 'next/image'
 
 interface GroupedUsersListProps {

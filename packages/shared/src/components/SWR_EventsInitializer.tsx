@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { mutate } from 'swr'
 
-export default function EventsInitializer() {
+export default function SWR_EventsInitializer() {
     useEffect(() => {
         // Force fresh events data when the app first loads
         // This ensures we always have the latest events, not stale cache
