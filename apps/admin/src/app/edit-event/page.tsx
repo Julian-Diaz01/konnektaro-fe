@@ -29,7 +29,7 @@ function EventPageContent() {
         handleCloseEvent
     } = useEventPage();
 
-    const {activeActivityId} = useEventSocket(event?.eventId || '')
+    const {activeActivityId} = useEventSocket(event?.eventId || '', 'admin');
 
     // Priority: Live socket data > Static event data
     // This ensures we use the most up-to-date information
