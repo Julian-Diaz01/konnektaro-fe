@@ -1,4 +1,4 @@
-import {Button} from './ui/button'
+import {Button} from '@shared/components/ui/button'
 import {FaTrash} from 'react-icons/fa'
 import RegenerateReviewButton from './RegenerateReviewButton'
 

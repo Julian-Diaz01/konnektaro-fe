@@ -1,13 +1,13 @@
 'use client';
 
-import useHomePage from "@shared/hooks/useHomePage";
-import JoinEvent from "@shared/components/JoinEvent";
-import CurrentActivity from "@shared/components/CurrentActivityUser";
-import InformationLobby from "@shared/components/InformationLobby";
+import JoinEvent from "@/components/JoinEvent";
+import CurrentActivity from "@/components/CurrentActivityUser";
+import InformationLobby from "@/components/InformationLobby";
+import useHomePage from "@/hooks/useHomePage";
+import EventBanner from "@/components/EventBanner";
+import ReviewBanner from "@/components/ReviewBanner";
 import Spinner from "@shared/components/ui/spinner";
-import ReviewBanner from "@shared/components/ReviewBanner";
-import useReviewSocket from "@shared/hooks/useReviewSocket";
-import EventBanner from "@shared/components/EventBanner";
+import useReviewSocket from "@/hooks/useReviewSocket";
 
 export default function HomePage() {
     const {

@@ -1,10 +1,10 @@
 import {useRouter, useSearchParams} from "next/navigation"
 import {useState, useMemo, useCallback} from "react"
-import {ActivityType} from "../types/models"
-import {updateCurrentActivity} from "../services/eventService"
-import { useEventContext } from "../contexts/EventContext"
-import useActivity from "./useActivity";
-import { getSocket } from "../lib/socket";
+import {ActivityType} from "@shared/types/models"
+import {updateCurrentActivity} from "@shared/services/eventService"
+import { useEventContext } from "@shared/contexts/EventContext"
+import useActivity from "@shared/hooks/useActivity";
+import { getSocket } from "@shared/lib/socket";
 import { toast } from "sonner";
 
 export default function useEventPage() {
@@ -39,15 +39,9 @@ export default function useEventPage() {
     }) => {
         if (!event) return
         try {
-            console.log('➕ Admin creating new activity:', { activityData, eventId: event.eventId })
             toast.info(`➕ Creating new activity: ${activityData.title}`)
             await createNewActivity({ ...activityData, eventId: event.eventId })
-            console.log('✅ Activity created successfully on server')
             toast.success(`✅ Activity "${activityData.title}" created successfully!`)
-
-            // The createNewActivity function already updates the activities cache locally
-            // No need to call refreshActivities() or update event context
-            console.log('✅ Activities cache updated automatically')
 
             setShowForm(false)
         } catch (error) {
@@ -68,19 +62,15 @@ export default function useEventPage() {
                 return
             }
             
-            console.log('🔄 Admin initiating activity:', { activityId, activityTitle: newActivity.title, eventId })
             toast.info(`🔄 Initiating activity: ${newActivity.title}`)
             
             await updateCurrentActivity(eventId, activityId)
-            console.log('✅ Current activity updated successfully')
             updateCurrentActivityId(activityId)
-            console.log('✅ Event context updated with new current activity')
             // Emit socket event to notify all connected users about the activity change
             try {
                 const socket = await getSocket()
                 if (socket && socket.connected) {
                     socket.emit('adminActivityUpdate', { eventId, activityId })
-                    console.log('🔌 Emitted adminActivityUpdate event:', { eventId, activityId })
                 } else {
                     console.warn('⚠️ Socket not connected, cannot emit adminActivityUpdate event')
                 }
@@ -119,10 +109,8 @@ export default function useEventPage() {
                 return
             }
             await deleteActivity(activityId)
-            console.log('✅ Activity deleted successfully on server')
             toast.success(`✅ Activity "${activity.title}" deleted successfully!`)
         } catch (error) {
-            console.error("Failed to delete activity:", error)
             toast.error("❌ Failed to delete activity. Please try again.")
         }
     }, [event, deleteActivity, activities])

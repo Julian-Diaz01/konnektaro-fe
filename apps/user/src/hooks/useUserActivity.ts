@@ -5,9 +5,9 @@ import {
     createUserActivity,
     updateUserActivity,
     getUserActivity,
-} from '../services/userActivityService'
-import {UserActivity} from '../types/models'
-import { swrConfigFrequent } from '../lib/swr-config'
+} from '@shared/services/userActivityService'
+import {UserActivity} from '@shared/types/models'
+import { swrConfigFrequent } from '@shared/lib/swr-config'
 
 interface UseUserActivityProps {
     userId?: string

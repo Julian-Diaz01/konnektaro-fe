@@ -1,10 +1,10 @@
 'use client'
 
 import {useEffect, useMemo} from 'react'
-import {useRouter, usePathname} from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 
 import Spinner from "@shared/components/ui/spinner"
-import { AppContext } from "@shared/contexts/AppContext"
+import {AppContext} from "@shared/contexts/AppContext"
 import Header from "@shared/components/Header"
 
 // Import user page components
@@ -81,36 +81,27 @@ export default function UserAuthenticatedLayout({children}: UserAuthenticatedLay
     const pathname = usePathname()
     const { firebaseUser, authLoading } = useUserContext()
 
-    console.log('UserAuthenticatedLayout: pathname:', pathname, 'authLoading:', authLoading, 'firebaseUser?.uid:', firebaseUser?.uid, 'firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous)
-
     // Check if user is a regular user (anonymous users)
     const isRegularUser = useMemo(() => {
         if (!firebaseUser?.uid || authLoading) {
-            console.log('isRegularUser: no firebase user or auth loading, returning false')
             return false
         }
-        const regularUser = firebaseUser?.isAnonymous
-        console.log('isRegularUser: firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous, 'regularUser:', regularUser)
-        return regularUser
+        return firebaseUser?.isAnonymous
     }, [firebaseUser, authLoading])
     
     // Check if user has access to current page
     const isAllowed = useMemo(() => {
         if (authLoading) {
-            console.log('isAllowed: authLoading, returning false')
             return false
         }
         
         // Always allow access to login page
         if (pathname === '/login') {
-            console.log('isAllowed: login page, returning true')
             return true
         }
         
         // For user pages, allow access if user is authenticated and is a regular user
-        const allowed = !!firebaseUser?.uid && isRegularUser
-        console.log('isAllowed:', pathname, 'firebaseUser?.uid:', firebaseUser?.uid, 'isRegularUser:', isRegularUser, 'allowed:', allowed)
-        return allowed
+        return !!firebaseUser?.uid && isRegularUser
     }, [firebaseUser, authLoading, pathname, isRegularUser])
     
     useEffect(() => {
@@ -118,12 +109,9 @@ export default function UserAuthenticatedLayout({children}: UserAuthenticatedLay
             return
         }
         
-        console.log('UserAuthenticatedLayout useEffect: firebaseUser?.uid:', firebaseUser?.uid, 'firebaseUser?.isAnonymous:', firebaseUser?.isAnonymous, 'pathname:', pathname, 'isRegularUser:', isRegularUser)
-        
         if (!firebaseUser?.uid) {
             // Redirect to login if not authenticated
             if (pathname !== '/login') {
-                console.log('Redirecting to login - no firebase user')
                 router.push('/login')
                 return
             } else {
@@ -133,7 +121,6 @@ export default function UserAuthenticatedLayout({children}: UserAuthenticatedLay
         
         // Check user access - redirect admin users to admin dashboard
         if (!isRegularUser) {
-            console.log('Redirecting to admin dashboard - not a regular user')
             router.push('/admin')
             return
         }

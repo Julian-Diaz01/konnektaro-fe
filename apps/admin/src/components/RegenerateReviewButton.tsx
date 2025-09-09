@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
-import { regenerateUserReview } from '../services/userService'
+import { regenerateUserReview } from '@shared/services/userService'
 import { toast } from 'sonner'
-import { Button } from './ui/button'
+import { Button } from '@shared/components/ui/button'
 
 interface RegenerateReviewButtonProps {
     userId: string

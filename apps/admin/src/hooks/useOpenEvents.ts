@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { getAllEvents } from '../services/eventService'
-import { Event } from '../types/models'
-import { getSocket } from '../lib/socket'
+import { getAllEvents } from '@shared/services/eventService'
+import { Event } from '@shared/types/models'
+import { getSocket } from '@shared/lib/socket'
 import { Socket } from 'socket.io-client'
 
 /**

@@ -1,9 +1,9 @@
 'use client'
 
 import {useState} from 'react'
-import {ActivityType} from '../types/models'
-import {Input} from './ui/input'
-import {Button} from './ui/button'
+import {ActivityType} from '@shared/types/models'
+import {Input} from '@shared/components/ui/input'
+import {Button} from '@shared/components/ui/button'
 
 type Props = {
     activityData: (activityData: { title: string; question: string; type: ActivityType }) => void

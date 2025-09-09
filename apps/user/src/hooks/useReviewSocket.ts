@@ -1,7 +1,7 @@
 import {useEffect, useCallback, useState} from 'react'
-import {getSocket} from '../lib/socket'
+import {getSocket} from '@shared/lib/socket'
 import {toast} from 'sonner'
-import {useEventContext} from '../contexts/EventContext'
+import {useEventContext} from '@shared/contexts/EventContext'
 import {Socket} from 'socket.io-client'
 
 interface UseReviewSocketProps {

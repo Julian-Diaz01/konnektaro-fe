@@ -2,7 +2,6 @@
 
 import {useEffect, useState} from 'react'
 import {useRouter, useSearchParams} from 'next/navigation'
-import AvatarSelector from '@shared/components/AvatarSelector'
 import {getEventStatus} from '@shared/services/eventService'
 import {Input} from "@shared/components/ui/input";
 import {Button} from "@shared/components/ui/button";
@@ -11,6 +10,7 @@ import {BackLink} from "@shared/components/BackLink";
 import {useUserContext} from "@shared/contexts/UserContext";
 import { mutate } from 'swr'
 import { getSocket } from '@shared/lib/socket'
+import AvatarSelector from "@/components/AvatarSelector";
 
 export default function CreateUserForm() {
     const router = useRouter()

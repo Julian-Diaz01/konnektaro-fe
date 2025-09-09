@@ -4,7 +4,8 @@ import {FC} from "react"
 import {Button} from "@shared/components/ui/button"
 import {ArrowLeft, Download} from "lucide-react"
 import Image from "next/image"
-import useReviewPage from "@shared/hooks/useReviewPage";
+import useReviewPage from "@/hooks/useReviewPage";
+import {ReviewActivity} from "@shared/types";
 
 const ReviewPage: FC = () => {
     const {
@@ -89,7 +90,7 @@ const ReviewPage: FC = () => {
                     {/* Event Info */}
                     <div className="p-4 mb-6">
                         <div className="flex flex-col items-center gap-4 mb-3">
-                        {review.event.picture && (
+                            {review.event.picture && (
                                 <div className="w-full h-30 overflow-hidden rounded-lg">
                                     <Image
                                         src={`/eventAssets/${review.event.picture}`}
@@ -100,7 +101,8 @@ const ReviewPage: FC = () => {
                                         priority={false}
                                     />
                                 </div>
-                            )}  <div>
+                            )}
+                            <div>
                                 <h2 className="text-xl font-bold text-card-foreground">{review.event.name}</h2>
                                 <p className="text-sm text-muted-foreground">{review.event.description}</p>
                             </div>
@@ -109,7 +111,7 @@ const ReviewPage: FC = () => {
 
                     {/* Activities */}
                     <div className="space-y-6">
-                        {review.activities.map((a, i) => (
+                        {review.activities.map((a: ReviewActivity, i: number) => (
                             <div
                                 key={a.activityId}
                             >

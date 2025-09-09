@@ -1,18 +1,18 @@
 import {useState, useEffect} from 'react'
-import Spinner from './ui/spinner'
-import {useAdminUser} from '../hooks/useAdminUser'
+import Spinner from '@shared/components/ui/spinner'
 import {
     Dialog,
     DialogTrigger,
     DialogContent,
     DialogTitle,
-} from './ui/dialog'
-import {GroupActivity, Event} from '../types/models'
+} from '@shared/components/ui/dialog'
+import {GroupActivity, Event} from '@shared/types/models'
 import GroupedUsersList from './GroupedUsersList'
 import UserActions from './UserActions'
 import {EyeIcon} from "lucide-react";
-import useReviewAccess from "../hooks/useReviewAccess";
-import { Button } from './ui/button'
+import useReviewAccess from "@shared/hooks/useReviewAccess";
+import { Button } from '@shared/components/ui/button'
+import {useAdminUser} from "@/hooks/useAdminUser";
 
 interface UsersListProps {
     event: Event | null

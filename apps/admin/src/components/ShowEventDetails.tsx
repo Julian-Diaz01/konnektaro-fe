@@ -1,29 +1,29 @@
 'use client'
 
 import Image from "next/image";
-import {Event} from "../types/models";
+import {Event} from "@shared/types/models";
 import {useState} from "react";
 
 export const ShowEventDetails = ({ event }: { event: Event | null }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    
+
     if (!event) return <></>
-    
+
     const toggleExpanded = () => {
         setIsExpanded(!isExpanded);
     };
-    
+
     return (
         <div className="w-full mb-8 bg-white border rounded">
             {/* Collapsed View - Always Visible */}
-            <div 
+            <div
                 className="flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={toggleExpanded}
             >
                 <div className="flex-grow">
                     <h2 className="font-bold text-xl text-gray-800">{event?.name}</h2>
                 </div>
-                
+
                 {/* Expand/Collapse Arrow */}
                 <div className="flex items-center justify-center w-8 h-8">
                     <svg
@@ -43,7 +43,7 @@ export const ShowEventDetails = ({ event }: { event: Event | null }) => {
                     </svg>
                 </div>
             </div>
-            
+
             {/* Expanded Content */}
             {isExpanded && (
                 <div className="border-t bg-gray-50 p-4">

@@ -1,5 +1,5 @@
-import {Event} from '../types/models'
-import EventCard from './EventCard'
+import {Event} from '@shared/types/models'
+import EventCard from '@shared/components/EventCard'
 import {useRouter} from "next/navigation";
 
 type Props = {

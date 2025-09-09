@@ -1,8 +1,8 @@
 import { FC, useState } from "react"
 import { Info, Calendar, Users, FileText } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { Event } from "../types/models"
-import { Button } from "./ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@shared/components/ui/dialog"
+import { Event } from "@shared/types/models"
+import { Button } from "@shared/components/ui/button"
 import Image from "next/image"
 
 interface EventBannerProps {

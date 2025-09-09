@@ -1,10 +1,10 @@
 'use client'
 
 import { Button } from "@shared/components/ui/button"
-import EventListAdmin from "@shared/components/EventListAdmin"
-import useOpenEvents from "@shared/hooks/useOpenEvents"
+import EventListAdmin from "@/components/EventListAdmin"
 import Spinner from "@shared/components/ui/spinner"
 import { useRouter } from "next/navigation"
+import useOpenEvents from "@/hooks/useOpenEvents"
 
 export default function AdminPage() {
     const router = useRouter()

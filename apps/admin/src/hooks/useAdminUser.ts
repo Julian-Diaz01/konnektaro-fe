@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react'
-import {getAllUserByEvent} from '../services/eventService'
-import {getUser, deleteUser as deleteUserApi} from '../services/userService'
-import {PartialUser} from '../types/models'
+import {getAllUserByEvent} from '@shared/services/eventService'
+import {getUser, deleteUser as deleteUserApi} from '@shared/services/userService'
+import {PartialUser} from '@shared/types/models'
 
 
 export function useAdminUser() {
