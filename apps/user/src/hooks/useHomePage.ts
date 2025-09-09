@@ -1,6 +1,6 @@
 import {useRouter} from "next/navigation";
 import {useEffect, useMemo, useRef} from "react";
-import useOpenEvents from "@/hooks/useOpenEvents";
+import useOpenEvents from "@shared/hooks/useOpenEvents";
 import useEventSocket from "@shared/hooks/useEventSocket";
 import useGroupActivity from "@shared/hooks/useGroupActivity";
 import { useEventContext } from "@shared/contexts/EventContext";

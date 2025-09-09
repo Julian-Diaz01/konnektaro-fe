@@ -31,6 +31,6 @@
       "@shared/contexts/*": ["../../packages/shared/src/contexts/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/shared/src/**/*.ts", "../../packages/shared/src/**/*.tsx", "../admin/src/components/RegenerateReviewButton.tsx", "../admin/src/components/ManageActivityUsersDialog.tsx", "../admin/src/components/UsersList.tsx", "../admin/src/components/UserDetails.tsx", "../admin/src/components/UserActions.tsx", "../admin/src/components/GroupedUsersList.tsx", "../admin/src/components/EventListAdmin.tsx", "../admin/src/hooks/useOpenEvents.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/shared/src/**/*.ts", "../../packages/shared/src/**/*.tsx"],
   "exclude": ["node_modules"]
 }

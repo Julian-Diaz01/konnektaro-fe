@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { getAllEvents } from '@shared/services/eventService'
-import { Event } from '@shared/types/models'
-import { getSocket } from '@shared/lib/socket'
+import { Event } from '../types/models'
 import { Socket } from 'socket.io-client'
+import {getAllEvents} from "../services";
+import {getSocket} from "../lib";
 
 /**
  * This hook fetches all open events from the server with real-time socket updates

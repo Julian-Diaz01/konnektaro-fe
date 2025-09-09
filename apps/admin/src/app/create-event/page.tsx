@@ -58,7 +58,7 @@ export default function CreateEventPage() {
 
     return (
             <div className="page-background">
-                <BackLink href="/admin"/>
+                <BackLink href="/"/>
                 <h1 className="text-2xl font-semibold mb-4">Create New Event</h1>
                 <div className="space-y-3">
                     <Input
