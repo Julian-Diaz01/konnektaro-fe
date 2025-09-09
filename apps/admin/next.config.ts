@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     webpack: (config) => {
         config.resolve.alias = {
             ...config.resolve.alias,
+            '@': path.resolve(__dirname, './src/'),
             '@shared': path.resolve(__dirname, '../../packages/shared/src'),
             '@shared/components': path.resolve(__dirname, '../../packages/shared/src/components'),
             '@shared/hooks': path.resolve(__dirname, '../../packages/shared/src/hooks'),

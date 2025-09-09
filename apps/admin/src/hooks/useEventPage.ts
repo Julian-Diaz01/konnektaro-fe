@@ -110,7 +110,7 @@ export default function useEventPage() {
             }
             await deleteActivity(activityId)
             toast.success(`✅ Activity "${activity.title}" deleted successfully!`)
-        } catch (error) {
+        } catch {
             toast.error("❌ Failed to delete activity. Please try again.")
         }
     }, [event, deleteActivity, activities])

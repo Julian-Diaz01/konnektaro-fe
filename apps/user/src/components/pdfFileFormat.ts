@@ -1,4 +1,4 @@
-import {Review} from "../types/models";
+import {Review} from "@shared/types/models";
 import {Content, StyleDictionary} from "pdfmake/interfaces";
 
 export type CurrentUser = {

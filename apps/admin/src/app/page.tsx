@@ -4,7 +4,7 @@ import { Button } from "@shared/components/ui/button"
 import EventListAdmin from "@/components/EventListAdmin"
 import Spinner from "@shared/components/ui/spinner"
 import { useRouter } from "next/navigation"
-import useOpenEvents from "@/hooks/useOpenEvents"
+import useOpenEvents from "@shared/hooks/useOpenEvents"
 
 export default function AdminPage() {
     const router = useRouter()
