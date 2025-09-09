@@ -3,7 +3,7 @@ import {toast} from "sonner";
 import {getSocket} from "../lib/socket";
 import {Socket} from "socket.io-client";
 
-export default function useEventSocket(eventId: string) {
+export default function useEventSocket(eventId: string, name: string) {
     const [activeActivityId, setActiveActivityId] = useState<string | null>(null)
     const [shouldFetchGroups, setShouldFetchGroups] = useState(false)
     const [hasActivityChanged, setHasActivityChanged] = useState(false)
@@ -27,14 +27,14 @@ export default function useEventSocket(eventId: string) {
                 // Check if already connected
                 if (socketInstance.connected) {
                     setIsConnected(true)
-                    socketInstance.emit('joinEvent', eventId)
+                    socketInstance.emit('joinEvent', {eventId, name})
                 }
 
                 socketInstance.on('connect', () => {
                     console.log('🔌 Connected to WebSocket:', socketInstance.id)
                     if (mounted) {
                         setIsConnected(true)
-                        socketInstance.emit('joinEvent', eventId)
+                        socketInstance.emit('joinEvent', {eventId, name})
                     }
                 })
 

@@ -44,7 +44,7 @@ export default function useHomePage() {
         skipCountdown,
         resetShouldFetchGroups,
         resetActivityChanged
-    } = useEventSocket(eventId)
+    } = useEventSocket(eventId, name)
 
     // Activity ID management
     const activityId = activeActivityId || contextCurrentActivityId || undefined
