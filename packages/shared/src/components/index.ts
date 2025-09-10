@@ -4,7 +4,12 @@ export { Input } from './ui/input';
 export { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 export { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 export { Switch } from './ui/switch';
-export { AutoGrowTextarea } from './ui/textarea';
+export { AutoGrowTextarea } from './ui/auto-grow-textarea';
+export { Textarea } from './ui/textarea';
+export { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+export { Badge } from './ui/badge';
+export { Progress } from './ui/progress';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 export { default as Spinner } from './ui/spinner';
 export { Toaster } from './ui/sonner';
 

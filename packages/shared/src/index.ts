@@ -24,3 +24,6 @@ export * from './contexts';
 
 // Lib
 export * from './lib';
+
+// Simple SEO exports
+export * from './components/SEO';

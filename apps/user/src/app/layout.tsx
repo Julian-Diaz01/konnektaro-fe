@@ -9,7 +9,8 @@ import { UserProvider } from "@shared/contexts/UserContext";
 
 export const metadata: Metadata = {
     title: 'Konnektaro',
-    description: 'Collaborative event app',
+    description: 'Join collaborative events and connect with others through Konnektaro\'s innovative platform.',
+    robots: 'noindex,nofollow', // Most pages require auth, so no indexing
 }
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
