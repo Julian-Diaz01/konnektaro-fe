@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { ActivityType } from '@shared/types/models'
 import { Button } from '@shared/components/ui/button'
-import { AutoGrowTextarea } from '@shared/components/ui/textarea'
+import { AutoGrowTextarea } from '@shared/components/ui/auto-grow-textarea'
 import {
     Dialog,
     DialogContent,

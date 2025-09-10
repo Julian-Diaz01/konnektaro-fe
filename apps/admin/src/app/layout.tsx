@@ -8,8 +8,9 @@ import SocketStatus from "@shared/components/SocketStatus";
 import { UserProvider } from "@shared/contexts/UserContext";
 
 export const metadata: Metadata = {
-    title: 'Konnektaro',
-    description: 'Collaborative event app',
+    title: 'Konnektaro Admin',
+    description: 'Admin dashboard for managing collaborative events',
+    robots: 'noindex,nofollow', // Admin pages should not be indexed
 }
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
