@@ -2,15 +2,17 @@
 
 import {Button} from "@shared/components/ui/button"
 import Spinner from "@shared/components/ui/spinner"
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@shared/components/ui/dialog"
 import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
 import useCountdown from "@shared/hooks/useCountdown"
-import {ChevronRight, Upload} from "lucide-react"
+import {ChevronRight, Upload, Mic} from "lucide-react"
 import {useUserContext} from "@shared/contexts/UserContext"
 import {Activity, ActivityGroupItem, ParticipantUser} from "@shared/types/models"
 import Image from 'next/image'
 import usePartnerNote from "@/hooks/usePartnerNote"
 import {getGroupColorClasses} from "./getGroupColorClasses"
 import useCurrentActivity from "@/hooks/useCurrentActivity"
+import { KonnektaroAudioRecorder } from '@konnektaro/speech-to-text'
 
 interface CurrentActivityProps {
     userId: string
@@ -49,7 +51,7 @@ export default function CurrentActivity({
         activityId
     })
 
-    const {user} = useUserContext()
+    const {user, firebaseUser} = useUserContext()
 
     const { partnerNote } = usePartnerNote({
         activityId: activityId ?? null,
@@ -71,6 +73,10 @@ export default function CurrentActivity({
     // State to track submission status
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    // Audio recorder state
+    const [showRecorder, setShowRecorder] = useState(false)
+    const [authToken, setAuthToken] = useState<string>('')
+
     // Memoized displayed notes to prevent unnecessary re-renders
     const notesToDisplay = useMemo(() => {
         return displayedNotes || userActivity?.notes || null
@@ -79,6 +85,40 @@ export default function CurrentActivity({
     useEffect(() => {
         setDisplayedNotes(userActivity?.notes || null)
     }, [userActivity?.notes, activityId])
+
+    // Handle transcription completion from audio recorder
+    const handleTranscriptionComplete = useCallback((transcription: string) => {
+        if (transcription && textareaRef.current) {
+            // Append transcription to existing text
+            const currentValue = textareaRef.current.value || ''
+            const newValue = currentValue + (currentValue ? ' ' : '') + transcription
+            textareaRef.current.value = newValue
+            setIsUserTyping(true)
+            setShowRecorder(false)
+        }
+    }, [])
+
+    const handleTranscriptionError = useCallback((error: string) => {
+        console.error('Transcription error:', error)
+        setShowRecorder(false)
+    }, [])
+
+    // Get Firebase token when dialog opens
+    useEffect(() => {
+        const getToken = async () => {
+            if (showRecorder && firebaseUser) {
+                try {
+                    const token = await firebaseUser.getIdToken()
+                    setAuthToken(token)
+                } catch (error) {
+                    console.error('Failed to get Firebase token:', error)
+                    setAuthToken('')
+                }
+            }
+        }
+
+        getToken()
+    }, [showRecorder, firebaseUser])
 
     // Initialize textarea value when activity changes (but not when user is typing)
     useEffect(() => {
@@ -246,6 +286,34 @@ export default function CurrentActivity({
         // We'll call it only when submitting
     }, [])
 
+    const AudioRecorderDialog = useCallback(() => {
+        return (
+            <Dialog open={showRecorder} onOpenChange={setShowRecorder}>
+                <DialogContent className="max-w-md h-[600px] p-0">
+                    {showRecorder && firebaseUser && (
+                        <div className="h-[500px]">
+                            {authToken ? (
+                                <KonnektaroAudioRecorder
+                                    apiUrl={process.env.NEXT_PUBLIC_RECORDER_API_URL || ''}
+                                    token={authToken}
+                                    onTranscriptionComplete={handleTranscriptionComplete}
+                                    onError={handleTranscriptionError}
+                                />
+                            ) : (
+                                <div className="flex items-center justify-center h-full">
+                                    <div className="text-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+                                        <p>Loading audio recorder...</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+        )
+    }, [showRecorder, firebaseUser, authToken, handleTranscriptionComplete, handleTranscriptionError])
+
     const BottomTextArea = useCallback(() => {
         return <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 z-50 h-[68px] flex items-center">
             {notesToDisplay && !isEditing ? (
@@ -267,7 +335,7 @@ export default function CurrentActivity({
                             placeholder="Write your thoughts..."
                             onChange={handleTextareaChange}
                             required
-                            className="h-[44px] resize-none border border-gray-300 rounded-2xl w-full py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-black"
+                            className="h-[44px] resize-none border border-gray-300 rounded-2xl w-full py-2 pr-12 pl-12 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-black"
                             style={{
                                 lineHeight: '1.5',
                                 paddingRight: '48px'
@@ -276,6 +344,14 @@ export default function CurrentActivity({
                     </div>
 
                     {/* Submit Button - Always visible */}
+                    {/* Microphone Button */}
+                    <Button
+                            type="button"
+                            onClick={() => setShowRecorder(true)}
+                            className="h-[44px] w-[44px] rounded-full p-0 flex-shrink-0 bg-[var(--primary)] hover:bg-[var(--terciary)] disabled:bg-gray-400 transition-colors"
+                            >
+                            <Mic className="w-4 h-4" />
+                        </Button>
                     <Button
                         type="submit"
                         disabled={displayCountdown > 0 || loadingUserActivity || isSubmitting || !(textareaRef.current?.value || '').trim()}
@@ -313,6 +389,7 @@ export default function CurrentActivity({
                 <PartnerLiveNote/>
                 <ActivityNotes/>
             </div>
+            <AudioRecorderDialog/>
             <BottomTextArea/>
 
         </div>

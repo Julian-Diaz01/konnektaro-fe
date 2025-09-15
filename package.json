@@ -13,20 +13,16 @@
     "dev:shared:watch": "npm run dev:styles --workspace=packages/shared",
     "dev:all": "npm run build:shared:styles && npm run dev:admin & npm run dev:user",
     "dev": "npm run dev:all",
-
     "build:admin": "npm run build --workspace=apps/admin",
     "build:user": "npm run build --workspace=apps/user",
     "build:shared": "npm run build --workspace=packages/shared",
     "build:shared:styles": "npm run build:styles --workspace=packages/shared",
     "build:all": "npm run build:shared && npm run build:admin && npm run build:user",
     "build": "npm run build:all",
-    
     "setup": "npm install && npm run build:shared:styles",
-
     "lint:admin": "npm run lint --workspace=apps/admin",
     "lint:user": "npm run lint --workspace=apps/user",
     "lint:all": "npm run lint:admin && npm run lint:user",
-
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
     "sync:assets": "node scripts/sync-public-assets.js",
     "postbuild": "node cleanup.js",
@@ -43,7 +39,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@react-pdf/renderer": "^4.3.0",
     "@types/pdfmake": "^0.2.11",
-    "axios": "1.11.0",
+    "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cookies-next": "^6.1.0",
