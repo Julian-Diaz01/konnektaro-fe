@@ -29,7 +29,15 @@
     "deploy": "npm run build:all && firebase deploy --only hosting",
     "deploy:user": "npm run build:shared:styles && npm run build:user && firebase deploy --only hosting:konnektaro",
     "deploy:admin": "npm run build:shared:styles && npm run build:admin && firebase deploy --only hosting:konnektaro-admin",
-    "deploy:all": "npm run build:all && firebase deploy --only hosting"
+    "deploy:all": "npm run build:all && firebase deploy --only hosting",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch",
+    "bump": "node scripts/bump-version.js",
+    "bump:patch": "node scripts/bump-version.js patch",
+    "bump:minor": "node scripts/bump-version.js minor",
+    "bump:major": "node scripts/bump-version.js major"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.5",
