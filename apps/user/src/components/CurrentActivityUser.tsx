@@ -306,7 +306,7 @@ export default function CurrentActivity({
                                     </p>
                                     <p className="flex items-center gap-2">
                                         <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                                        Wait - it will close automatically and you'll get your transcription
+                                        Wait - it will close automatically and you will get your transcription
                                     </p>
                                 </div>
                             </div>
