@@ -1,0 +1,51 @@
+{
+  "types": {
+    "feat": {
+      "section": "Features"
+    },
+    "fix": {
+      "section": "Bug Fixes"
+    },
+    "chore": {
+      "section": "Maintenance"
+    },
+    "docs": {
+      "section": "Documentation"
+    },
+    "style": {
+      "section": "Styling"
+    },
+    "refactor": {
+      "section": "Code Refactoring"
+    },
+    "perf": {
+      "section": "Performance Improvements"
+    },
+    "test": {
+      "section": "Tests"
+    }
+  },
+  "commitUrlFormat": "{{host}}/{{owner}}/{{repository}}/commit/{{hash}}",
+  "compareUrlFormat": "{{host}}/{{owner}}/{{repository}}/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}",
+  "userUrlFormat": "{{host}}/{{user}}",
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "apps/admin/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "apps/user/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "packages/shared/package.json",
+      "type": "json"
+    }
+  ]
+}
