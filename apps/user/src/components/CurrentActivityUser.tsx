@@ -2,7 +2,7 @@
 
 import {Button} from "@shared/components/ui/button"
 import Spinner from "@shared/components/ui/spinner"
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@shared/components/ui/dialog"
+import {Dialog, DialogContent} from "@shared/components/ui/dialog"
 import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
 import useCountdown from "@shared/hooks/useCountdown"
 import {ChevronRight, Upload, Mic} from "lucide-react"
