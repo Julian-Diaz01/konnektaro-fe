@@ -2,7 +2,7 @@
 
 import {Button} from "@shared/components/ui/button"
 import Spinner from "@shared/components/ui/spinner"
-import React, {useEffect, useState, useRef, useCallback, useMemo} from "react"
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react"
 import useCountdown from "@shared/hooks/useCountdown"
 import {ChevronRight, Upload} from "lucide-react"
 import {useUserContext} from "@shared/contexts/UserContext"
@@ -11,7 +11,7 @@ import Image from 'next/image'
 import usePartnerNote from "@/hooks/usePartnerNote"
 import {getGroupColorClasses} from "./getGroupColorClasses"
 import useCurrentActivity from "@/hooks/useCurrentActivity"
-import { AudioRecorder } from "./AudioRecorder"
+import {AudioRecorder} from "./AudioRecorder"
 
 interface CurrentActivityProps {
     userId: string
@@ -50,7 +50,7 @@ export default function CurrentActivity({
         activityId
     })
 
-    const {user, firebaseUser} = useUserContext()
+    const {user} = useUserContext()
 
     const { partnerNote } = usePartnerNote({
         activityId: activityId ?? null,
@@ -86,8 +86,7 @@ export default function CurrentActivity({
         if (transcription && textareaRef.current) {
             // Append transcription to existing text
             const currentValue = textareaRef.current.value || ''
-            const newValue = currentValue + (currentValue ? ' ' : '') + transcription
-            textareaRef.current.value = newValue
+            textareaRef.current.value = currentValue + (currentValue ? ' ' : '') + transcription
             setIsUserTyping(true)
         }
     }, [])
