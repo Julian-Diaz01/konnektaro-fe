@@ -88,6 +88,8 @@ export default function useCurrentActivity({
 
 	// Save or update current activity
 	const saveOrUpdate = useCallback(async (targetActivityId: string, _targetUserActivity?: UserActivity | null, targetNotes?: string) => {
+		console.log("notes", notes)
+		console.log("targetNotes", targetNotes)
 		const notesToSave = (targetNotes ?? notes ?? '').trim()
 		if (!userId || !targetActivityId || !notesToSave) {
 			// Silent no-op if missing data
@@ -126,10 +128,10 @@ export default function useCurrentActivity({
 		}
 	}, [userId, groupId, notes, writeStoredNotes])
 
-	const handleSubmit = useCallback(async (e: React.FormEvent) => {
+	const handleSubmit = useCallback(async (e: React.FormEvent, notesToSubmit?: string) => {
 		e.preventDefault()
 		if (!activityId) return
-		await saveOrUpdate(activityId, userActivity, notes)
+		await saveOrUpdate(activityId, userActivity, notesToSubmit || notes)
 	}, [activityId, userActivity, notes, saveOrUpdate])
 
 	return {

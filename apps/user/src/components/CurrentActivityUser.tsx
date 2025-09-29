@@ -241,7 +241,7 @@ export default function CurrentActivity({
             setNotes(currentValue)
             
             try {
-                await handleSubmit(e)
+                await handleSubmit(e, currentValue)
                 // Only update displayed notes if the submission was successful (no error thrown)
                 setDisplayedNotes(currentValue)
                 setIsEditing(false)
