@@ -35,7 +35,7 @@ export default function useRecorderHealth(): UseRecorderHealthReturn {
             const healthy = await testConnection(apiUrl, token)
             setIsHealthy(healthy)
         } catch (error) {
-            console.error('Health check failed:', error)
+            //console.error('Health check failed:', error)
             setIsHealthy(false)
         } finally {
             setIsChecking(false)
