@@ -17,6 +17,8 @@ jobs:
           node-version: '20'
       - name: Install Dependencies
         run: npm install
+      - name: Run Tests
+        run: npm run test:user
       - name: Create .env file from GitHub Secrets
         run: |
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> .env
