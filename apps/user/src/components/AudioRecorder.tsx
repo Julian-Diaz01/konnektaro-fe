@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import { Button } from "@shared/components/ui/button"
-import { Dialog, DialogContent, DialogTitle } from "@shared/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@shared/components/ui/dialog"
 import { Mic } from "lucide-react"
 import { KonnektaroAudioRecorder } from '@konnektaro/speech-to-text'
 import { useUserContext } from "@shared/contexts/UserContext"
@@ -145,8 +145,9 @@ function AudioRecorderDialog({
 }: AudioRecorderDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md h-[80vh] p-0 flex flex-col">
+            <DialogContent className="max-w-md h-[80vh] p-0 flex flex-col" aria-describedby="voice-recording-description">
                 <DialogTitle className="sr-only">Voice Recording</DialogTitle>
+                <DialogDescription className="sr-only" id="voice-recording-description">Record your voice to transcribe your thoughts</DialogDescription>
                 {isOpen && firebaseUser && (
                     <>
                         <RecordingInstructions />
