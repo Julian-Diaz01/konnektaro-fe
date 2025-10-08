@@ -52,7 +52,7 @@ export interface UserActivity {
 export interface ParticipantUser {
     userId: string
     name: string
-    email: string
+    email: string | null
     icon: string
     description: string
 }
