@@ -1,5 +1,16 @@
 import { vi } from 'vitest'
-import { Activity, ParticipantUser, ActivityGroupItem, UserActivity } from '@shared/types/models'
+import { Activity, ParticipantUser, ActivityGroupItem, UserActivity, Event } from '@shared/types/models'
+
+export const mockEvent: Event = {
+  eventId: 'event-1',
+  name: 'Test Event',
+  description: 'This is a test event description',
+  picture: 'teamwork.png',
+  activityIds: ['activity-1', 'activity-2', 'activity-3'],
+  open: true,
+  participantIds: ['user-1', 'user-2', 'user-3'],
+  currentActivityId: 'activity-1'
+}
 
 export const mockActivity: Activity = {
   activityId: 'activity-1',
