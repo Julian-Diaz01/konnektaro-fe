@@ -2,7 +2,7 @@ import React from 'react'
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { PartnerInfoCard } from '../PartnerInfoCard'
-import { mockPartner, mockGroup } from '../../__tests__/setup/testFixtures'
+import { mockPartner } from '../../__tests__/setup/testFixtures'
 
 describe('PartnerInfoCard', () => {
   it('renders partner name', () => {

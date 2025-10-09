@@ -23,7 +23,7 @@ const mockUseCountdown = vi.fn(() => ({
 }))
 const mockUseCurrentActivity = vi.fn(() => ({
   activity: mockActivity,
-  userActivity: null as any,
+  userActivity: null,
   activitiesLoading: false,
   loadingUserActivity: false,
   setNotes: vi.fn(),
@@ -44,13 +44,17 @@ vi.mock('@/hooks/useCurrentActivity', () => ({
   default: () => mockUseCurrentActivity()
 }))
 vi.mock('@/hooks/usePartnerNote', () => ({
-  default: (params: any) => mockUsePartnerNote()
+  default: () => mockUsePartnerNote()
 }))
 vi.mock('@/hooks/useRecorderHealth', () => ({
   default: () => mockUseRecorderHealth()
 }))
+interface MockKonnektaroAudioRecorderProps {
+  onTranscriptionComplete: (text: string) => void
+}
+
 vi.mock('@konnektaro/speech-to-text', () => ({
-  KonnektaroAudioRecorder: ({ onTranscriptionComplete }: any) => (
+  KonnektaroAudioRecorder: ({ onTranscriptionComplete }: MockKonnektaroAudioRecorderProps) => (
     <div data-testid="audio-recorder">
       <button onClick={() => onTranscriptionComplete('Test transcription')}>Complete</button>
     </div>

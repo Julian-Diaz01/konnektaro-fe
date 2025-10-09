@@ -34,8 +34,7 @@ export default function useRecorderHealth(): UseRecorderHealthReturn {
             
             const healthy = await testConnection(apiUrl, token)
             setIsHealthy(healthy)
-        } catch (error) {
-            //console.error('Health check failed:', error)
+        } catch {
             setIsHealthy(false)
         } finally {
             setIsChecking(false)
@@ -46,6 +45,7 @@ export default function useRecorderHealth(): UseRecorderHealthReturn {
     // Check health on mount and when firebaseUser changes
     useEffect(() => {
         checkHealth()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [firebaseUser])
 
     return {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AudioRecorder } from '../AudioRecorder'
 
@@ -27,8 +27,13 @@ vi.mock('@/hooks/useRecorderHealth', () => ({
   default: () => mockUseRecorderHealth()
 }))
 
+interface MockKonnektaroAudioRecorderProps {
+  onTranscriptionComplete: (text: string) => void
+  onError: (error: string) => void
+}
+
 vi.mock('@konnektaro/speech-to-text', () => ({
-  KonnektaroAudioRecorder: ({ onTranscriptionComplete, onError }: any) => (
+  KonnektaroAudioRecorder: ({ onTranscriptionComplete, onError }: MockKonnektaroAudioRecorderProps) => (
     <div data-testid="audio-recorder">
       <button onClick={() => onTranscriptionComplete('Test transcription')}>
         Complete

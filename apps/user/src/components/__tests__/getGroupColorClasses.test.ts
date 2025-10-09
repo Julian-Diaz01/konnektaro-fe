@@ -12,7 +12,7 @@ describe('getGroupColorClasses', () => {
   })
 
   it('falls back to blue for unknown color', () => {
-    expect(getGroupColorClasses('unknown' as any)).toEqual({ bg: 'bg-blue-500', border: 'border-l-blue-500' })
+    expect(getGroupColorClasses('unknown' as string)).toEqual({ bg: 'bg-blue-500', border: 'border-l-blue-500' })
   })
 })
 

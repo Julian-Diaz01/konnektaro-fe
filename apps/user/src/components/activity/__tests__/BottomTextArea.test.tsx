@@ -5,12 +5,16 @@ import userEvent from '@testing-library/user-event'
 import { BottomTextArea } from '../BottomTextArea'
 
 // Mock child components
+interface MockEditButtonProps {
+  onClick: () => void
+}
+
 vi.mock('../EditButton', () => ({
-  EditButton: ({ onClick }: any) => <button onClick={onClick}>Edit Answer</button>
+  EditButton: ({ onClick }: MockEditButtonProps) => <button onClick={onClick}>Edit Answer</button>
 }))
 
 vi.mock('../NotesForm', () => ({
-  NotesForm: (props: any) => <form data-testid="notes-form">Notes Form</form>
+  NotesForm: () => <form data-testid="notes-form">Notes Form</form>
 }))
 
 describe('BottomTextArea', () => {

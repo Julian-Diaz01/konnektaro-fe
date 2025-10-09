@@ -6,9 +6,19 @@ import EventBanner from '../EventBanner'
 import { mockEvent } from './setup/testFixtures'
 import { Event } from '@shared/types/models'
 
+interface MockImageProps {
+  src: string
+  alt: string
+  width?: number
+  height?: number
+  priority?: boolean
+  className?: string
+}
+
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: any) => (
-    <img src={src} alt={alt} {...props} />
+  default: ({ src, alt }: MockImageProps) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} />
   )
 }))
 

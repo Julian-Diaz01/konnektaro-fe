@@ -5,8 +5,13 @@ import userEvent from '@testing-library/user-event'
 import { NotesForm } from '../NotesForm'
 
 // Mock AudioRecorder
+interface MockAudioRecorderProps {
+  onTranscriptionComplete: (text: string) => void
+  onTranscriptionError: (error: string) => void
+}
+
 vi.mock('../../AudioRecorder', () => ({
-  AudioRecorder: ({ onTranscriptionComplete, onTranscriptionError }: any) => (
+  AudioRecorder: ({ onTranscriptionComplete, onTranscriptionError }: MockAudioRecorderProps) => (
     <div data-testid="mock-audio-recorder">
       <button onClick={() => onTranscriptionComplete('test')}>Transcribe</button>
       <button onClick={() => onTranscriptionError('error')}>Error</button>

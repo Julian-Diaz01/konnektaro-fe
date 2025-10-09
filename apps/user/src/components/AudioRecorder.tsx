@@ -129,7 +129,7 @@ function AudioRecorderContent({
 interface AudioRecorderDialogProps {
     isOpen: boolean
     onOpenChange: (open: boolean) => void
-    firebaseUser: any
+    firebaseUser: { getIdToken: () => Promise<string> } | null
     authToken: string
     onTranscriptionComplete: (transcription: string) => void
     onTranscriptionError: (error: string) => void

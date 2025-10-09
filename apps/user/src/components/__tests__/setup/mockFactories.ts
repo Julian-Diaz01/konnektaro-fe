@@ -1,10 +1,11 @@
 import { vi } from 'vitest'
+import { Activity } from '@shared/types/models'
 
 export function createMockGetIdToken() {
   return vi.fn().mockResolvedValue('mock-token')
 }
 
-export function createMockUseUserContext(getIdToken: any) {
+export function createMockUseUserContext(getIdToken: ReturnType<typeof vi.fn>) {
   return vi.fn(() => ({
     user: { userId: 'user-123', name: 'Test User', email: 'test@example.com' },
     firebaseUser: { getIdToken }
@@ -45,12 +46,12 @@ export function createMockUsePartnerNote() {
 }
 
 export function resetAllMocks(mocks: {
-  mockGetIdToken: any
-  mockUseUserContext: any
-  mockUseCurrentActivity: any
-  mockUsePartnerNote: any
-  mockUseCountdown?: any
-  mockActivity: any
+  mockGetIdToken: ReturnType<typeof vi.fn>
+  mockUseUserContext: ReturnType<typeof vi.fn>
+  mockUseCurrentActivity: ReturnType<typeof vi.fn>
+  mockUsePartnerNote: ReturnType<typeof vi.fn>
+  mockUseCountdown?: ReturnType<typeof vi.fn>
+  mockActivity: Activity
 }) {
   vi.clearAllMocks()
   localStorage.clear()
