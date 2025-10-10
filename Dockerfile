@@ -8,6 +8,9 @@ FROM node:${NODE_VERSION}-alpine as base
 
 WORKDIR /usr/src/app
 
+# Install dependencies only when needed
+RUN apk add --no-cache libc6-compat
+
 ################################################################################
 # Dependencies stage - install all dependencies
 FROM base as deps
@@ -22,7 +25,8 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/tailwind-config/package.json ./packages/tailwind-config/
 
 # Install all dependencies (using workspace)
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 ################################################################################
 # Build stage - build the applications
@@ -54,11 +58,27 @@ ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
 ENV NEXT_PUBLIC_RECORDER_URL=$NEXT_PUBLIC_RECORDER_URL
 ENV NEXT_PUBLIC_RECORDER_API_URL=$NEXT_PUBLIC_RECORDER_API_URL
 
-# Copy all source files
-COPY . .
 
-# Build shared packages and both apps
-RUN npm run build:all
+# Copy source files in stages for better caching
+# Copy shared package first (changes less frequently)
+COPY packages/ ./packages/
+
+# Build shared packages with Next.js cache mount
+RUN --mount=type=cache,target=/usr/src/app/.next/cache \
+    npm run build:shared
+
+# Now copy app source files
+COPY apps/ ./apps/
+
+# Copy other necessary files
+COPY tsconfig.json ./
+COPY tailwind.config.ts ./
+COPY postcss.config.mjs ./
+
+# Build both apps with Next.js cache mount (HUGE SPEED BOOST!)
+RUN --mount=type=cache,target=/usr/src/app/apps/user/.next/cache \
+    --mount=type=cache,target=/usr/src/app/apps/admin/.next/cache \
+    npm run build:user && npm run build:admin
 
 ################################################################################
 # User app production stage
